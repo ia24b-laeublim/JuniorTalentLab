@@ -1,4 +1,4 @@
-package ch.ubs.juniorlab.juniortalentlab;
+package ch.ubs.juniorlab;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
