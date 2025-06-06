@@ -9,5 +9,4 @@ public class JuniorTalentLabApplication {
     public static void main(String[] args) {
         SpringApplication.run(JuniorTalentLabApplication.class, args);
     }
-
 }
