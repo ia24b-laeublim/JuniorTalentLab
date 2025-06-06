@@ -1,4 +1,4 @@
-package ch.ubs.juniorlab.juniortalentlab;
+package ch.ubs.juniorlab;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

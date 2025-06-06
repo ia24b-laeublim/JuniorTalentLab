@@ -1,4 +1,4 @@
-package ch.ubs.juniorlab.juniortalentlab;
+package ch.ubs.juniorlab;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
