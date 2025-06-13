@@ -3,7 +3,9 @@
 <body>
 <div th:fragment="header">
     <header class="ubs-header">
-        <img th:src="@{/img/ubsLogo.svg}" alt="UBS Logo" class="ubs-logo">
+        <a th:href="@{/}">
+            <img th:src="@{/img/ubsLogo.svg}" alt="UBS Logo" class="ubs-logo">
+        </a>
         <div class="dropdown">
             <button class="role-button">
                 Choose role <span class="arrow"></span>
