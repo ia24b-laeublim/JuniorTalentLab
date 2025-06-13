@@ -27,4 +27,15 @@ public class HomeController {
     public String privacyPolicy() {
         return "privacyPolicy"; // templates/privacyPolicy.html
     }
+
+    @GetMapping("/apprenticePage")
+    public String showApprenticePage() {
+        return "/apprentice";
+    }
+
+    @GetMapping("/createTaskPage")
+    public String showEmployeePage() {
+        return "/employee";
+    }
+
 }
