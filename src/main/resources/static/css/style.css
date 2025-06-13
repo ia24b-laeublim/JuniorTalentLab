@@ -1,0 +1,101 @@
+/* Font Face Definitions */
+@font-face {
+    font-family: 'Frutiger';
+    font-style: normal;
+    font-weight: 400; /* normal weight */
+    src: local('Frutiger'), url('../fonts/Frutiger.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Frutiger';
+    font-style: normal;
+    font-weight: 700; /* bold weight */
+    src: local('Frutiger Bold'), url('../fonts/Frutiger_bold.woff') format('woff');
+}
+
+body {
+    font-family: 'Frutiger', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.ubs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 20px 40px;
+    border-bottom: 1px solid #ccc;
+}
+
+.ubs-logo {
+    height: 50px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.role-button {
+    background-color: #e00000;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.arrow {
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when dropdown is open */
+.dropdown.show .arrow {
+    transform: rotate(-135deg);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f2f2f2;
+    width: 100%;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    z-index: 1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    text-align: center; /* Changed from right to center */
+    border-top: 1px solid #999;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:first-child {
+    border-top: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown.show .dropdown-content {
+    display: block;
+}
