@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Startseite</title>
-    <link rel="stylesheet" th:href="@{/css/footer.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script th:src="@{/js/script.js}"></script>
 </head>
 
 <body>
+
+<div th:replace="fragments/header :: header"></div>
 
 <h1 style="text-align: center;">Willkommen bei UBS Junior Talent Lab</h1>
 

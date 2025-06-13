@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer th:fragment="footer">
+<footer th:fragment="footer" class="footer">
   <div class="footer-container">
 
     <!-- UBS Logo -->
-    <div class="footer-logo">
+    <div class="ubs-logo">
       <a th:href="@{/}">
-        <img th:src="@{/img/UBS_Logo.png}" alt="UBS Logo" />
+        <img th:src="@{/img/ubsLogo.svg}" alt="UBS Logo" />
       </a>
     </div>
 
-    <!-- Links -->
-    <div class="footer-link">
-      <a href="/imprint">Imprint</a>
-    </div>
-    <div class="footer-link">
-      <a href="/contact">Contact</a>
-    </div>
-    <div class="footer-link">
-      <a href="/privacy">Privacy Policy</a>
-    </div>
+    <!-- Footer Links -->
+    <div class="footer-link"><a href="/imprint">Imprint</a></div>
+    <div class="footer-link"><a href="/contact">Contact</a></div>
+    <div class="footer-link"><a href="/privacy">Privacy Policy</a></div>
 
   </div>
 </footer>

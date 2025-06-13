@@ -13,12 +13,19 @@
     src: local('Frutiger Bold'), url('../fonts/Frutiger_bold.woff') format('woff');
 }
 
+/* General Styles */
 body {
     font-family: 'Frutiger', sans-serif;
     margin: 0;
     padding: 0;
 }
 
+
+.ubs-logo {
+    height: 50px;
+}
+
+/* Header Styles */
 .ubs-header {
     display: flex;
     justify-content: space-between;
@@ -28,9 +35,6 @@ body {
     border-bottom: 1px solid #ccc;
 }
 
-.ubs-logo {
-    height: 50px;
-}
 
 .dropdown {
     position: relative;
@@ -100,6 +104,7 @@ body {
     display: block;
 }
 
+/* Footer Styles*/
 footer {
     width: 100%;
     background-color: white;
@@ -116,15 +121,13 @@ footer {
     width: 100%;
 }
 
+/*
 .footer-logo {
     flex: 1;
     min-width: 150px;
     text-align: left;
 }
-
-.footer-logo img {
-    height: 40px;
-}
+*/
 
 .footer-link {
     flex: 1;
