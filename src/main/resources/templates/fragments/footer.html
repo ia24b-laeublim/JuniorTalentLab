@@ -1,37 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer th:fragment="footer" style="
-    width: 100%;
-    background-color: white;
-    border-top: 2px solid black;
-    padding: 20px 60px;
-    box-sizing: border-box;
-">
-  <div style="
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      width: 100%;
-  ">
-    <!-- UBS Logo als Link zur Startseite ("/") -->
-    <div style="flex: 1; min-width: 150px; text-align: left;">
+<footer th:fragment="footer">
+  <div class="footer-container">
+
+    <!-- UBS Logo -->
+    <div class="footer-logo">
       <a th:href="@{/}">
-        <img th:src="@{/img/UBS_Logo.png}" alt="UBS Logo" style="height: 40px;" />
+        <img th:src="@{/img/UBS_Logo.png}" alt="UBS Logo" />
       </a>
     </div>
 
     <!-- Links -->
-    <div style="flex: 1; min-width: 100px; text-align: center;">
-      <a href="/imprint" style="text-decoration: none; color: black; font-weight: bold;">Imprint</a>
+    <div class="footer-link">
+      <a href="/imprint">Imprint</a>
     </div>
-    <div style="flex: 1; min-width: 100px; text-align: center;">
-      <a href="/contact" style="text-decoration: none; color: black; font-weight: bold;">Contact</a>
+    <div class="footer-link">
+      <a href="/contact">Contact</a>
     </div>
-    <div style="flex: 1; min-width: 100px; text-align: center;">
-      <a href="/privacy" style="text-decoration: none; color: black; font-weight: bold;">Privacy Policy</a>
+    <div class="footer-link">
+      <a href="/privacy">Privacy Policy</a>
     </div>
+
   </div>
 </footer>
 </body>

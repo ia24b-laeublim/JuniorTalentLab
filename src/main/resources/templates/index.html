@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="fragments/header :: head"></th:block>
-<body>
-<th:block th:replace="fragments/header :: header"></th:block>
+<head>
+    <meta charset="UTF-8">
+    <title>Startseite</title>
+    <link rel="stylesheet" th:href="@{/css/footer.css}" />
+</head>
 
-<main>
-    <h2>Welcome to the Junior Talent Lab</h2>
-    <p>This is your project platform.</p>
-</main>
+<body>
+
+<h1 style="text-align: center;">Willkommen bei UBS Junior Talent Lab</h1>
+
+<!-- Footer einbinden -->
+<div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>
