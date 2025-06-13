@@ -140,3 +140,61 @@ footer {
     color: black;
     font-weight: bold;
 }
+
+/* Homepage Styles */
+/* ==== KARUSSELL ==== */
+.carousel-placeholder {
+    height: 300px;
+    background-color: #d3d3d3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+/*
+.carousel-button {
+    background-color: white;
+    border: 2px solid #E2001A;
+    color: #E2001A;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.carousel-button:hover {
+    background-color: #E2001A;
+    color: white;
+}
+*/
+/* ==== ABOUT SECTION ==== */
+.about-section {
+    padding: 40px;
+    background-color: #ffffff;
+    text-align: left;
+}
+
+.about-section h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.red-underline {
+    width: 80px;
+    height: 10px;
+    background-color: #E2001A;
+    margin-top: 12px;
+    margin-bottom: 24px;
+}
+
+.about-section p {
+    max-width: 900px;
+    margin-bottom: 20px;
+}
+
