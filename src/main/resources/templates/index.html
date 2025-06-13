@@ -9,11 +9,32 @@
 
 <body>
 
+<!-- Header -->
 <div th:replace="fragments/header :: header"></div>
 
-<h1 style="text-align: center;">Willkommen bei UBS Junior Talent Lab</h1>
+<!-- Karussell-Platzhalter mit klaren Pfeilen -->
+<div class="carousel-placeholder">
+    <span class="carousel-button left">‹    </span>
+    <span>Karussell</span>
+    <span class="carousel-button right">    ›</span>
+</div>
 
-<!-- Footer einbinden -->
+<!-- About Section -->
+<section class="about-section">
+    <h2>About Junior Talent Lab</h2>
+    <div class="red-underline"></div>
+    <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+    </p>
+    <p>
+        Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.
+    </p>
+    <p>
+        Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+    </p>
+</section>
+
+<!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>
 
 </body>
