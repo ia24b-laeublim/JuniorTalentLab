@@ -12,4 +12,19 @@ public class HomeController {
         model.addAttribute("pageTitle", "Home - Junior Talent Lab");
         return "index";
     }
+
+    @GetMapping("/imprint")
+    public String imprint() {
+        return "imprint"; // templates/imprint.html
+    }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "contact"; // templates/contact.html
+    }
+
+    @GetMapping("/privacy")
+    public String privacyPolicy() {
+        return "privacyPolicy"; // templates/privacyPolicy.html
+    }
 }
