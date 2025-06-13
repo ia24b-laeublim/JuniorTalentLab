@@ -2,14 +2,14 @@
 @font-face {
     font-family: 'Frutiger';
     font-style: normal;
-    font-weight: 400; /* normal weight */
+    font-weight: 400;
     src: local('Frutiger'), url('../fonts/Frutiger.woff') format('woff');
 }
 
 @font-face {
     font-family: 'Frutiger';
     font-style: normal;
-    font-weight: 700; /* bold weight */
+    font-weight: 700;
     src: local('Frutiger Bold'), url('../fonts/Frutiger_bold.woff') format('woff');
 }
 
@@ -20,8 +20,8 @@ body {
     padding: 0;
 }
 
-
-.ubs-logo {
+.ubs-logo,
+.ubs-logo img {
     height: 50px;
 }
 
@@ -34,7 +34,6 @@ body {
     padding: 20px 40px;
     border-bottom: 1px solid #ccc;
 }
-
 
 .dropdown {
     position: relative;
@@ -87,7 +86,7 @@ body {
     text-decoration: none;
     display: block;
     font-size: 16px;
-    text-align: center; /* Changed from right to center */
+    text-align: center;
     border-top: 1px solid #999;
     transition: background-color 0.3s ease;
 }
@@ -108,8 +107,8 @@ body {
 footer {
     width: 100%;
     background-color: white;
-    border-top: 2px solid black;
-    padding: 20px 60px;
+    border-top: 1px solid #ccc;
+    padding: 20px 40px;
     box-sizing: border-box;
 }
 
@@ -120,14 +119,6 @@ footer {
     flex-wrap: wrap;
     width: 100%;
 }
-
-/*
-.footer-logo {
-    flex: 1;
-    min-width: 150px;
-    text-align: left;
-}
-*/
 
 .footer-link {
     flex: 1;
