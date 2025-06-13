@@ -1,4 +1,4 @@
-package ch.ubs.juniorlab.service;
+package ch.ubs.juniorlab.Service;
 
 import ch.ubs.juniorlab.entity.*;
 import ch.ubs.juniorlab.repository.TaskRepository;
@@ -11,6 +11,7 @@ public class TaskProcessingService {
 
     private final TaskRepository taskRepository;
 
+    // Konstruktor-Injektion des Repositories
     public TaskProcessingService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
@@ -18,7 +19,6 @@ public class TaskProcessingService {
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
-
     public void printAllTasks() {
         List<Task> tasks = getAllTasks();
         for (Task task : tasks) {
@@ -81,6 +81,5 @@ public class TaskProcessingService {
             System.out.println("----------------------");
         }
     }
-
 
 }
