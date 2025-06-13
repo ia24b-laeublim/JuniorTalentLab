@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Default Title</title>
+</head>
+<body>
+<header th:fragment="header">
+    <h1>Junior Talent Lab</h1>
+    <nav>
+        <a href="/" th:href="@{/}">Home</a>
+        <a href="/about" th:href="@{/about}">About</a>
+    </nav>
+</header>
+</body>
+</html>
