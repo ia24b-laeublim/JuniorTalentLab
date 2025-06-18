@@ -191,7 +191,6 @@ footer {
     margin-bottom: 20px;
 }
 
-/* Impressum Seite */
 /* Impressum-Seite */
 
 .impressum-container {
@@ -225,3 +224,22 @@ footer {
     color: #E2001A;
     text-decoration: underline;
 }
+
+/* Header Apprentice */
+/* Header-Navigation links (Request, Overview, Finished tasks) */
+.header-nav-links {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex: 1;
+    margin-left: 40px;
+}
+
+
+.header-nav-links a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+
