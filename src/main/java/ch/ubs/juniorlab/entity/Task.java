@@ -3,6 +3,8 @@ package ch.ubs.juniorlab.entity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import ch.ubs.juniorlab.entity.TaskStatus;
+
 
 @Entity
 @Table(name = "Task")
@@ -37,6 +39,10 @@ public class Task {
     @Column(name = "HandoverMethod", length = 45)
     private String handoverMethod;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Status", length = 20)
+    private TaskStatus status;
+
     // Relationen zur Person
     @ManyToOne
     @JoinColumn(name = "Client", foreignKey = @ForeignKey(name = "fk_Task_Client"))
@@ -48,6 +54,7 @@ public class Task {
 
     // Konstruktoren
     public Task() {
+        this.status = TaskStatus.OPEN;
     }
 
     // Getter & Setter
@@ -139,4 +146,13 @@ public class Task {
     public void setApprentice(Person apprentice) {
         this.apprentice = apprentice;
     }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
 }

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>requesPage</title>
+    <title>Request Page</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <script th:src="@{/js/script.js}"></script>
 </head>
@@ -12,10 +12,59 @@
 <!-- Header einbinden -->
 <div th:replace="fragments/header_apprentice :: header"></div>
 
-<h1 style="text-align: center;">Reques Page</h1>
+<main>
+    <!-- UPDATED: Centered black title with a red line -->
+    <div class="page-title-container">
+        <h1>Open Requests</h1>
+    </div>
+
+    <!-- Aufgabenübersicht (Container for the original cards) -->
+    <div id="task-container" class="task-grid"></div>
+
+    <!-- Pop-up für Details (Reverted to the original design) -->
+    <div id="popup" class="popup hidden">
+        <div class="popup-content">
+            <h2 id="popup-title" class="popup-heading">Titel</h2>
+            <div class="red-underline"></div>
+
+            <div class="popup-layout">
+                <div class="popup-left">
+                    <div class="popup-row"><span>Name</span><span id="popup-name"></span></div>
+                    <div class="popup-row"><span>GPN</span><span id="popup-gpn"></span></div>
+                    <div class="popup-row"><span>Deadline</span><span id="popup-deadline"></span></div>
+                    <div class="popup-row"><span>Channel</span><span id="popup-channel"></span></div>
+                    <div class="popup-row"><span>Content Type</span><span id="popup-type"></span></div>
+                    <div class="popup-row"><span>Format</span><span id="popup-format"></span></div>
+                    <div class="popup-row"><span>Target Audience</span><span id="popup-target"></span></div>
+                    <div class="popup-row"><span>Budget</span><span id="popup-budget"></span></div>
+                    <div class="popup-row"><span>Handover</span><span id="popup-handover"></span></div>
+                </div>
+
+                <div class="popup-right">
+                    <div class="popup-section">
+                        <strong>Description</strong>
+                        <p id="popup-description"></p>
+                    </div>
+                    <div class="popup-section">
+                        <strong>Other requirements</strong>
+                        <p id="popup-other"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-buttons">
+                <button onclick="acceptTask()">Accept</button>
+                <button onclick="rejectTask()">Reject</button>
+            </div>
+        </div>
+    </div>
+
+</main>
 
 <!-- Footer einbinden -->
 <div th:replace="fragments/footer :: footer"></div>
+
+<script defer th:src="@{/js/request.js}"></script>
 
 </body>
 </html>
