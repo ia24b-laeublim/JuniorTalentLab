@@ -38,4 +38,19 @@ public class HomeController {
         return "/employee";
     }
 
+    @GetMapping("/requestPage")
+    public String showRequestPage() {
+        return "requestPage"; // entspricht requestPage.html in /templates
+    }
+
+    @GetMapping("/overviewPage")
+    public String showOverviewPage() {
+        return "overviewPage"; // entspricht overviewPage.html
+    }
+
+    @GetMapping("/finishedTasksPage")
+    public String showFinishedTasksPage() {
+        return "finishedTasksPage"; // entspricht finishedTasksPage.html
+    }
+
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="header">
+    <header class="ubs-header">
+        <a th:href="@{/}">
+            <img th:src="@{/img/ubsLogo.svg}" alt="UBS Logo" class="ubs-logo">
+        </a>
+
+        <!-- Navigation Links -->
+        <nav class="header-nav-links">
+            <a th:href="@{/requestPage}">Request</a>
+            <a th:href="@{/overviewPage}">Overview</a>
+            <a th:href="@{/finishedTasksPage}">Finished tasks</a>
+        </nav>
+
+
+        <!-- Dropdown für Rollenwechsel -->
+        <div class="dropdown">
+            <button class="role-button">
+                Apprentice <span class="arrow"></span>
+            </button>
+            <div class="dropdown-content">
+                <a th:href="@{/apprenticePage}">Apprentice</a>
+                <a th:href="@{/createTaskPage}">Employee</a>
+            </div>
+        </div>
+    </header>
+</div>
+</body>
+</html>
