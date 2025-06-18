@@ -1,4 +1,91 @@
-/* Font Face Definitions */
+/* ================================
+   Layout & Container
+   ================================ */
+#contact-page {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+}
+
+/* Page Title */
+.page-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+/* ================================
+   Field Card Wrapper
+   ================================ */
+.contact-field {
+    background: #f2f2f2;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Textarea braucht etwas weniger Padding unten */
+.contact-field--textarea {
+    padding-bottom: 0.5rem;
+}
+
+/* ================================
+   Labels & Required
+   ================================ */
+.contact-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.contact-required {
+    color: #e00;
+    margin-left: 0.25rem;
+}
+
+/* ================================
+   Inputs & Textareas
+   ================================ */
+.contact-input,
+.contact-textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+    outline: none;
+    border-color: #e00;
+}
+
+/* ================================
+   Submit Button
+   ================================ */
+.contact-button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background: #e00;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+.contact-button:hover {
+    background: #c00;
+}
+
 @font-face {
     font-family: 'Frutiger';
     font-style: normal;
