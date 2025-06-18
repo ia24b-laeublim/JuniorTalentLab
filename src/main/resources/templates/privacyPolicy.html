@@ -1,20 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Privacy Policy</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <script th:src="@{/js/script.js}"></script>
-</head>
+    <title>Privacy Policy – UBS Junior Talent Lab</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .privacy-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 50px 0;
+        }
 
+        .privacy-box {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 800px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .privacy-box h2 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        .privacy-box p {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
 <body>
 
-<!-- Header einbinden -->
+<!-- Header -->
 <div th:replace="fragments/header :: header"></div>
 
-<h1 style="text-align: center;">Privacy Policy Page</h1>
+<!-- PRIVACY POLICY CONTENT -->
+<main class="privacy-wrapper">
+    <div class="privacy-box">
+        <h2>Privacy Policy for UBS Junior Talent Lab</h2>
+        <p><strong>Last updated:</strong> June 2025</p>
 
-<!-- Footer einbinden -->
+        <p>UBS AG (“UBS,” “we,” “our,” or “us”) operates the UBS Junior Talent Lab (“Talent Lab,” “Platform”) to connect internal media professionals (“Mediamaticians”) with task requests from UBS employees.</p>
+
+        <p>We collect details of each task you accept or decline, including its title, description, status updates, uploaded deliverables, and communications exchanged with the requester.</p>
+
+        <p>We use this information solely to power the Platform’s functionality: to display available tasks, record your choices, enable file uploads and downloads, send optional email alerts, and provide progress-tracking reports.</p>
+
+        <p>We engage only trusted third-party vendors for hosting, analytics, and email delivery, sharing the minimum information necessary under binding confidentiality agreements. We disclose personal data only when required by law or to protect our legal rights.</p>
+
+        <p>By using the UBS Junior Talent Lab via your UBS credentials, you acknowledge that you have read this Privacy Policy and consent to the collection, processing, and retention of your data as described herein.</p>
+    </div>
+</main>
+
+<!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>
 
 </body>
