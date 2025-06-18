@@ -191,3 +191,26 @@ footer {
     margin-bottom: 20px;
 }
 
+/* Impressum Seite */
+/* Impressum-Seite */
+
+.impressum-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+.impressum-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.red-underline {
+    width: 80px;
+    height: 10px;
+    background-color: #E2001A;
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
