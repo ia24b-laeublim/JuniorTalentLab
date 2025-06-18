@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="header">
+    <header class="ubs-header">
+        <a th:href="@{/}">
+            <img th:src="@{/img/ubsLogo.svg}" alt="UBS Logo" class="ubs-logo">
+        </a>
+        <div class="dropdown">
+            <button class="role-button">
+                Employee<span class="arrow"></span>
+            </button>
+            <div class="dropdown-content">
+                <a th:href="@{/requestPage}">Apprentice</a>
+                <a th:href="@{/createTaskPage}">Employee</a>
+            </div>
+        </div>
+    </header>
+</div>
+</body>
+</html>
