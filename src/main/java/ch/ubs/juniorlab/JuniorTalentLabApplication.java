@@ -24,8 +24,6 @@ public class JuniorTalentLabApplication {
         // Methode aufrufen
         taskService.printAllTasks();
 
-        PDFService pdfService = context.getBean(PDFService.class);
-        System.out.println(pdfService.checkPDF(taskService.getAllTasks().get(2)));
 
 
     }
