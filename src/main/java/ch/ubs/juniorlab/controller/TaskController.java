@@ -1,7 +1,6 @@
 package ch.ubs.juniorlab.controller;
 
 import ch.ubs.juniorlab.entity.Task;
-import ch.ubs.juniorlab.entity.TaskStatus;
 import ch.ubs.juniorlab.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +35,7 @@ public class TaskController {
     @PostMapping("/{id}/accept")
     public ResponseEntity<Void> acceptTask(@PathVariable Long id) {
         Task task = taskRepository.findById(id).orElseThrow();
-        task.setStatus(TaskStatus.ACCEPTED);
+        task.setStatus("Accepted");
         taskRepository.save(task);
         return ResponseEntity.ok().build();
     }
@@ -45,7 +44,7 @@ public class TaskController {
     @PostMapping("/{id}/reject")
     public ResponseEntity<Void> rejectTask(@PathVariable Long id) {
         Task task = taskRepository.findById(id).orElseThrow();
-        task.setStatus(TaskStatus.REJECTED);
+        task.setStatus("Rejected");
         taskRepository.save(task);
         return ResponseEntity.ok().build();
     }
