@@ -49,6 +49,9 @@ public class Task {
     @JoinColumn(name = "Apprentice", nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Apprentice"))
     private Person apprentice;
 
+    @Column(name = "Progress", length = 100)
+    private String progress;
+
     // Konstruktoren
     public Task() {
         this.status = "open"; // Optionaler Default-Wert
@@ -150,5 +153,12 @@ public class Task {
 
     public void setApprentice(Person apprentice) {
         this.apprentice = apprentice;
+    }
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
     }
 }
