@@ -25,7 +25,7 @@ public class JuniorTalentLabApplication {
         taskService.printAllTasks();
 
         PDFService pdfService = context.getBean(PDFService.class);
-        pdfService.generatePDF(taskService.getAllTasks().get(1));
+        System.out.println(pdfService.checkPDF(taskService.getAllTasks().get(2)));
 
 
     }

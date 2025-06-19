@@ -166,4 +166,21 @@ public class PDFService {
         writeField(cs, "E-Mail", p.getEmail());
         writeField(cs, "GPN", p.getGpn());
     }
+
+    public File checkPDF(Task task) throws IOException {
+        String folderPath = "src/Files";
+        File dir = new File(folderPath);
+        if (!dir.exists()) dir.mkdirs();
+
+        File pdfFile = new File(dir, "Task_" + task.getId() + ".pdf");
+
+        if (pdfFile.exists()) {
+            System.out.println("ℹ️ PDF existiert bereits: " + pdfFile.getAbsolutePath());
+            return pdfFile;
+        }
+
+        generatePDF(task);  // erstellt das PDF neu, wenn es noch nicht existiert
+        return pdfFile;
+    }
+
 }
