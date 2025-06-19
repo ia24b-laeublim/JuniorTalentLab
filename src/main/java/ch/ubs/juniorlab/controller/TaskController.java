@@ -27,7 +27,10 @@ public class TaskController {
 
     @GetMapping("/open")
     public List<Task> getOpenTasks() {
-        return taskRepository.findAll(); // ZEIGT ALLE TASKS, auch ACCEPTED/REJECTED
+        return taskRepository.findAll().stream()
+                .filter(task ->
+                        task.getStatus() == null || task.getStatus() == TaskStatus.REJECTED)
+                .toList();
     }
 
 
@@ -48,5 +51,13 @@ public class TaskController {
         taskRepository.save(task);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/accepted")
+    public List<Task> getAcceptedTasks() {
+        return taskRepository.findAll().stream()
+                .filter(task -> task.getStatus() == TaskStatus.ACCEPTED)
+                .toList();
+    }
+
 
 }
