@@ -1,4 +1,4 @@
-package ch.ubs.juniorlab.Service;
+package ch.ubs.juniorlab.service;
 
 import ch.ubs.juniorlab.entity.*;
 import org.apache.pdfbox.pdmodel.*;

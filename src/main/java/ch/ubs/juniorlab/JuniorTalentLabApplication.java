@@ -1,9 +1,7 @@
 package ch.ubs.juniorlab;
 
-
-
 import ch.ubs.juniorlab.Service.MailService;
-import ch.ubs.juniorlab.Service.PDFService;
+import ch.ubs.juniorlab.service.PDFService;
 import ch.ubs.juniorlab.Service.TaskProcessingService;
 
 import org.springframework.boot.SpringApplication;
