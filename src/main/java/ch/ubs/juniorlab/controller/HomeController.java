@@ -1,6 +1,6 @@
 package ch.ubs.juniorlab.controller;
 
-import ch.ubs.juniorlab.Service.MailService;
+import ch.ubs.juniorlab.service.MailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

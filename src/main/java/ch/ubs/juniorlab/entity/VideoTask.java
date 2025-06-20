@@ -37,19 +37,6 @@ public class VideoTask extends Task {
     public VideoTask() {
     }
 
-    public VideoTask(Integer lengthSec, Boolean voiceover, Boolean disclaimer,
-                     String brandingRequirements, String format, String fileFormat,
-                     String socialMediaPlatforms, String resolution, String musicStyle) {
-        this.lengthSec = lengthSec;
-        this.voiceover = voiceover;
-        this.disclaimer = disclaimer;
-        this.brandingRequirements = brandingRequirements;
-        this.format = format;
-        this.fileFormat = fileFormat;
-        this.socialMediaPlatforms = socialMediaPlatforms;
-        this.resolution = resolution;
-        this.musicStyle = musicStyle;
-    }
 
     // Getter & Setter
     public Integer getLengthSec() {

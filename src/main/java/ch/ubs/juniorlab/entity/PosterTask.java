@@ -25,14 +25,6 @@ public class PosterTask extends Task {
     public PosterTask() {
     }
 
-    public PosterTask(String format, String posterSize, String paperType, Integer printQualityDpi, String mountingType) {
-        this.format = format;
-        this.posterSize = posterSize;
-        this.paperType = paperType;
-        this.printQualityDpi = printQualityDpi;
-        this.mountingType = mountingType;
-    }
-
     // Getter & Setter
 
     public String getFormat() {

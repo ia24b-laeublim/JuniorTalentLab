@@ -35,17 +35,6 @@ public class PollTask extends Task {
     public PollTask() {
     }
 
-    public PollTask(String title, String description, Integer questionCount, String questionType,
-                    LocalDate startDate, LocalDate endDate, Boolean anonymous, String distributionMethod) {
-        this.title = title;
-        this.description = description;
-        this.questionCount = questionCount;
-        this.questionType = questionType;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.anonymous = anonymous;
-        this.distributionMethod = distributionMethod;
-    }
 
     // Getter & Setter
 

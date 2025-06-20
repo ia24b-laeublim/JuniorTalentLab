@@ -26,13 +26,6 @@ public class Person {
     public Person() {
     }
 
-    // Optional: Konstruktor mit Parametern
-    public Person(String gpn, String name, String email, String prename) {
-        this.gpn = gpn;
-        this.name = name;
-        this.email = email;
-        this.prename = prename;
-    }
 
     // Getter und Setter
 

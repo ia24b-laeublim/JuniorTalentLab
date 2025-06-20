@@ -24,11 +24,6 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Task task, String title, String content) {
-        this.task = task;
-        this.title = title;
-        this.content = content;
-    }
 
     // Getters & Setters
     public Long getId() {

@@ -22,12 +22,6 @@ public class PhotoTask extends Task {
     public PhotoTask() {
     }
 
-    public PhotoTask(String format, String fileFormat, String socialMediaPlatforms, String resolution) {
-        this.format = format;
-        this.fileFormat = fileFormat;
-        this.socialMediaPlatforms = socialMediaPlatforms;
-        this.resolution = resolution;
-    }
 
     // Getter & Setter
 

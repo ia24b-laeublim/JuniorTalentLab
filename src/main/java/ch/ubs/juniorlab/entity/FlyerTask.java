@@ -16,10 +16,6 @@ public class FlyerTask extends Task {
     public FlyerTask() {
     }
 
-    public FlyerTask(String paperSize, String paperType) {
-        this.paperSize = paperSize;
-        this.paperType = paperType;
-    }
 
     // Getter & Setter
 

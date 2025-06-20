@@ -25,13 +25,6 @@ public class SlideshowTask extends Task {
     public SlideshowTask() {
     }
 
-    public SlideshowTask(String format, String fileFormat, String socialMediaPlatforms, Integer photoCount, String resolution) {
-        this.format = format;
-        this.fileFormat = fileFormat;
-        this.socialMediaPlatforms = socialMediaPlatforms;
-        this.photoCount = photoCount;
-        this.resolution = resolution;
-    }
 
     // Getter & Setter
 

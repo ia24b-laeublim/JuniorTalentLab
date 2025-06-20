@@ -1,8 +1,7 @@
-package ch.ubs.juniorlab.Service;
+package ch.ubs.juniorlab.service;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
-import jakarta.websocket.server.ServerEndpoint;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
