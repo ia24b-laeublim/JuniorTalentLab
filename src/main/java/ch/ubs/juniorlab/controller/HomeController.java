@@ -1,11 +1,18 @@
 package ch.ubs.juniorlab.controller;
 
+import ch.ubs.juniorlab.Service.MailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class HomeController {
+
+    private final MailService mailService;
+
+    public HomeController(MailService mailService) {
+        this.mailService = mailService;
+    }
 
     @GetMapping("/")
     public String index(Model model) {
@@ -51,6 +58,16 @@ public class HomeController {
     @GetMapping("/finishedTasksPage")
     public String showFinishedTasksPage() {
         return "finishedTasksPage"; // entspricht finishedTasksPage.html
+    }
+
+    @PostMapping("/api/send-contact-mail")
+    public String sendContactEmail(@ModelAttribute ContactFormDto form, Model model) {
+        String subject = "Kontaktanfrage von " + form.getFirstName() + " " + form.getLastName();
+        String message = "GPN: " + form.getGpn() + "\nEmail: " + form.getEmail() + "\n\nConcern:\n" + form.getConcern();
+
+        mailService.sendEmail("dariangermann@gmail.com", subject, message);
+        model.addAttribute("formFeedback", "Thank you for your feedback!");
+        return "contact";
     }
 
 }

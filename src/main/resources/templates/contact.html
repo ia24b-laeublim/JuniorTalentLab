@@ -7,42 +7,50 @@
     <script defer th:src="@{/js/script.js}"></script>
 </head>
 <body>
+
+<!-- Header -->
 <div th:replace="fragments/header :: header"></div>
 
-<main id="contact-page" class="container">
-    <h1 class="page-title">Contact Us</h1>
+<!-- Main Content -->
+<main class="privacy-wrapper">
+    <div class="privacy-box">
+        <h2>Contact Us</h2>
+        <p><strong>Get in touch with our team</strong></p>
 
-    <form id="contact-form" action="/api/send-contact-mail" method="post" novalidate>
-        <div class="contact-field">
-            <label for="input-firstName" class="contact-label">First Name</label>
-            <input type="text" id="input-firstName" class="contact-input" required />
-        </div>
+        <form id="contact-form" action="/api/send-contact-mail" method="post"
+              th:attr="data-feedback=${formFeedback}" novalidate>
+            <div class="contact-field">
+                <label for="input-firstName" class="contact-label">First Name</label>
+                <input type="text" id="input-firstName" name="firstName" class="contact-input" required />
+            </div>
 
-        <div class="contact-field">
-            <label for="input-lastName" class="contact-label">Last Name</label>
-            <input type="text" id="input-lastName" class="contact-input" required />
-        </div>
+            <div class="contact-field">
+                <label for="input-lastName" class="contact-label">Last Name</label>
+                <input type="text" id="input-lastName" name="lastName" class="contact-input" required />
+            </div>
 
-        <div class="contact-field">
-            <label for="input-gpn" class="contact-label">GPN</label>
-            <input type="text" id="input-gpn" class="contact-input" required />
-        </div>
+            <div class="contact-field">
+                <label for="input-gpn" class="contact-label">GPN</label>
+                <input type="text" id="input-gpn" name="gpn" class="contact-input" required />
+            </div>
 
-        <div class="contact-field">
-            <label for="input-email" class="contact-label">Your Email</label>
-            <input type="email" id="input-email" class="contact-input" required />
-        </div>
+            <div class="contact-field">
+                <label for="input-email" class="contact-label">Your Email</label>
+                <input type="email" id="input-email" name="email" class="contact-input" required />
+            </div>
 
-        <div class="contact-field contact-field--textarea">
-            <label for="input-concern" class="contact-label">Your Concern</label>
-            <textarea id="input-concern" class="contact-textarea" rows="5" required></textarea>
-        </div>
+            <div class="contact-field contact-field--textarea">
+                <label for="input-concern" class="contact-label">Your Concern</label>
+                <textarea id="input-concern" name="concern" class="contact-textarea" rows="5" required></textarea>
+            </div>
 
-        <button type="submit" id="btn-submit" class="contact-button">Send Message</button>
-        <p id="form-feedback" class="feedback"></p>
-    </form>
+            <button type="submit" id="btn-submit" class="contact-button">Send Message</button>
+            <p id="form-feedback" class="feedback" th:if="${formFeedback}" th:text="${formFeedback}"></p>
+        </form>
+    </div>
 </main>
 
+<!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

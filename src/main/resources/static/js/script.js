@@ -91,3 +91,15 @@ function initializeCarousel() {
     // Auto-advance slides every 5 seconds
     setInterval(nextSlide, 5000);
 }
+
+// Email
+document.addEventListener("DOMContentLoaded", function () {
+    const contactForm = document.getElementById("contact-form");
+
+    if (contactForm) {
+        const feedback = contactForm.getAttribute("data-feedback");
+        if (feedback) {
+            alert(feedback);
+        }
+    }
+});
