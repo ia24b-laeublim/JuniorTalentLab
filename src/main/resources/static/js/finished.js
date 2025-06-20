@@ -1,7 +1,6 @@
 let selectedTaskId = null;
 
-
-// This function is called when the dropdown value changes
+// Diese Funktion ist called, wenn der Dropdown-Wert sich ändert
 function updateTaskStatus() {
     const statusDropdown = document.getElementById("popup-status");
     const newStatus = statusDropdown.value;
@@ -11,13 +10,9 @@ function updateTaskStatus() {
         return;
     }
 
-    console.log(`Updating task ${selectedTaskId} to status: ${newStatus}`);
-
     fetch(`/api/tasks/${selectedTaskId}/status`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
     })
         .then(response => {
@@ -26,17 +21,11 @@ function updateTaskStatus() {
             } else {
                 console.log("Status updated successfully!");
             }
-        })
-        .catch(error => {
-            console.error('Error updating status:', error);
-            alert('An error occurred while updating the status.');
         });
 }
 
-
 function openPopup(task) {
     selectedTaskId = task.id;
-
     document.getElementById("popup-title").textContent = task.title ?? "-";
     document.getElementById("popup-name").textContent = task.apprentice?.name ?? "-";
     document.getElementById("popup-gpn").textContent = task.apprentice?.gpn ?? "-";
@@ -51,25 +40,16 @@ function openPopup(task) {
     document.getElementById("popup-other").textContent = task.otherRequirements ?? "—";
 
     const statusDropdown = document.getElementById("popup-status");
-    const validOptions = Array.from(statusDropdown.options).map(opt => opt.value);
-
-    const savedStatus = task.progress?.trim();
-
-    if (savedStatus && validOptions.includes(savedStatus)) {
-        statusDropdown.value = savedStatus;
-    } else {
-        statusDropdown.value = "Started";
-    }
+    statusDropdown.value = task.progress ?? "Finished";
 
     loadComments(task.id);
     document.getElementById("popup").classList.remove("hidden");
 }
 
-
 function closePopup() {
     document.getElementById("popup").classList.add("hidden");
     selectedTaskId = null;
-    location.reload();
+    location.reload(); // Seite neu laden, um Änderungen sichtbar zu machen
 }
 
 function submitComment() {
@@ -83,23 +63,23 @@ function submitComment() {
     })
         .then(res => {
             if (res.ok) {
-                // Wenn das Senden erfolgreich war, lade die Kommentare neu
-                loadComments(selectedTaskId);
-                // Leere das Textfeld
-                document.getElementById("popup-comment").value = "";
+                loadComments(selectedTaskId); // Kommentare neu laden
+                document.getElementById("popup-comment").value = ""; // Textfeld leeren
             } else {
                 alert("Failed to submit comment");
             }
         });
 }
 
-// ⭐ KORRIGIERTE FUNKTION: Passt zur neuen DTO-Struktur
+// ==========================================================
+// HIER IST DIE KORREKTUR
+// ==========================================================
 function loadComments(taskId) {
     fetch(`/api/tasks/${taskId}/comments`)
         .then(res => {
             if (!res.ok) {
                 console.error("Failed to load comments, server responded with status: " + res.status);
-                return []; // Gib ein leeres Array zurück, um Fehler zu vermeiden
+                return [];
             }
             return res.json();
         })
@@ -108,12 +88,10 @@ function loadComments(taskId) {
             list.innerHTML = "";
             comments.forEach(c => {
                 const div = document.createElement("div");
-
-                // Greift jetzt auf die DTO-Struktur zu: { content: "...", authorName: "..." }
+                // Greift jetzt auf die korrekten DTO-Eigenschaften zu:
+                // c.authorName statt c.author.name
+                // c.content statt c.text
                 div.innerHTML = `<strong>${c.authorName}:</strong> ${c.content}`;
-
-                div.style.borderBottom = "1px solid #eee";
-                div.style.padding = "8px 0";
                 list.appendChild(div);
             });
         })
@@ -121,6 +99,7 @@ function loadComments(taskId) {
             console.error("Error fetching or parsing comments:", error);
         });
 }
+
 
 function getTaskType(task) {
     if (task.paperSize) return "Poster";
@@ -130,7 +109,7 @@ function getTaskType(task) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("/api/tasks/accepted")
+    fetch("/api/tasks/finished")
         .then(res => res.json())
         .then(data => {
             const container = document.getElementById("task-container");
