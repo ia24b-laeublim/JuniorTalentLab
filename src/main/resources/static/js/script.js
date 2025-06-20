@@ -1,40 +1,41 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const roleButton = document.querySelector(".role-button");
-    const dropdown = document.querySelector(".dropdown");
+    // Initialize dropdown functionality
+    initializeDropdown();
 
-    roleButton.addEventListener("click", function (e) {
-        e.stopPropagation();
-        dropdown.classList.toggle("show");
-    });
-
-    window.addEventListener("click", function (e) {
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove("show");
-        }
-    });
+    // Initialize carousel functionality
+    initializeCarousel();
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Existing dropdown functionality
+function initializeDropdown() {
     const roleButton = document.querySelector(".role-button");
     const dropdown = document.querySelector(".dropdown");
 
     if (roleButton && dropdown) {
+        console.log("Dropdown elements found, initializing...");
+
         roleButton.addEventListener("click", function (e) {
             e.stopPropagation();
             dropdown.classList.toggle("show");
+            console.log("Dropdown toggled");
         });
 
-        window.addEventListener("click", function (e) {
-            if (!dropdown.contains(e.target)) {
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (e) {
+            if (!dropdown.contains(e.target) && !roleButton.contains(e.target)) {
                 dropdown.classList.remove("show");
             }
         });
-    }
 
-    // Carousel functionality
-    initializeCarousel();
-});
+        // Close dropdown when pressing Escape key
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") {
+                dropdown.classList.remove("show");
+            }
+        });
+    } else {
+        console.log("Dropdown elements not found on this page");
+    }
+}
 
 function initializeCarousel() {
     const images = document.querySelectorAll('.carousel-image');
@@ -44,6 +45,8 @@ function initializeCarousel() {
         console.log('No carousel images found');
         return;
     }
+
+    console.log(`Carousel initialized with ${images.length} images`);
 
     let currentSlideIndex = 0;
     const totalSlides = images.length;
