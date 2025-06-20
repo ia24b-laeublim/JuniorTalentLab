@@ -25,7 +25,6 @@ public class JuniorTalentLabApplication {
         taskService.printAllTasks();
 
 
-
     }
 }
 
