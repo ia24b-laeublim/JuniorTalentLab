@@ -12,15 +12,30 @@
 <!-- Header -->
 <div th:replace="fragments/header :: header"></div>
 
-<!-- Karussell-Platzhalter mit klaren Pfeilen -->
-<div class="carousel-placeholder">
-    <span class="carousel-button left">‹    </span>
-    <span>Karussell</span>
-    <span class="carousel-button right">    ›</span>
+<!-- Image Carousel -->
+<div class="carousel-container">
+    <div class="carousel">
+        <div class="carousel-images">
+            <img src="/img/img1.jpg" alt="Image 1" class="carousel-image active">
+            <img src="/img/img2.jpg" alt="Image 2" class="carousel-image">
+            <img src="/img/img3.jpg" alt="Image 3" class="carousel-image">
+            <img src="/img/img4.jpg" alt="Image 4" class="carousel-image">
+            <img src="/img/img5.jpg" alt="Image 5" class="carousel-image">
+        </div>
+        <button class="carousel-button left" onclick="previousSlide()">‹</button>
+        <button class="carousel-button right" onclick="nextSlide()">›</button>
+        <div class="carousel-dots">
+            <span class="dot active" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+            <span class="dot" onclick="currentSlide(5)"></span>
+        </div>
+    </div>
 </div>
 
 <!-- About Section -->
-<section class="about-section">
+<section class="index-section">
     <h2>About Junior Talent Lab</h2>
     <div class="red-underline"></div>
     <p>
@@ -29,6 +44,23 @@
         The Lab offers a simple platform where professional employees can submit their project ideas and small tasks. The learners then review and work on these assignments, providing clear feedback upon completion. The system ensures structured workflows, open communication, and a transparent overview of all active projects.     </p>
     <p>
         This way, not only useful products and services are created, but also strong personalities for the future.
+    </p>
+</section>
+
+<!-- How to Use Section -->
+<section class="index-section">
+    <h2>How to Use the Platform</h2>
+    <div class="red-underline"></div>
+    <p>
+        Getting started is simple! Browse available tasks in the <strong>Requests</strong> section and click "Accept Task" on any project that interests you. Once accepted, the task moves to your <strong>Overview</strong> where you can track your progress and communicate with the task creator.
+    </p>
+    <p>
+        <strong>Requests:</strong> All new tasks from UBS professionals waiting to be accepted<br>
+        <strong>Overview:</strong> Your active tasks that you're currently working on<br>
+        <strong>Finished:</strong> Completed tasks where you can view feedback and results
+    </p>
+    <p>
+        When you complete a task, submit your work and it will automatically move to the <strong>Finished</strong> section. The platform keeps everything organized so you can focus on what matters most - learning and creating great solutions!
     </p>
 </section>
 
