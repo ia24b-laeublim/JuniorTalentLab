@@ -496,3 +496,46 @@ footer {
 }
 
 /* Include your other styles like header and footer here */
+
+.privacy-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 50px 0;
+}
+
+.privacy-box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 800px;
+    font-size: 15px;
+    line-height: 1.7;
+    position: relative;
+}
+
+.privacy-box h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.privacy-box p {
+    margin-bottom: 20px;
+}
+
+.pdf-icon-only {
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+}
+
+.pdf-icon-only img {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.pdf-icon-only img:hover {
+    opacity: 0.7;
+}
