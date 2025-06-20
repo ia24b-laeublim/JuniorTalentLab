@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Poll Task - Junior Talent Lab</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+    <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+
+<!-- Header -->
+<div th:replace="fragments/header_employee :: header"></div>
+
+<!-- Main Content -->
+<main class="create-task-wrapper">
+    <div class="page-title-container">
+        <h1>Create Poll Task</h1>
+        <div class="red-underline"></div>
+    </div>
+
+    <div class="create-task-container">
+        <form id="create-poll-form" action="/api/create-task/poll" method="post" novalidate>
+            <input type="hidden" name="taskType" value="poll">
+
+            <!-- Basic Task Details -->
+            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+
+            <!-- Poll Specific Details -->
+            <div class="form-section">
+                <h2>Poll Specifications</h2>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="question-count" class="form-label">Question Count</label>
+                        <input type="number" id="question-count" name="questionCount" class="form-input"
+                               min="1" max="50" placeholder="e.g., 10" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="question-type" class="form-label">Question Type</label>
+                        <select id="question-type" name="questionType" class="form-select">
+                            <option value="">Select Question Type</option>
+                            <option value="multiple-choice">Multiple Choice</option>
+                            <option value="single-choice">Single Choice</option>
+                            <option value="text">Text Response</option>
+                            <option value="rating">Rating Scale</option>
+                            <option value="mixed">Mixed Types</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="start-date" class="form-label">Start Date</label>
+                        <input type="date" id="start-date" name="startDate" class="form-input" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="end-date" class="form-label">End Date</label>
+                        <input type="date" id="end-date" name="endDate" class="form-input" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="anonymous" class="form-label">Anonymous Poll</label>
+                        <select id="anonymous" name="anonymous" class="form-select">
+                            <option value="">Select Option</option>
+                            <option value="true">Yes, Anonymous</option>
+                            <option value="false">No, Collect Names</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="distribution-method" class="form-label">Distribution Method</label>
+                        <select id="distribution-method" name="distributionMethod" class="form-select">
+                            <option value="">Select Distribution Method</option>
+                            <option value="email">Email</option>
+                            <option value="teams">Microsoft Teams</option>
+                            <option value="sharepoint">SharePoint</option>
+                            <option value="intranet">Intranet</option>
+                            <option value="qr-code">QR Code</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="target-audience" class="form-label">Target Audience</label>
+                        <input type="text" id="target-audience" name="targetAudience" class="form-input"
+                               placeholder="e.g., All UBS employees, Marketing team" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="channel" class="form-label">Channel</label>
+                        <select id="channel" name="channel" class="form-select">
+                            <option value="">Select Channel</option>
+                            <option value="Internal">Internal Distribution</option>
+                            <option value="External">External Distribution</option>
+                            <option value="Digital">Digital Only</option>
+                            <option value="Print">Print Only</option>
+                            <option value="Both">Digital & Print</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="handover-method" class="form-label">Handover</label>
+                    <select id="handover-method" name="handover" class="form-select">
+                        <option value="">Select Handover Method</option>
+                        <option value="email">Email</option>
+                        <option value="teams">Microsoft Teams</option>
+                        <option value="sharepoint">SharePoint</option>
+                        <option value="direct">Direct Meeting</option>
+                        <option value="download">Download Portal</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="form-section">
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Poll Task</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>
