@@ -4,41 +4,16 @@
     <meta charset="UTF-8">
     <title>Privacy Policy – UBS Junior Talent Lab</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .privacy-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 50px 0;
-        }
-
-        .privacy-box {
-            background-color: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: 800px;
-            font-size: 15px;
-            line-height: 1.7;
-        }
-
-        .privacy-box h2 {
-            margin-top: 0;
-            font-size: 24px;
-        }
-
-        .privacy-box p {
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 <body>
 
 <!-- Header -->
 <div th:replace="fragments/header :: header"></div>
 
-<!-- PRIVACY POLICY CONTENT -->
+<!-- Main Content -->
 <main class="privacy-wrapper">
     <div class="privacy-box">
+
         <h2>Privacy Policy for UBS Junior Talent Lab</h2>
         <p><strong>Last updated:</strong> June 2025</p>
 
@@ -51,9 +26,13 @@
         <p>We engage only trusted third-party vendors for hosting, analytics, and email delivery, sharing the minimum information necessary under binding confidentiality agreements. We disclose personal data only when required by law or to protect our legal rights.</p>
 
         <p>By using the UBS Junior Talent Lab via your UBS credentials, you acknowledge that you have read this Privacy Policy and consent to the collection, processing, and retention of your data as described herein.</p>
+
+        <!-- ICON BUTTON -->
+        <a th:href="@{/files/ubsjunior-guide.pdf}" download class="pdf-icon-only" title="Download PDF">
+            <img src="../static/img/download-file-icon2.svg" alt="PDF Download" style="width: 32px;height: 32px;">
+        </a>
     </div>
 </main>
-
 
 <!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>
