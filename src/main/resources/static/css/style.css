@@ -256,14 +256,14 @@ footer {
 }
 */
 
-/* ==== ABOUT SECTION ==== */
-.about-section {
+/* ==== Index SECTION ==== */
+.index-section {
     padding: 40px;
     background-color: #ffffff;
     text-align: left;
 }
 
-.about-section h2 {
+.index-section h2 {
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 0px;
@@ -277,7 +277,7 @@ footer {
     margin-bottom: 50px;
 }
 
-.about-section p {
+.index-section p {
     max-width: 1100px;
     margin-bottom: 20px;
 }
@@ -404,4 +404,123 @@ footer {
 
 .pdf-icon-only img:hover {
     opacity: 0.7;
+}
+
+/* Carousel Styles */
+.carousel-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-images {
+    position: relative;
+    width: 100%;
+    height: 400px;
+}
+
+.carousel-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-image.active {
+    opacity: 1;
+}
+
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+}
+
+.carousel-button:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.carousel-button.left {
+    left: 10px;
+}
+
+.carousel-button.right {
+    right: 10px;
+}
+
+.carousel-dots {
+    text-align: center;
+    padding: 1rem 0;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot:hover {
+    background-color: #717171;
+}
+
+.dot.active {
+    background-color: #e74c3c;
+}
+
+/* Make sure index section matches carousel width */
+.index-section {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .carousel-container,
+    .index-section {
+        padding: 0 1rem;
+    }
+
+    .carousel-images {
+        height: 250px;
+    }
+
+    .carousel-button {
+        font-size: 1.5rem;
+        padding: 0.3rem 0.7rem;
+    }
+
+    .carousel-button.left {
+        left: 5px;
+    }
+
+    .carousel-button.right {
+        right: 5px;
+    }
 }
