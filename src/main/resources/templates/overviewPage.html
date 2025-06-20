@@ -12,7 +12,6 @@
 
 <div class="page-title-container">
     <h1>Overview Page</h1>
-    <div class="red-underline"></div>
 </div>
 
 <div id="task-container" class="task-grid"></div>
@@ -24,7 +23,7 @@
         <div class="red-underline"></div>
 
         <div class="popup-layout">
-            <!-- Linke Spalte -->
+            <!-- Linke Spalte (unverändert) -->
             <div class="popup-left">
                 <div class="popup-row"><span>Name</span><span id="popup-name"></span></div>
                 <div class="popup-row"><span>GPN</span><span id="popup-gpn"></span></div>
@@ -35,11 +34,9 @@
                 <div class="popup-row"><span>Target Audience</span><span id="popup-target"></span></div>
                 <div class="popup-row"><span>Budget</span><span id="popup-budget"></span></div>
                 <div class="popup-row"><span>Handover</span><span id="popup-handover"></span></div>
-
-                <!-- Status Dropdown (UPDATED with onchange) -->
                 <div class="popup-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                     <label for="popup-status" style="font-weight: bold;">Status</label>
-                    <select id="popup-status" onchange="updateTaskStatus()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <select id="popup-status" onchange="updateTaskStatus()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc;">
                         <option>Started</option>
                         <option>Planning</option>
                         <option>Gathering Resources</option>
@@ -60,12 +57,15 @@
                     <strong>Other requirements</strong>
                     <p id="popup-other"></p>
                 </div>
-                <div class="popup-section">
+
+                <!-- Kommentarfeld bleibt unten – volle Höhe nutzen -->
+                <div class="popup-section comment-section">
                     <strong>Comments</strong>
-                    <div id="comment-list" style="margin-bottom: 12px; max-height: 150px; overflow-y: auto;"></div>
-                    <textarea id="popup-comment" rows="3" placeholder="Write a comment..." style="width: 100%; resize: vertical; padding: 8px; border-radius: 4px; border: 1px solid #ccc;"></textarea>
-                    <button onclick="submitComment()" style="margin-top: 8px; padding: 8px 16px; border: none; background-color: #E2001A; color: white; border-radius: 4px; cursor: pointer;">Submit</button>
+                    <div id="comment-list"></div>
+                    <textarea id="popup-comment" rows="3" placeholder="Write a comment..."></textarea>
+                    <button onclick="submitComment()">Submit</button>
                 </div>
+
                 <div class="popup-section" style="display: flex; justify-content: flex-end; gap: 16px; background: none; padding: 0; margin-top: 16px;">
                     <button title="Show attachments" style="font-size: 1.5rem; background: none; border: none; cursor: pointer;">📎</button>
                     <button title="Download as PDF" style="font-size: 1.5rem; background: none; border: none; cursor: pointer;">⬇️</button>
