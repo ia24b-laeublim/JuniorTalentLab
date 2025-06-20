@@ -167,3 +167,18 @@ document.addEventListener("click", (event) => {
         closePopup();
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Füge Listener für PDF-Button ein:
+    const popup = document.getElementById("popup");
+    popup.querySelector('[title="Download as PDF"]').addEventListener("click", () => {
+        if (!selectedTaskId) return;
+
+        const link = document.createElement('a');
+        link.href = `/api/tasks/${selectedTaskId}/pdf`;
+        link.download = `Task_${selectedTaskId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+});

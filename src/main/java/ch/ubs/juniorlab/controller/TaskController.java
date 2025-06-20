@@ -7,6 +7,15 @@ import ch.ubs.juniorlab.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import ch.ubs.juniorlab.service.PDFService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +29,9 @@ public class TaskController {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private PDFService pdfService;
 
     // Offene Tasks (unverändert)
     @GetMapping("/open")
@@ -112,4 +124,20 @@ public class TaskController {
         // Sende die sichere DTO-Liste an das Frontend
         return ResponseEntity.ok(commentDtos);
     }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<Resource> downloadTaskPdf(@PathVariable Long id) throws IOException {
+
+        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
+        File pdf = pdfService.checkPDF(task); // erzeugt falls nötig
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(pdf));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + pdf.getName())
+                .contentType(MediaType.APPLICATION_PDF)
+                .contentLength(pdf.length())
+                .body(resource);
+    }
+
 }

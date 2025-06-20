@@ -146,3 +146,24 @@ document.addEventListener("click", (event) => {
         closePopup();
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.getElementById("popup");
+    const downloadBtn = popup.querySelector('[title="Download as PDF"]');
+
+    if (downloadBtn) {
+        downloadBtn.addEventListener("click", () => {
+            if (!selectedTaskId) {
+                console.error("❌ Keine Task-ID für PDF ausgewählt");
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.href = `/api/tasks/${selectedTaskId}/pdf`;
+            link.download = `Task_${selectedTaskId}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+});
