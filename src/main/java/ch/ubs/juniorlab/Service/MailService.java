@@ -15,7 +15,7 @@ public class MailService {
     private final int smtpPort = 587;
     private final String smtpUsername = "9009c1001@smtp-brevo.com";
     private final String smtpPassword = "h3s8zfSBkpWnyJYd";
-    private final String senderEmail = "madox.laeubli@gmail.com"; // Muss bei Brevo verifiziert sein
+    private final String senderEmail = "madox.laeubli@gmail.com";
 
     public void sendEmail(String toEmail, String subject, String content) {
         Properties props = new Properties();
