@@ -26,7 +26,7 @@ function initializeDropdown() {
             }
         });
 
-        // Close dropdown when pressing Escape key
+        // Close dropdown when pressing an Escape key
         document.addEventListener("keydown", function(e) {
             if (e.key === "Escape") {
                 dropdown.classList.remove("show");
@@ -103,3 +103,175 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTaskTypeSelection();
+    initializeFormValidation();
+});
+
+function initializeTaskTypeSelection() {
+    const taskTypeCards = document.querySelectorAll('.task-type-card');
+    const radioButtons = document.querySelectorAll('input[name="taskType"]');
+
+    taskTypeCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove selected class from all cards
+            taskTypeCards.forEach(c => c.classList.remove('selected'));
+
+            // Add selected class to clicked card
+            this.classList.add('selected');
+
+            // Check the corresponding radio button
+            const radioButton = this.querySelector('input[type="radio"]');
+            if (radioButton) {
+                radioButton.checked = true;
+            }
+        });
+    });
+
+    // Handle radio button changes (for keyboard navigation)
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                taskTypeCards.forEach(card => {
+                    card.classList.remove('selected');
+                    if (card.dataset.type === this.value) {
+                        card.classList.add('selected');
+                    }
+                });
+            }
+        });
+    });
+}
+
+function initializeFormValidation() {
+    const form = document.getElementById('create-task-form');
+    const requiredFields = form.querySelectorAll('[required]');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (validateForm()) {
+            // If validation passes, submit the form
+            this.submit();
+        }
+    });
+
+    // Add real-time validation feedback
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            validateField(this);
+        });
+
+        field.addEventListener('input', function() {
+            // Remove error styling when user starts typing
+            this.classList.remove('error');
+            const errorMsg = this.parentNode.querySelector('.error-message');
+            if (errorMsg) {
+                errorMsg.remove();
+            }
+        });
+    });
+}
+
+function validateForm() {
+    const form = document.getElementById('create-task-form');
+    const requiredFields = form.querySelectorAll('[required]');
+    const taskTypeSelected = form.querySelector('input[name="taskType"]:checked');
+
+    let isValid = true;
+
+    // Clear previous error messages
+    document.querySelectorAll('.error-message').forEach(msg => msg.remove());
+    document.querySelectorAll('.error').forEach(field => field.classList.remove('error'));
+
+    // Check if task type is selected
+    if (!taskTypeSelected) {
+        showError('Please select a task type');
+        isValid = false;
+    }
+
+    // Validate required fields
+    requiredFields.forEach(field => {
+        if (!validateField(field)) {
+            isValid = false;
+        }
+    });
+
+    // Validate deadline is in the future
+    const deadlineField = document.getElementById('task-deadline');
+    if (deadlineField.value) {
+        const selectedDate = new Date(deadlineField.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate <= today) {
+            showFieldError(deadlineField, 'Deadline must be in the future');
+            isValid = false;
+        }
+    }
+
+    if (isValid) {
+        showSuccess('Task created successfully!');
+    }
+
+    return isValid;
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+
+    if (field.hasAttribute('required') && !value) {
+        showFieldError(field, 'This field is required');
+        return false;
+    }
+
+    if (field.type === 'email' && value && !isValidEmail(value)) {
+        showFieldError(field, 'Please enter a valid email address');
+        return false;
+    }
+
+    return true;
+}
+
+function showFieldError(field, message) {
+    field.classList.add('error');
+
+    const errorElement = document.createElement('div');
+    errorElement.className = 'error-message';
+    errorElement.textContent = message;
+    errorElement.style.color = '#e00000';
+    errorElement.style.fontSize = '0.9rem';
+    errorElement.style.marginTop = '5px';
+
+    field.parentNode.appendChild(errorElement);
+}
+
+function showError(message) {
+    const errorElement = document.createElement('div');
+    errorElement.className = 'form-message error';
+    errorElement.textContent = message;
+
+    const container = document.querySelector('.create-task-container');
+    container.insertBefore(errorElement, container.firstChild);
+
+    // Scroll to top to show error
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showSuccess(message) {
+    const successElement = document.createElement('div');
+    successElement.className = 'form-message success';
+    successElement.textContent = message;
+
+    const container = document.querySelector('.create-task-container');
+    container.insertBefore(successElement, container.firstChild);
+
+    // Scroll to top to show success message
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}

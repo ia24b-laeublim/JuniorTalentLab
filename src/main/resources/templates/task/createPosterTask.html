@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Poster Task - Junior Talent Lab</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+    <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+
+<!-- Header -->
+<div th:replace="fragments/header_employee :: header"></div>
+
+<!-- Main Content -->
+<main class="create-task-wrapper">
+    <div class="page-title-container">
+        <h1>Create Poster Task</h1>
+        <div class="red-underline"></div>
+    </div>
+
+    <div class="create-task-container">
+        <form id="create-poster-form" action="/api/create-task/poster" method="post" novalidate>
+            <input type="hidden" name="taskType" value="poster">
+            
+            <!-- Basic Task Details -->
+            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+
+            <!-- Poster Specific Details -->
+            <div class="form-section">
+                <h2>Poster Specifications</h2>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="format" class="form-label">Format</label>
+                        <select id="format" name="format" class="form-select">
+                            <option value="">Select Format</option>
+                            <option value="Portrait">Portrait</option>
+                            <option value="Landscape">Landscape</option>
+                            <option value="Square">Square</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="poster-size" class="form-label">Poster Size</label>
+                        <input type="text" id="poster-size" name="posterSize" class="form-input" 
+                               list="poster-size-options" placeholder="Select or enter custom size" />
+                        <datalist id="poster-size-options">
+                            <option value="A0">
+                            <option value="A1">
+                            <option value="A2">
+                            <option value="A3">
+                            <option value="A4">
+                            <option value="24x36 inches">
+                            <option value="18x24 inches">
+                            <option value="11x17 inches">
+                        </datalist>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="paper-type" class="form-label">Paper Type</label>
+                        <select id="paper-type" name="paperType" class="form-select">
+                            <option value="">Select Paper Type</option>
+                            <option value="Standard">Standard (80gsm)</option>
+                            <option value="Premium">Premium (120gsm)</option>
+                            <option value="Glossy">Glossy</option>
+                            <option value="Matte">Matte</option>
+                            <option value="Canvas">Canvas</option>
+                            <option value="Photo Paper">Photo Paper</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="print-quality-dpi" class="form-label">Print Quality (DPI)</label>
+                        <select id="print-quality-dpi" name="printQualityDpi" class="form-select">
+                            <option value="">Select Print Quality</option>
+                            <option value="150">150 DPI (Draft)</option>
+                            <option value="300">300 DPI (Standard)</option>
+                            <option value="600">600 DPI (High Quality)</option>
+                            <option value="1200">1200 DPI (Premium)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="mounting-type" class="form-label">Mounting Type</label>
+                        <select id="mounting-type" name="mountingType" class="form-select">
+                            <option value="">Select Mounting Type</option>
+                            <option value="None">No Mounting</option>
+                            <option value="Foam Board">Foam Board</option>
+                            <option value="Aluminum">Aluminum Composite</option>
+                            <option value="Acrylic">Acrylic</option>
+                            <option value="Canvas Frame">Canvas Frame</option>
+                            <option value="Wooden Frame">Wooden Frame</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="target-audience" class="form-label">Target Audience</label>
+                        <input type="text" id="target-audience" name="targetAudience" class="form-input" 
+                               placeholder="e.g., UBS clients, employees, general public" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="channel" class="form-label">Channel</label>
+                        <select id="channel" name="channel" class="form-select">
+                            <option value="">Select Channel</option>
+                            <option value="Internal">Internal Distribution</option>
+                            <option value="External">External Distribution</option>
+                            <option value="Digital">Digital Only</option>
+                            <option value="Print">Print Only</option>
+                            <option value="Both">Digital & Print</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="handover-method" class="form-label">Handover</label>
+                        <select id="handover-method" name="handover" class="form-select">
+                            <option value="">Select Handover Method</option>
+                            <option value="email">Email</option>
+                            <option value="teams">Microsoft Teams</option>
+                            <option value="sharepoint">SharePoint</option>
+                            <option value="direct">Direct Meeting</option>
+                            <option value="download">Download Portal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="form-section">
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Poster Task</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>
