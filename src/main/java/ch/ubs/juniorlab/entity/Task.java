@@ -42,11 +42,11 @@ public class Task {
 
     // Relationen zur Person
     @ManyToOne
-    @JoinColumn(name = "Client", foreignKey = @ForeignKey(name = "fk_Task_Client"))
+    @JoinColumn(name = "Client",nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Client"))
     private Person client;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "Apprentice", nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Apprentice"))
+    @JoinColumn(name = "Apprentice", nullable = true, foreignKey = @ForeignKey(name = "fk_Task_Apprentice"))
     private Person apprentice;
 
     @Column(name = "Progress", nullable = true,  length = 100)
