@@ -49,7 +49,7 @@ public class Task {
     @JoinColumn(name = "Apprentice", nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Apprentice"))
     private Person apprentice;
 
-    @Column(name = "Progress",nullable = true,  length = 100)
+    @Column(name = "Progress", nullable = true,  length = 100)
     private String progress;
 
     // Konstruktoren
