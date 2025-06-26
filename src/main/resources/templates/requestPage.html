@@ -11,7 +11,7 @@
 <body>
 
 <!-- Header einbinden -->
-<div th:replace="fragments/header_apprentice :: header"></div>
+<div th:replace="~{fragments/header_apprentice :: header}"></div>
 
 <main>
     <!-- UPDATED: Centered black title with a red line -->
@@ -63,7 +63,7 @@
 </main>
 
 <!-- Footer einbinden -->
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script defer th:src="@{/js/request.js}"></script>
 
