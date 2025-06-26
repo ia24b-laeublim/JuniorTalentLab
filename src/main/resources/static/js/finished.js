@@ -26,18 +26,21 @@ function updateTaskStatus() {
 
 function openPopup(task) {
     selectedTaskId = task.id;
+
+    const clientName = task.client ? `${task.client.prename || ''} ${task.client.name || ''}`.trim() : "-";
+
     document.getElementById("popup-title").textContent = task.title ?? "-";
-    document.getElementById("popup-name").textContent = task.apprentice?.name ?? "-";
-    document.getElementById("popup-gpn").textContent = task.apprentice?.gpn ?? "-";
+    document.getElementById("popup-name").textContent = clientName;
+    document.getElementById("popup-gpn").textContent = task.client?.gpn ?? "-";
     document.getElementById("popup-deadline").textContent = task.deadline ?? "-";
     document.getElementById("popup-channel").textContent = task.channel ?? "-";
     document.getElementById("popup-type").textContent = getTaskType(task);
-    document.getElementById("popup-format").textContent = task.format ?? "-";
+    document.getElementById("popup-format").textContent = getMaxFileSize(task);
     document.getElementById("popup-target").textContent = task.targetAudience ?? "-";
     document.getElementById("popup-budget").textContent = task.budgetChf ?? "-";
     document.getElementById("popup-handover").textContent = task.handoverMethod ?? "-";
     document.getElementById("popup-description").textContent = task.description ?? "-";
-    document.getElementById("popup-other").textContent = task.otherRequirements ?? "—";
+    document.getElementById("popup-other").textContent = getSpecificRequirements(task);
 
     const statusDropdown = document.getElementById("popup-status");
     statusDropdown.value = task.progress ?? "Finished";
@@ -49,7 +52,7 @@ function openPopup(task) {
 function closePopup() {
     document.getElementById("popup").classList.add("hidden");
     selectedTaskId = null;
-    location.reload(); // Seite neu laden, um Änderungen sichtbar zu machen
+    location.reload();
 }
 
 function submitComment() {
@@ -63,17 +66,14 @@ function submitComment() {
     })
         .then(res => {
             if (res.ok) {
-                loadComments(selectedTaskId); // Kommentare neu laden
-                document.getElementById("popup-comment").value = ""; // Textfeld leeren
+                loadComments(selectedTaskId);
+                document.getElementById("popup-comment").value = "";
             } else {
                 alert("Failed to submit comment");
             }
         });
 }
 
-// ==========================================================
-// HIER IST DIE KORREKTUR
-// ==========================================================
 function loadComments(taskId) {
     fetch(`/api/tasks/${taskId}/comments`)
         .then(res => {
@@ -88,9 +88,6 @@ function loadComments(taskId) {
             list.innerHTML = "";
             comments.forEach(c => {
                 const div = document.createElement("div");
-                // Greift jetzt auf die korrekten DTO-Eigenschaften zu:
-                // c.authorName statt c.author.name
-                // c.content statt c.text
                 div.innerHTML = `<strong>${c.authorName}:</strong> ${c.content}`;
                 list.appendChild(div);
             });
@@ -100,13 +97,16 @@ function loadComments(taskId) {
         });
 }
 
-
 function getTaskType(task) {
-    if (task.paperSize) return "Poster";
+    if (task.paperSize || task.paperType) return "Flyer";
+    if (task.posterSize) return "Poster";
     if (task.photoCount) return "Slideshow";
     if (task.lengthSec) return "Video";
-    return "Other";
+    if (task.questionCount) return "Poll";
+    if (task.format) return "Photo";
+    return "General Task";
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("/api/tasks/finished")
@@ -117,12 +117,16 @@ document.addEventListener("DOMContentLoaded", () => {
             data.forEach(task => {
                 const card = document.createElement("div");
                 card.className = "task-card";
+
+                const clientName = task.client ? `${task.client.prename || ''} ${task.client.name || ''}`.trim() : "-";
+                const clientGpn = task.client?.gpn ?? "-";
+
                 card.innerHTML = `
                   <h2 style="font-size: 1.5rem; font-weight: bold; color: #000000;">${task.title}</h2>
                   <div style="display: flex; gap: 1rem;">
                     <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
-                      <div class="popup-row"><span>Name</span><span>${task.apprentice?.name ?? "-"}</span></div>
-                      <div class="popup-row"><span>GPN</span><span>${task.apprentice?.gpn ?? "-"}</span></div>
+                      <div class="popup-row"><span>Name</span><span>${clientName}</span></div>
+                      <div class="popup-row"><span>GPN</span><span>${clientGpn}</span></div>
                       <div class="popup-row"><span>Deadline</span><span>${task.deadline ?? "-"}</span></div>
                     </div>
                     <div style="flex: 1; background-color: #f5f5f5; padding: 1rem; border-radius: 4px;">
@@ -167,3 +171,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+function getMaxFileSize(task) {
+    // This assumes maxFileSizeMb comes from the child table (e.g., FlyerTask)
+    if (task.maxFileSizeMb) {
+        return `${task.maxFileSizeMb}MB`;
+    }
+    return "-";
+}
+
+function getSpecificRequirements(task) {
+    const requirements = [];
+
+    if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
+    if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
+    if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
+    if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
+    if (task.dimensions) requirements.push(`Dimensions: ${task.dimensions}`);
+
+    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
+}
