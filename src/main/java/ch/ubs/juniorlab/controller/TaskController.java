@@ -128,9 +128,7 @@ public class TaskController {
 
     @GetMapping("/{id}/pdf")
     public ResponseEntity<Resource> downloadTaskPdf(@PathVariable Long id) throws IOException {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
-        File pdf = pdfService.checkPDF(task);
-
+        File pdf = pdfService.checkPDF(id);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(pdf));
 
         return ResponseEntity.ok()

@@ -171,7 +171,6 @@ function getSpecificRequirements(task) {
 
     // Poster-specific requirements
     if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
-    if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
     if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
     if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
 
