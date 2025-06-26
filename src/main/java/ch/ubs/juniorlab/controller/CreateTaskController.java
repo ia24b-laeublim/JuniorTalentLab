@@ -20,6 +20,7 @@ public class CreateTaskController {
     private final PhotoTaskRepository photoTaskRepository;
     private final SlideshowTaskRepository slideshowTaskRepository;
     private final PosterTaskRepository posterTaskRepository;
+    private final PollTaskRepository pollTaskRepository;
 
     public CreateTaskController(
             PersonRepository personRepository,
@@ -27,7 +28,8 @@ public class CreateTaskController {
             VideoTaskRepository videoTaskRepository,
             PhotoTaskRepository photoTaskRepository,
             SlideshowTaskRepository slideshowTaskRepository,
-            PosterTaskRepository posterTaskRepository
+            PosterTaskRepository posterTaskRepository,
+            PollTaskRepository pollTaskRepository
     ) {
         this.personRepository = personRepository;
         this.flyerTaskRepository = flyerTaskRepository;
@@ -35,6 +37,7 @@ public class CreateTaskController {
         this.photoTaskRepository = photoTaskRepository;
         this.slideshowTaskRepository = slideshowTaskRepository;
         this.posterTaskRepository = posterTaskRepository;
+        this.pollTaskRepository = pollTaskRepository;
     }
 
     @PostMapping("/create-task/flyer")
@@ -219,6 +222,43 @@ public class CreateTaskController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/poster?error=true");
+        }
+    }
+
+    @PostMapping("/create-task/poll")
+    public ModelAndView createPollTask(
+            @RequestParam String gpn,
+            @RequestParam String name,
+            @RequestParam(required = false) String prename,
+            @RequestParam String email,
+            @RequestParam String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String targetAudience,
+            @RequestParam(required = false) BigDecimal budgetChf,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate deadline,
+            @RequestParam(required = false) Integer maxFileSizeMb,
+            @RequestParam(required = false) String channel,
+            @RequestParam(required = false) String handoverMethod,
+            @RequestParam(required = false) Integer questionCount,
+            @RequestParam(required = false) String questionType,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(required = false) Boolean anonymous
+    ) {
+        try {
+            Person client = findOrCreatePerson(gpn, name, prename, email);
+            PollTask pollTask = new PollTask();
+            populateBaseTaskFields(pollTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
+            pollTask.setQuestionCount(questionCount);
+            pollTask.setQuestionType(questionType);
+            pollTask.setStartDate(startDate);
+            pollTask.setEndDate(endDate);
+            pollTask.setAnonymous(anonymous);
+            pollTaskRepository.save(pollTask);
+            return new ModelAndView("redirect:/");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ModelAndView("redirect:/create-task/poll?error=true");
         }
     }
 

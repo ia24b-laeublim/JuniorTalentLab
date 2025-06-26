@@ -117,12 +117,12 @@ function loadComments(taskId) {
 }
 
 function getTaskType(task) {
-    if (task.paperSize || task.paperType) return "Flyer";
+    if (task.paperSize && task.paperType) return "Flyer";
     if (task.posterSize) return "Poster";
     if (task.photoCount) return "Slideshow";
     if (task.lengthSec) return "Video";
     if (task.questionCount) return "Poll";
-    if (task.format) return "Photo";
+    if (task.format && task.resolution) return "Photo";
     return "General Task";
 }
 
@@ -223,6 +223,15 @@ function getSpecificRequirements(task) {
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
     if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
     if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
+
+    // Poll-specific requirements
+    if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
+    if (task.questionType) requirements.push(`Type: ${task.questionType}`);
+    if (task.startDate) requirements.push(`Start: ${task.startDate}`);
+    if (task.endDate) requirements.push(`End: ${task.endDate}`);
+    if (task.anonymous !== null && task.anonymous !== undefined)
+        requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
+    if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
 
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
