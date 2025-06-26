@@ -11,7 +11,7 @@
 <body>
 
 <!-- Header -->
-<div th:replace="fragments/header_employee :: header"></div>
+<div th:replace="~{fragments/header_employee :: header}"></div>
 
 <!-- Main Content -->
 <main class="create-task-wrapper">
@@ -25,7 +25,7 @@
             <input type="hidden" name="taskType" value="poster">
             
             <!-- Basic Task Details -->
-            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+            <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
 
             <!-- Poster Specific Details -->
             <div class="form-section">
@@ -113,7 +113,7 @@
 </main>
 
 <!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

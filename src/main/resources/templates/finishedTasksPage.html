@@ -10,7 +10,7 @@
 <body>
 
 <!-- Header einbinden -->
-<div th:replace="fragments/header_apprentice :: header"></div>
+<div th:replace="~{fragments/header_apprentice :: header}"></div>
 
 <div class="page-title-container">
     <h1>Finished Tasks</h1>
@@ -83,7 +83,7 @@
     </div>
 </div>
 
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/finished.js}"></script>
 </body>
 </html>
