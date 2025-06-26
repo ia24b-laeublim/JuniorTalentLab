@@ -169,5 +169,11 @@ function getSpecificRequirements(task) {
     // Slideshow-specific requirements
     if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
 
+    // Poster-specific requirements
+    if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
+    if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
+    if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
+    if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
+
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }

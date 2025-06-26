@@ -19,19 +19,22 @@ public class CreateTaskController {
     private final VideoTaskRepository videoTaskRepository;
     private final PhotoTaskRepository photoTaskRepository;
     private final SlideshowTaskRepository slideshowTaskRepository;
+    private final PosterTaskRepository posterTaskRepository;
 
     public CreateTaskController(
             PersonRepository personRepository,
             FlyerTaskRepository flyerTaskRepository,
             VideoTaskRepository videoTaskRepository,
             PhotoTaskRepository photoTaskRepository,
-            SlideshowTaskRepository slideshowTaskRepository
+            SlideshowTaskRepository slideshowTaskRepository,
+            PosterTaskRepository posterTaskRepository
     ) {
         this.personRepository = personRepository;
         this.flyerTaskRepository = flyerTaskRepository;
         this.videoTaskRepository = videoTaskRepository;
         this.photoTaskRepository = photoTaskRepository;
         this.slideshowTaskRepository = slideshowTaskRepository;
+        this.posterTaskRepository = posterTaskRepository;
     }
 
     @PostMapping("/create-task/flyer")
@@ -179,6 +182,43 @@ public class CreateTaskController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/slideshow?error=true");
+        }
+    }
+
+    @PostMapping("/create-task/poster")
+    public ModelAndView createPosterTask(
+            @RequestParam String gpn,
+            @RequestParam String name,
+            @RequestParam(required = false) String prename,
+            @RequestParam String email,
+            @RequestParam String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String targetAudience,
+            @RequestParam(required = false) BigDecimal budgetChf,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate deadline,
+            @RequestParam(required = false) Integer maxFileSizeMb,
+            @RequestParam(required = false) String channel,
+            @RequestParam(required = false) String handoverMethod,
+            @RequestParam(required = false) String format,
+            @RequestParam(required = false) String posterSize,
+            @RequestParam(required = false) String paperType,
+            @RequestParam(required = false) Integer printQualityDpi,
+            @RequestParam(required = false) String mountingType
+    ) {
+        try {
+            Person client = findOrCreatePerson(gpn, name, prename, email);
+            PosterTask posterTask = new PosterTask();
+            populateBaseTaskFields(posterTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
+            posterTask.setFormat(format);
+            posterTask.setPosterSize(posterSize);
+            posterTask.setPaperType(paperType);
+            posterTask.setPrintQualityDpi(printQualityDpi);
+            posterTask.setMountingType(mountingType);
+            posterTaskRepository.save(posterTask);
+            return new ModelAndView("redirect:/");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ModelAndView("redirect:/create-task/poster?error=true");
         }
     }
 
