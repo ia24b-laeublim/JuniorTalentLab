@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/apprentice.css}" />
     <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/finished.js}"></script>
 </head>
 <body>
 
@@ -32,7 +33,7 @@
                 <div class="popup-row"><span>Deadline</span><span id="popup-deadline"></span></div>
                 <div class="popup-row"><span>Channel</span><span id="popup-channel"></span></div>
                 <div class="popup-row"><span>Content Type</span><span id="popup-type"></span></div>
-                <div class="popup-row"><span>Format</span><span id="popup-format"></span></div>
+                <div class="popup-row"><span>Max File Size</span><span id="popup-format"></span></div>
                 <div class="popup-row"><span>Target Audience</span><span id="popup-target"></span></div>
                 <div class="popup-row"><span>Budget</span><span id="popup-budget"></span></div>
                 <div class="popup-row"><span>Handover</span><span id="popup-handover"></span></div>
@@ -56,7 +57,7 @@
                     <p id="popup-description"></p>
                 </div>
                 <div class="popup-section">
-                    <strong>Other requirements</strong>
+                    <strong>Specific Requirements</strong>
                     <p id="popup-other"></p>
                 </div>
 
@@ -84,6 +85,6 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-<script th:src="@{/js/finished.js}"></script>
+
 </body>
 </html>
