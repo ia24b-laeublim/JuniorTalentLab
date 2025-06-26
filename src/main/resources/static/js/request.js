@@ -126,12 +126,12 @@ document.addEventListener("click", (event) => {
 
 // ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
-    if (task.paperSize || task.paperType) return "Flyer";
+    if (task.paperSize && task.paperType) return "Flyer";
     if (task.posterSize) return "Poster";
     if (task.photoCount) return "Slideshow";
     if (task.lengthSec) return "Video";
     if (task.questionCount) return "Poll";
-    if (task.format) return "Photo";
+    if (task.format && task.resolution) return "Photo";
     return "General Task";
 }
 
@@ -151,10 +151,38 @@ function getSpecificRequirements(task) {
     if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
 
-    // Other task type requirements (removed maxFileSizeMb)
-    if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
+    // Video-specific requirements
+    if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
+    if (task.voiceover !== null && task.voiceover !== undefined)
+        requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
+    if (task.disclaimer !== null && task.disclaimer !== undefined)
+        requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
+    if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
+    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
+
+    // Photo-specific requirements (shared fields reused from Video)
+    if (task.format) requirements.push(`Format: ${task.format}`);
+    if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
     if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
-    if (task.dimensions) requirements.push(`Dimensions: ${task.dimensions}`);
+    if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
+
+    // Slideshow-specific requirements
+    if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
+
+    // Poster-specific requirements
+    if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
+    if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
+    if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
+    if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
+
+    // Poll-specific requirements
+    if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
+    if (task.questionType) requirements.push(`Type: ${task.questionType}`);
+    if (task.startDate) requirements.push(`Start: ${task.startDate}`);
+    if (task.endDate) requirements.push(`End: ${task.endDate}`);
+    if (task.anonymous !== null && task.anonymous !== undefined)
+        requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
+    if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
 
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
