@@ -192,8 +192,9 @@ function getMaxFileSize(task) {
     return "-";
 }
 
+// ✅ UPDATED: Helper function for Specific Requirements (removed Max File Size)
 function getSpecificRequirements(task) {
-    const requirements = [];
+    let requirements = [];
 
     // Flyer-specific requirements
     if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
@@ -206,10 +207,12 @@ function getSpecificRequirements(task) {
     if (task.disclaimer !== null && task.disclaimer !== undefined)
         requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
     if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
+    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
+
+    // Photo-specific requirements (shared fields reused from Video)
     if (task.format) requirements.push(`Format: ${task.format}`);
     if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
     if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
-    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
 
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
