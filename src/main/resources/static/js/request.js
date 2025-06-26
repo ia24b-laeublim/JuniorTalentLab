@@ -166,5 +166,8 @@ function getSpecificRequirements(task) {
     if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
 
+    // Slideshow-specific requirements
+    if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
+
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
