@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const card = document.createElement("div");
                 card.className = "task-card";
 
-                // ✅ FIXED: Use client instead of apprentice
                 const clientName = task.client ?
                     `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
                     "Unknown";
@@ -54,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function openPopup(task) {
     selectedTaskId = task.id;
 
-    // ✅ FIXED: Show client information, not apprentice
     const clientName = task.client ?
         `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
         "Unknown";
@@ -65,13 +63,12 @@ function openPopup(task) {
     document.getElementById("popup-deadline").textContent = task.deadline ?? "-";
     document.getElementById("popup-channel").textContent = task.channel ?? "-";
     document.getElementById("popup-type").textContent = getTaskType(task);
-    // ✅ CHANGED: Now showing Max File Size instead of Format
-    document.getElementById("popup-format").textContent = getMaxFileSize(task);
+    document.getElementById("popup-format").textContent = getTaskFormat(task);
     document.getElementById("popup-target").textContent = task.targetAudience ?? "-";
     document.getElementById("popup-budget").textContent = task.budgetChf ? `CHF ${task.budgetChf}` : "-";
     document.getElementById("popup-handover").textContent = task.handoverMethod ?? "-";
     document.getElementById("popup-description").textContent = task.description ?? "No description provided";
-    document.getElementById("popup-other").textContent = getSpecificRequirements(task);
+    document.getElementById("popup-other").textContent = getOtherRequirements(task);
 
     document.getElementById("popup").classList.remove("hidden");
 }
@@ -105,7 +102,6 @@ function rejectTask() {
         });
 }
 
-// Close popup when clicking outside
 document.addEventListener("click", (event) => {
     const popup = document.getElementById("popup");
     if (!popup) return;
@@ -124,7 +120,6 @@ document.addEventListener("click", (event) => {
     }
 });
 
-// ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
     if (task.paperSize || task.paperType) return "Flyer";
     if (task.posterSize) return "Poster";
@@ -135,26 +130,19 @@ function getTaskType(task) {
     return "General Task";
 }
 
-// ✅ NEW: Helper function for Max File Size (replaces Format)
-function getMaxFileSize(task) {
-    if (task.maxFileSizeMb) {
-        return `${task.maxFileSizeMb}MB`;
-    }
+function getTaskFormat(task) {
+    if (task.paperSize) return task.paperSize;
+    if (task.format) return task.format;
+    if (task.resolution) return task.resolution;
     return "-";
 }
 
-// ✅ UPDATED: Helper function for Specific Requirements (removed Max File Size)
-function getSpecificRequirements(task) {
+function getOtherRequirements(task) {
     let requirements = [];
 
-    // Flyer-specific requirements
-    if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
-
-    // Other task type requirements (removed maxFileSizeMb)
+    if (task.maxFileSizeMb) requirements.push(`Max file size: ${task.maxFileSizeMb}MB`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
-    if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
-    if (task.dimensions) requirements.push(`Dimensions: ${task.dimensions}`);
 
-    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
+    return requirements.length > 0 ? requirements.join(", ") : "No additional requirements";
 }
