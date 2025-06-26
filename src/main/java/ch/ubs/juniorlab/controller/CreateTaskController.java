@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @RestController
 public class CreateTaskController {
 
+    private final TaskRepository taskRepository;
     private final PersonRepository personRepository;
     private final FlyerTaskRepository flyerTaskRepository;
     private final VideoTaskRepository videoTaskRepository;
@@ -23,6 +24,7 @@ public class CreateTaskController {
     private final PollTaskRepository pollTaskRepository;
 
     public CreateTaskController(
+            TaskRepository taskRepository,
             PersonRepository personRepository,
             FlyerTaskRepository flyerTaskRepository,
             VideoTaskRepository videoTaskRepository,
@@ -31,6 +33,7 @@ public class CreateTaskController {
             PosterTaskRepository posterTaskRepository,
             PollTaskRepository pollTaskRepository
     ) {
+        this.taskRepository = taskRepository;
         this.personRepository = personRepository;
         this.flyerTaskRepository = flyerTaskRepository;
         this.videoTaskRepository = videoTaskRepository;
@@ -259,6 +262,33 @@ public class CreateTaskController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/poll?error=true");
+        }
+    }
+
+    @PostMapping("/create-task/other")
+    public ModelAndView createOtherTask(
+            @RequestParam String gpn,
+            @RequestParam String name,
+            @RequestParam(required = false) String prename,
+            @RequestParam String email,
+            @RequestParam String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String targetAudience,
+            @RequestParam(required = false) BigDecimal budgetChf,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate deadline,
+            @RequestParam(required = false) Integer maxFileSizeMb,
+            @RequestParam(required = false) String channel,
+            @RequestParam(required = false) String handoverMethod
+    ) {
+        try {
+            Person client = findOrCreatePerson(gpn, name, prename, email);
+            Task task = new Task();
+            populateBaseTaskFields(task, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
+            taskRepository.save(task); // ✅ This line
+            return new ModelAndView("redirect:/");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ModelAndView("redirect:/create-task/other?error=true");
         }
     }
 
