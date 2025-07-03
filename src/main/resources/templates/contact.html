@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Contact Us</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/createTask.css}" />
     <script defer th:src="@{/js/script.js}"></script>
 </head>
 <body>
@@ -40,8 +41,8 @@
             </div>
 
             <div class="contact-field contact-field--textarea">
-                <label for="input-concern" class="contact-label">Your Message</label>
-                <textarea id="input-concern" name="concern" class="contact-textarea" rows="5" required></textarea>
+                <label for="task-description" class="contact-label">Your Message</label>
+                <textarea id="task-description" name="description" class="form-textarea" rows="6" required></textarea>
             </div>
 
             <button type="submit" id="btn-submit" class="contact-button">Send Message</button>
