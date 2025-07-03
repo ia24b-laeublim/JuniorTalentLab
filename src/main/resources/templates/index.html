@@ -5,67 +5,88 @@
     <title>Startseite</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <script th:src="@{/js/script.js}"></script>
+
+    <style>
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 40px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1145px;
+            width: 100%;
+        }
+
+        .cards {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .card-title::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 6px;
+            background-color: #e60100;
+            margin-top: 5px;
+        }
+
+        .more-text {
+            display: none;
+        }
+
+        .read-more-btn {
+            color: #e60100;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            background: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+        /* Override des JS display:none/display:inline */
+        .more-text {
+            display: block !important;
+            font-size: 19px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition:
+                    max-height 1s ease,
+                    opacity    1s ease;
+        }
+
+        /* Wenn toggleText() display:inline setzt, wird hier ge-matched */
+        .more-text[style*="display: inline"] {
+            max-height: 800px;
+            opacity:    1;
+        }
+        .cardText {
+            font-size: 19px;
+        }
+
+
+    </style>
 </head>
-<style>
-
-    .card {
-        background: #fff;
-        border-radius: 10px;
-        padding: 25px;
-        margin: 40px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        max-width: 700px;
-        width: 100%;
-    }
-
-    .cards {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .card-title {
-        font-size: 22px;
-        font-weight: bold;
-        position: relative;
-        display: inline-block;
-        margin-bottom: 15px;
-    }
-
-    .card-title::after {
-        content: "";
-        display: block;
-        width: 60px;
-        height: 6px;
-        background-color: #e60100; /* UBS red */
-        margin-top: 5px;
-    }
-
-    .more-text {
-        display: none;
-    }
-
-    .read-more-btn {
-        color: #e60100;
-        cursor: pointer;
-        font-weight: bold;
-        border: none;
-        background: none;
-        padding: 0;
-        margin-top: 10px;
-    }
-
-    p {
-        margin-bottom: 15px;
-    }
-</style>
-
 <body>
 
 <!-- Header -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<!-- Image Carousel -->
+<!-- Image Carousel (unverändert) -->
 <div class="carousel-container">
     <div class="carousel">
         <div class="carousel-images">
@@ -75,71 +96,67 @@
             <img src="/img/img4.jpg" alt="Image 4" class="carousel-image">
             <img src="/img/img5.jpg" alt="Image 5" class="carousel-image">
         </div>
-        <button class="carousel-button left" onclick="previousSlide()">‹</button>
+        <button class="carousel-button left"  onclick="previousSlide()">‹</button>
         <button class="carousel-button right" onclick="nextSlide()">›</button>
         <div class="carousel-dots">
-            <span class="dot active" onclick="currentSlide(1)"></span>
-            <span class="dot" onclick="currentSlide(2)"></span>
-            <span class="dot" onclick="currentSlide(3)"></span>
-            <span class="dot" onclick="currentSlide(4)"></span>
-            <span class="dot" onclick="currentSlide(5)"></span>
+            <span class="dot active"   onclick="currentSlide(1)"></span>
+            <span class="dot"          onclick="currentSlide(2)"></span>
+            <span class="dot"          onclick="currentSlide(3)"></span>
+            <span class="dot"          onclick="currentSlide(4)"></span>
+            <span class="dot"          onclick="currentSlide(5)"></span>
         </div>
     </div>
 </div>
 
+<!-- Deine Karten mit Read more/less -->
 <div class="cards">
     <div class="card">
         <div class="card-title">About Junior Talent Lab</div>
-        <p>
+        <p class="cardText">
             The UBS Junior Talent Lab is a fresh learning format where mediamatics trainees receive real assignments
             from UBS-Professionals and implement them independently as a team. In a creative, self-organized
             environment, the learners develop practical solutions, strengthen their professional skills, and tackle new
             challenges.
         </p>
         <div class="more-text">
-            <p>The Lab offers a simple platform where professional employees can submit their project ideas and small
+            <p>
+                The Lab offers a simple platform where professional employees can submit their project ideas and small
                 tasks. The learners then review and work on these assignments, providing clear feedback upon completion.
                 The system ensures structured workflows, open communication, and a transparent overview of all active
-                projects.</p>
-            <p>This way, not only useful products and services are created, but also strong personalities for the
-                future.</p>
+                projects.
+            </p>
+            <p>
+                This way, not only useful products and services are created, but also strong personalities for the
+                future.
+            </p>
         </div>
         <button class="read-more-btn" onclick="toggleText(this)">Read more</button>
     </div>
 
     <div class="card">
         <div class="card-title">How to Use the Platform</div>
-        <p>
+        <p class="cardText">
             Getting started is simple! Browse available tasks in the <strong>Requests</strong> section and click "Accept
             Task" on any project that interests you. Once accepted, the task moves to your <strong>Overview</strong>
             where you can track your progress and communicate with the task creator.
         </p>
         <div class="more-text">
-            <p><strong>Requests:</strong> All new tasks from UBS professionals waiting to be accepted<br>
+            <p>
+                <strong>Requests:</strong> All new tasks from UBS professionals waiting to be accepted<br>
                 <strong>Overview:</strong> Your active tasks that you're currently working on<br>
-                <strong>Finished:</strong> Completed tasks where you can view feedback and results</p>
-            <p>When you complete a task, submit your work, and it will automatically move to the
+                <strong>Finished:</strong> Completed tasks where you can view feedback and results
+            </p>
+            <p>
+                When you complete a task, submit your work, and it will automatically move to the
                 <strong>Finished</strong> section. The platform keeps everything organized so you can focus on what
-                matters most – learning and creating great solutions!</p>
+                matters most – learning and creating great solutions!
+            </p>
         </div>
         <button class="read-more-btn" onclick="toggleText(this)">Read more</button>
     </div>
 </div>
-<script>
-    function toggleText(button) {
-        const moreText = button.previousElementSibling;
-        if (moreText.style.display === "inline") {
-            moreText.style.display = "none";
-            button.textContent = "Read more";
-        } else {
-            moreText.style.display = "inline";
-            button.textContent = "Read less";
-        }
-    }
-</script>
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>
-
 </body>
 </html>
