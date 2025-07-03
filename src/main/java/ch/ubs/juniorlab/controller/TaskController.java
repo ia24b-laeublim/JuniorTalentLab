@@ -1,10 +1,11 @@
 package ch.ubs.juniorlab.controller;
 
 import ch.ubs.juniorlab.entity.Comment;
+
 import ch.ubs.juniorlab.entity.Task;
 import ch.ubs.juniorlab.repository.CommentRepository;
 import ch.ubs.juniorlab.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.InputStreamResource;
@@ -17,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import ch.ubs.juniorlab.service.PDFService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,40 +26,56 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
-    @Autowired
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
-    @Autowired
-    private PDFService pdfService;
+    private final PDFService pdfService;
 
-    // Offene Tasks (unverändert)
+    public TaskController(TaskRepository taskRepository, CommentRepository commentRepository, PDFService pdfService) {
+        this.taskRepository = taskRepository;
+        this.commentRepository = commentRepository;
+        this.pdfService = pdfService;
+    }
+
     @GetMapping("/open")
     public List<Task> getOpenTasks() {
-        return taskRepository.findAll().stream()
-                .filter(task -> task.getStatus() == null || "REJECTED".equalsIgnoreCase(task.getStatus()))
-                .toList();
+        List<Task> allTasks = taskRepository.findAllWithClients();
+
+
+        return allTasks.stream()
+                .filter(task -> {
+                    String status = task.getStatus();
+                    boolean isOpen = status == null ||
+                            "open".equalsIgnoreCase(status) ||
+                            "REJECTED".equalsIgnoreCase(status);
+                    return isOpen;
+                })
+                .sorted(Comparator.comparing(Task::getId).reversed())
+                .collect(Collectors.toList());
     }
 
-    // Akzeptierte, aber NICHT erledigte Tasks anzeigen (unverändert)
     @GetMapping("/accepted")
     public List<Task> getAcceptedTasks() {
-        return taskRepository.findAll().stream()
-                .filter(task -> "ACCEPTED".equalsIgnoreCase(task.getStatus()) && !"Finished".equalsIgnoreCase(task.getProgress()))
-                .toList();
+        return taskRepository.findAllWithClients().stream()
+                .filter(task -> {
+                    String status = task.getStatus();
+                    String progress = task.getProgress();
+                    return "ACCEPTED".equalsIgnoreCase(status) &&
+                            !"Finished".equalsIgnoreCase(progress);
+                })
+                .sorted(Comparator.comparing(Task::getId).reversed())
+                .collect(Collectors.toList());
     }
 
-    // Erledigte Tasks anzeigen (unverändert)
     @GetMapping("/finished")
     public List<Task> getFinishedTasks() {
-        return taskRepository.findAll().stream()
+        return taskRepository.findAllWithClients().stream()
                 .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
-                .toList();
+                .sorted(Comparator.comparing(Task::getId).reversed())
+                .collect(Collectors.toList());
     }
 
-    // Task akzeptieren (unverändert)
     @PostMapping("/{id}/accept")
     public ResponseEntity<Void> acceptTask(@PathVariable Long id) {
         Task task = taskRepository.findById(id).orElseThrow();
@@ -69,7 +87,6 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
-    // Task ablehnen (unverändert)
     @PostMapping("/{id}/reject")
     public ResponseEntity<Void> rejectTask(@PathVariable Long id) {
         Task task = taskRepository.findById(id).orElseThrow();
@@ -78,7 +95,6 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
-    // Task-Status aktualisieren (unverändert)
     @PostMapping("/{id}/status")
     public ResponseEntity<Void> updateTaskStatus(@PathVariable Long id, @RequestBody StatusUpdateRequest request) {
         Task task = taskRepository.findById(id).orElseThrow();
@@ -87,7 +103,6 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
-    // Methode zum Hinzufügen eines Kommentars (unverändert, funktioniert)
     @PostMapping("/{taskId}/comments")
     public ResponseEntity<Void> addCommentToTask(@PathVariable Long taskId, @RequestBody CommentRequest commentRequest) {
         Task task = taskRepository.findById(taskId)
@@ -100,37 +115,24 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
-    // ⭐ KORRIGIERTE METHODE: Gibt jetzt eine Liste von sicheren DTOs zurück
     @GetMapping("/{taskId}/comments")
     public ResponseEntity<List<CommentDto>> getCommentsForTask(@PathVariable Long taskId) {
-        // Überprüfen, ob der Task existiert
         if (!taskRepository.existsById(taskId)) {
             return ResponseEntity.notFound().build();
         }
 
-        // Finde alle Kommentare für diesen Task
         List<Comment> comments = commentRepository.findByTaskId(taskId);
-
-        // Wandle die Liste von Comment-Entitäten in eine Liste von CommentDto-Objekten um
         List<CommentDto> commentDtos = comments.stream().map(comment -> {
-            // Platzhalter, da der Autor noch nicht gespeichert wird
-            // Später wird hier der richtige Name stehen
             String authorName = "User";
-
-            // Erstelle ein DTO mit dem Inhalt und dem Autorennamen
             return new CommentDto(comment.getContent(), authorName);
         }).collect(Collectors.toList());
 
-        // Sende die sichere DTO-Liste an das Frontend
         return ResponseEntity.ok(commentDtos);
     }
 
     @GetMapping("/{id}/pdf")
     public ResponseEntity<Resource> downloadTaskPdf(@PathVariable Long id) throws IOException {
-
-        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
-        File pdf = pdfService.checkPDF(task); // erzeugt falls nötig
-
+        File pdf = pdfService.checkPDF(id);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(pdf));
 
         return ResponseEntity.ok()
@@ -139,5 +141,4 @@ public class TaskController {
                 .contentLength(pdf.length())
                 .body(resource);
     }
-
 }
