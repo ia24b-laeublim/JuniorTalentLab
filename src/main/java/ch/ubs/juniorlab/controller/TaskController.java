@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import ch.ubs.juniorlab.service.PDFService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class TaskController {
     public List<Task> getOpenTasks() {
         return taskRepository.findAll().stream()
                 .filter(task -> task.getStatus() == null || "REJECTED".equalsIgnoreCase(task.getStatus()))
+                .sorted(Comparator.comparing(Task::getId).reversed())
                 .toList();
     }
 
@@ -46,6 +48,7 @@ public class TaskController {
     public List<Task> getAcceptedTasks() {
         return taskRepository.findAll().stream()
                 .filter(task -> "ACCEPTED".equalsIgnoreCase(task.getStatus()) && !"Finished".equalsIgnoreCase(task.getProgress()))
+                .sorted(Comparator.comparing(Task::getId).reversed())
                 .toList();
     }
 
@@ -54,6 +57,7 @@ public class TaskController {
     public List<Task> getFinishedTasks() {
         return taskRepository.findAll().stream()
                 .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
+                .sorted(Comparator.comparing(Task::getId).reversed())
                 .toList();
     }
 
