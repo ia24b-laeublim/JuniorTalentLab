@@ -321,6 +321,31 @@ footer {
     color: white;
 }
 */
+.card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 600px;
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.more-text {
+    display: none;
+}
+
+.read-more-btn {
+    color: #b00000;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    background: none;
+    padding: 0;
+}
 
 /* ==== Index SECTION ==== */
 .index-section {
