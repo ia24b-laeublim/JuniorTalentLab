@@ -96,7 +96,7 @@ public class HomeController {
     @PostMapping("/api/send-contact-mail")
     public String sendContactEmail(@ModelAttribute ContactFormDto form, Model model) {
         String subject = "Kontaktanfrage von " + form.getFirstName() + " " + form.getLastName();
-        String message = "GPN: " + form.getGpn() + "\nEmail: " + form.getEmail() + "\n\nConcern:\n" + form.getConcern();
+        String message = "GPN: " + form.getGpn() + "\nEmail: " + form.getEmail() + "\n\nMessage:\n" + form.getMessage();
 
         mailService.sendEmail("dariangermann@gmail.com", subject, message);
         model.addAttribute("formFeedback", "Thank you for your feedback!");
