@@ -1,11 +1,11 @@
 package ch.ubs.juniorlab.controller;
 
 import ch.ubs.juniorlab.entity.Comment;
-import ch.ubs.juniorlab.entity.Person;
+
 import ch.ubs.juniorlab.entity.Task;
 import ch.ubs.juniorlab.repository.CommentRepository;
 import ch.ubs.juniorlab.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.InputStreamResource;
@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import ch.ubs.juniorlab.service.PDFService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,7 @@ public class TaskController {
                             "REJECTED".equalsIgnoreCase(status);
                     return isOpen;
                 })
+                .sorted(Comparator.comparing(Task::getId).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -62,6 +64,7 @@ public class TaskController {
                     return "ACCEPTED".equalsIgnoreCase(status) &&
                             !"Finished".equalsIgnoreCase(progress);
                 })
+                .sorted(Comparator.comparing(Task::getId).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -69,6 +72,7 @@ public class TaskController {
     public List<Task> getFinishedTasks() {
         return taskRepository.findAllWithClients().stream()
                 .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
+                .sorted(Comparator.comparing(Task::getId).reversed())
                 .collect(Collectors.toList());
     }
 
