@@ -307,7 +307,6 @@ public class CreateTaskController {
     }
 
     // === Shared Logic ===
-
     private Person findOrCreatePerson(String gpn, String name, String prename, String email) {
         return personRepository.findByGpn(gpn)
                 .orElseGet(() -> {
