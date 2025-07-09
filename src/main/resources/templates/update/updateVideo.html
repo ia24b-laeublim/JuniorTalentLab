@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Video Task - Junior Talent Lab</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+  <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+
+
+<!-- Main Content -->
+<main class="create-task-wrapper">
+  <div class="page-title-container">
+    <h1>Create Video Task</h1>
+    <div class="red-underline"></div>
+  </div>
+
+  <div class="create-task-container">
+    <form id="create-video-form" action="/create-task/video" method="post" novalidate>
+      <input type="hidden" name="taskType" value="video">
+
+      <!-- Basic Task Details -->
+      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+
+      <!-- Video Specific Details -->
+      <div class="form-section">
+        <h2>Video Specifications</h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="length-sec" class="form-label">Length (Seconds)</label>
+            <input type="number" id="length-sec" name="lengthSec" class="form-input"
+                   min="1" max="3600" placeholder="e.g., 60" />
+          </div>
+
+          <div class="form-field">
+            <label for="format" class="form-label">Format</label>
+            <select id="format" name="format" class="form-select">
+              <option value="">Select Format</option>
+              <option value="Landscape">Landscape (16:9)</option>
+              <option value="Portrait">Portrait (9:16)</option>
+              <option value="Square">Square (1:1)</option>
+              <option value="Cinematic">Cinematic (21:9)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="file-format" class="form-label">File Format</label>
+            <select id="file-format" name="fileFormat" class="form-select">
+              <option value="">Select File Format</option>
+              <option value="MP4">MP4</option>
+              <option value="MOV">MOV</option>
+              <option value="AVI">AVI</option>
+              <option value="MKV">MKV</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="resolution" class="form-label">Resolution</label>
+            <input type="text" id="resolution" name="resolution" class="form-input"
+                   list="resolution-options" placeholder="Select or enter resolution" />
+            <datalist id="resolution-options">
+              <option value="1920x1080">
+              <option value="1280x720">
+              <option value="3840x2160">
+              <option value="1080x1920">
+              <option value="720x1280">
+            </datalist>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="voiceover" class="form-label">Voiceover Required</label>
+            <select id="voiceover" name="voiceover" class="form-select">
+              <option value="">Select Option</option>
+              <option value="true">Yes, Include Voiceover</option>
+              <option value="false">No Voiceover Needed</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="disclaimer" class="form-label">Disclaimer Required</label>
+            <select id="disclaimer" name="disclaimer" class="form-select">
+              <option value="">Select Option</option>
+              <option value="true">Yes, Include Disclaimer</option>
+              <option value="false">No Disclaimer Needed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="music-style" class="form-label">Music Style</label>
+            <select id="music-style" name="musicStyle" class="form-select">
+              <option value="">Select Music Style</option>
+              <option value="Corporate">Corporate</option>
+              <option value="Upbeat">Upbeat</option>
+              <option value="Calm">Calm/Relaxing</option>
+              <option value="Dramatic">Dramatic</option>
+              <option value="Modern">Modern</option>
+              <option value="Classical">Classical</option>
+              <option value="None">No Music</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="social-media-platforms" class="form-label">Social Media Platforms</label>
+            <input type="text" id="social-media-platforms" name="socialMediaPlatforms" class="form-input"
+                   placeholder="e.g., YouTube, LinkedIn, Instagram" />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="branding-requirements" class="form-label">Branding Requirements</label>
+          <textarea id="branding-requirements" name="brandingRequirements" class="form-textarea" rows="3"
+                    placeholder="Specific branding guidelines, colors, logos, etc."></textarea>
+        </div>
+      </div>
+
+        <!-- Submit Section -->
+        <div class="form-section">
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+            <button type="submit" class="btn-primary">Confirm</button>
+          </div>
+        </div>
+    </form>
+  </div>
+</main>
+
+
+</body>
+</html>
