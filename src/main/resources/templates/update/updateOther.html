@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Other Task - Junior Talent Lab</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+  <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+
+
+
+<!-- Main Content -->
+<main class="create-task-wrapper">
+  <div class="page-title-container">
+    <h1>Create Other Task</h1>
+    <div class="red-underline"></div>
+  </div>
+
+  <div class="create-task-container">
+    <form id="create-flyer-form" action="/create-task/flyer" method="post" novalidate>
+      <input type="hidden" name="taskType" value="flyer">
+
+      <!-- Basic Task Details -->
+      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+
+      <!-- Submit Section -->
+      <div class="form-section">
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+
+
+</body>
+</html>
