@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Poll Task - Junior Talent Lab</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+  <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+
+
+<!-- Main Content -->
+<main class="create-task-wrapper">
+  <div class="page-title-container">
+    <h1>Update Poll Task</h1>
+    <div class="red-underline"></div>
+  </div>
+
+  <div class="create-task-container">
+    <form id="create-poll-form" action="/create-task/poll" method="post" novalidate>
+      <input type="hidden" name="taskType" value="poll">
+
+      <!-- Basic Task Details -->
+      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+
+      <!-- Poll Specific Details -->
+      <div class="form-section">
+        <h2>Poll Specifications</h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="question-count" class="form-label">Question Count</label>
+            <input type="number" id="question-count" name="questionCount" class="form-input"
+                   min="1" max="50" placeholder="e.g., 10" />
+          </div>
+
+          <div class="form-field">
+            <label for="question-type" class="form-label">Question Type</label>
+            <select id="question-type" name="questionType" class="form-select">
+              <option value="">Select Question Type</option>
+              <option value="multiple-choice">Multiple Choice</option>
+              <option value="single-choice">Single Choice</option>
+              <option value="text">Text Response</option>
+              <option value="rating">Rating Scale</option>
+              <option value="mixed">Mixed Types</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="start-date" class="form-label">Start Date</label>
+            <input type="date" id="start-date" name="startDate" class="form-input" />
+          </div>
+
+          <div class="form-field">
+            <label for="end-date" class="form-label">End Date</label>
+            <input type="date" id="end-date" name="endDate" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="anonymous" class="form-label">Anonymous Poll</label>
+            <select id="anonymous" name="anonymous" class="form-select">
+              <option value="">Select Option</option>
+              <option value="true">Yes, Anonymous</option>
+              <option value="false">No, Collect Names</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Section -->
+      <div class="form-section">
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+
+
+</body>
+</html>

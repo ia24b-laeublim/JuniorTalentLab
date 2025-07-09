@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Flyer Task - Junior Talent Lab</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+    <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+<!-- Main Content -->
+<main class="create-task-wrapper">
+    <div class="page-title-container">
+        <h1>Update Flyer Task</h1>
+        <div class="red-underline"></div>
+    </div>
+
+    <div class="create-task-container">
+        <form id="create-flyer-form" action="/api/create-task/flyer" method="post" novalidate>
+            <input type="hidden" name="taskType" value="flyer">
+
+            <!-- Basic Task Details -->
+            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+
+            <!-- Flyer Specific Details -->
+            <div class="form-section">
+                <h2>Flyer Specifications</h2>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="paper-size" class="form-label">Size</label>
+                        <input type="text" id="paper-size" name="paperSize" class="form-input"
+                               list="size-options" placeholder="Select or enter custom size" />
+                        <datalist id="size-options">
+                            <option value="A4">
+                            <option value="A5">
+                            <option value="A6">
+                            <option value="Letter">
+                            <option value="Legal">
+                            <option value="Tabloid">
+                            <option value="210 x 297 mm">
+                            <option value="148 x 210 mm">
+                            <option value="105 x 148 mm">
+                        </datalist>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="paper-type" class="form-label">Paper Type</label>
+                        <select id="paper-type" name="paperType" class="form-select">
+                            <option value="">Select Paper Type</option>
+                            <option value="Standard">Standard (80gsm)</option>
+                            <option value="Premium">Premium (120gsm)</option>
+                            <option value="Glossy">Glossy</option>
+                            <option value="Matte">Matte</option>
+                            <option value="Recycled">Recycled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="target-audience" class="form-label">Target Audience</label>
+                        <input type="text" id="target-audience" name="targetAudience" class="form-input"
+                               placeholder="e.g., UBS clients, employees, general public" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="channel" class="form-label">Channel</label>
+                        <select id="channel" name="channel" class="form-select">
+                            <option value="">Select Channel</option>
+                            <option value="Internal">Internal Distribution</option>
+                            <option value="External">External Distribution</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="handover-method" class="form-label">Handover</label>
+                    <select id="handover-method" name="handover" class="form-select">
+                        <option value="">Select Handover Method</option>
+                        <option value="email">Email</option>
+                        <option value="teams">Microsoft Teams</option>
+                        <option value="sharepoint">SharePoint</option>
+                        <option value="direct">Direct Meeting</option>
+                        <option value="download">Download Portal</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="form-section">
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="btn-primary">Confirm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>
