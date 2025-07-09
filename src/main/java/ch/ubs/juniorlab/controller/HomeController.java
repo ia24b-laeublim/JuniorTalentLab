@@ -1,18 +1,26 @@
 package ch.ubs.juniorlab.controller;
 
+import ch.ubs.juniorlab.entity.Task;
+import ch.ubs.juniorlab.repository.TaskRepository;
 import ch.ubs.juniorlab.service.MailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 public class HomeController {
 
     private final MailService mailService;
+    private final TaskRepository taskRepository;
 
-    public HomeController(MailService mailService) {
+    public HomeController(MailService mailService, TaskRepository taskRepository) {
         this.mailService = mailService;
+        this.taskRepository = taskRepository;
     }
+
+
 
     @GetMapping("/")
     public String index(Model model) {
@@ -160,4 +168,6 @@ public class HomeController {
         model.addAttribute("taskCreated", "Custom task created successfully!");
         return "task/createOtherTask";
     }
+
+
 }

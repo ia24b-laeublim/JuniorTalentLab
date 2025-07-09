@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Overview Page</title>
+    <meta charset="UTF-8" />
+    <title th:text="${task.title}">Task Details</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/apprentice.css}" />
     <script th:src="@{/js/script.js}"></script>
-    <script th:src="@{/js/overview.js}"></script>
 </head>
 <body>
 
@@ -14,38 +13,36 @@
 <div th:replace="~{fragments/header_apprentice :: header}"></div>
 
 <div class="page-title-container">
-    <h1>Overview Page</h1>
+    <h1 th:text="${task.title}">Task Details</h1>
 </div>
 
-<div id="task-container" class="task-grid"></div>
-
-<!-- Popup -->
-<div id="popup" class="popup hidden">
+<div class="popup" style="position: relative; transform: none; top: 0; left: 0;">
     <div class="popup-content">
-        <h2 id="popup-title" class="popup-heading">Titel</h2>
+        <h2 class="popup-heading" th:text="${task.title}">Titel</h2>
         <div class="red-underline"></div>
 
         <div class="popup-layout">
-            <!-- Linke Spalte (unverändert) -->
+            <!-- Linke Spalte -->
             <div class="popup-left">
-                <div class="popup-row"><span>Name</span><span id="popup-name"></span></div>
-                <div class="popup-row"><span>GPN</span><span id="popup-gpn"></span></div>
-                <div class="popup-row"><span>Deadline</span><span id="popup-deadline"></span></div>
-                <div class="popup-row"><span>Channel</span><span id="popup-channel"></span></div>
-                <div class="popup-row"><span>Content Type</span><span id="popup-type"></span></div>
-                <div class="popup-row"><span>Max File Size</span><span id="popup-format"></span></div>
-                <div class="popup-row"><span>Target Audience</span><span id="popup-target"></span></div>
-                <div class="popup-row"><span>Budget</span><span id="popup-budget"></span></div>
-                <div class="popup-row"><span>Handover</span><span id="popup-handover"></span></div>
+                <div class="popup-row"><span>Name</span><span th:text="${task.client != null ? task.client.prename + ' ' + task.client.name : '-'}"></span></div>
+                <div class="popup-row"><span>GPN</span><span th:text="${task.client != null ? task.client.gpn : '-'}"></span></div>
+                <div class="popup-row"><span>Deadline</span><span th:text="${task.deadline != null ? task.deadline : '-'}"></span></div>
+                <div class="popup-row"><span>Channel</span><span th:text="${task.channel != null ? task.channel : '-'}"></span></div>
+                <div class="popup-row"><span>Content Type</span><span th:text="${task.taskType}"></span></div>
+                <div class="popup-row"><span>Max File Size</span><span th:text="${task.maxFileSizeMb != null ? task.maxFileSizeMb + ' MB' : '-'}"></span></div>
+                <div class="popup-row"><span>Target Audience</span><span th:text="${task.targetAudience != null ? task.targetAudience : '-'}"></span></div>
+                <div class="popup-row"><span>Budget</span><span th:text="${task.budgetChf != null ? task.budgetChf : '-'}"></span></div>
+                <div class="popup-row"><span>Handover</span><span th:text="${task.handoverMethod != null ? task.handoverMethod : '-'}"></span></div>
+
                 <div class="popup-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                    <label for="popup-status" style="font-weight: bold;">Status</label>
-                    <select id="popup-status" onchange="updateTaskStatus()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc;">
-                        <option>Started</option>
-                        <option>Planning</option>
-                        <option>Gathering Resources</option>
-                        <option>Editing</option>
-                        <option>In production</option>
-                        <option>Finished</option>
+                    <label for="status" style="font-weight: bold;">Status</label>
+                    <select id="status" name="status" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option th:selected="${task.progress == 'Started'}">Started</option>
+                        <option th:selected="${task.progress == 'Planning'}">Planning</option>
+                        <option th:selected="${task.progress == 'Gathering Resources'}">Gathering Resources</option>
+                        <option th:selected="${task.progress == 'Editing'}">Editing</option>
+                        <option th:selected="${task.progress == 'In production'}">In production</option>
+                        <option th:selected="${task.progress == 'Finished'}">Finished</option>
                     </select>
                 </div>
             </div>
@@ -54,28 +51,31 @@
             <div class="popup-right">
                 <div class="popup-section">
                     <strong>Description</strong>
-                    <p id="popup-description"></p>
+                    <p th:text="${task.description != null ? task.description : '-'}"></p>
                 </div>
                 <div class="popup-section">
                     <strong>Specific Requirements</strong>
-                    <p id="popup-other"></p>
+                    <p th:text="${task.specificRequirements}"></p>
                 </div>
 
-                <!-- Kommentarfeld bleibt unten – volle Höhe nutzen -->
                 <div class="popup-section comment-section">
                     <strong>Comments</strong>
-                    <div id="comment-list"></div>
-                    <textarea id="popup-comment" rows="3" placeholder="Write a comment..."></textarea>
-                    <button onclick="submitComment()">Submit</button>
+                    <div>
+                        <div th:each="comment : ${comments}">
+                            <strong th:text="${comment.authorName}"></strong>: <span th:text="${comment.content}"></span>
+                            <hr/>
+                        </div>
+                    </div>
+                    <form th:action="@{'/api/tasks/' + ${task.id} + '/comments'}" method="post">
+                        <textarea name="text" rows="3" placeholder="Write a comment..."></textarea>
+                        <button type="submit">Submit</button>
+                    </form>
                 </div>
 
                 <div class="popup-section" style="display: flex; justify-content: flex-end; gap: 16px; background: none; padding: 0; margin-top: 16px;">
-                    <button title="Show attachments" style="background: none; border: none; cursor: pointer;">
-                        <img src="/img/büroklammer.png" alt="atachments" style="height: 24px;" />
-                    </button>
-                    <button title="Download as PDF" style="background: none; border: none; cursor: pointer;">
-                        <img src="/img/download-file-icon2.svg" alt="Download" style="height: 24px;" />
-                    </button>
+                    <a th:href="@{'/api/tasks/' + ${task.id} + '/pdf'}" download th:attr="download='Task_' + ${task.id} + '.pdf'">
+                        <img src="/img/download-file-icon2.svg" alt="Download" style="height: 24px;"/>
+                    </a>
                 </div>
             </div>
         </div>
