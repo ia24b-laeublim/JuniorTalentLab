@@ -275,3 +275,15 @@ function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
+// Read More button Landing Page
+function toggleText(button) {
+    const moreText = button.previousElementSibling;
+    if (moreText.style.display === "inline") {
+        moreText.style.display = "none";
+        button.textContent = "Read more";
+    } else {
+        moreText.style.display = "inline";
+        button.textContent = "Read less";
+    }
+}

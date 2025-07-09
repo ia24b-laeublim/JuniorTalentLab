@@ -52,7 +52,6 @@ public class TaskProcessingService {
                 System.out.println("Fragenanzahl: " + poll.getQuestionCount());
                 System.out.println("Fragetyp: " + poll.getQuestionType());
                 System.out.println("Anonym: " + poll.getAnonymous());
-                System.out.println("Verteilungsmethode: " + poll.getDistributionMethod());
 
             } else if (task instanceof SlideshowTask slideshow) {
                 System.out.println("SlideshowTask");
@@ -75,9 +74,8 @@ public class TaskProcessingService {
                 System.out.println("Musikstil: " + video.getMusicStyle());
 
             } else {
-                System.out.println("Unbekannter Task-Typ: " + task.getClass().getSimpleName());
+                System.out.println("⚠️ Unbekannter Task-Typ: " + task.getClass().getSimpleName());
             }
         }
     }
-
 }

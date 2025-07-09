@@ -40,25 +40,24 @@ public class Task {
     @Column(name = "Status", length = 20)
     private String status;
 
-    // Relationen zur Person
-    @ManyToOne
-    @JoinColumn(name = "Client",nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Client"))
+    // ✅ FIXED: Force eager loading to ensure client data is always fetched
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "Client", nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Client"))
     private Person client;
 
-    @ManyToOne(optional = false)
+    // ✅ FIXED: Force eager loading for apprentice too
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "Apprentice", nullable = true, foreignKey = @ForeignKey(name = "fk_Task_Apprentice"))
     private Person apprentice;
 
-    @Column(name = "Progress", nullable = true,  length = 100)
+    @Column(name = "Progress", nullable = true, length = 100)
     private String progress;
 
-    // Konstruktoren
     public Task() {
-        this.status = "open"; // Optionaler Default-Wert
+        this.status = "open";
     }
 
     // Getter & Setter
-
     public Long getId() {
         return id;
     }
@@ -154,6 +153,7 @@ public class Task {
     public void setApprentice(Person apprentice) {
         this.apprentice = apprentice;
     }
+
     public String getProgress() {
         return progress;
     }

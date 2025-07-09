@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Contact Us</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/createTask.css}" />
     <script defer th:src="@{/js/script.js}"></script>
 </head>
 <body>
 
 <!-- Header -->
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <!-- Main Content -->
 <main class="privacy-wrapper">
@@ -40,8 +41,8 @@
             </div>
 
             <div class="contact-field contact-field--textarea">
-                <label for="input-message" class="contact-label">Your Message</label>
-                <textarea id="input-message" name="message" class="contact-textarea" rows="5" required></textarea>
+                <label for="task-description" class="contact-label">Your Message</label>
+                <textarea id="task-description" name="description" class="form-textarea" rows="6" required></textarea>
             </div>
 
             <button type="submit" id="btn-submit" class="contact-button">Send Message</button>
@@ -51,6 +52,6 @@
 </main>
 
 <!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

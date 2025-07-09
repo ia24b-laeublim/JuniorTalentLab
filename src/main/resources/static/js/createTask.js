@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const card = document.createElement("div");
                 card.className = "task-card";
 
-                // ✅ FIXED: Use client instead of apprentice
                 const clientName = task.client ?
                     `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
                     "Unknown";
@@ -54,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function openPopup(task) {
     selectedTaskId = task.id;
 
-    // ✅ FIXED: Show client information, not apprentice
     const clientName = task.client ?
         `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
         "Unknown";
@@ -65,13 +63,12 @@ function openPopup(task) {
     document.getElementById("popup-deadline").textContent = task.deadline ?? "-";
     document.getElementById("popup-channel").textContent = task.channel ?? "-";
     document.getElementById("popup-type").textContent = getTaskType(task);
-    // ✅ CHANGED: Now showing Max File Size instead of Format
-    document.getElementById("popup-format").textContent = getMaxFileSize(task);
+    document.getElementById("popup-format").textContent = getTaskFormat(task);
     document.getElementById("popup-target").textContent = task.targetAudience ?? "-";
     document.getElementById("popup-budget").textContent = task.budgetChf ? `CHF ${task.budgetChf}` : "-";
     document.getElementById("popup-handover").textContent = task.handoverMethod ?? "-";
     document.getElementById("popup-description").textContent = task.description ?? "No description provided";
-    document.getElementById("popup-other").textContent = getSpecificRequirements(task);
+    document.getElementById("popup-other").textContent = getOtherRequirements(task);
 
     document.getElementById("popup").classList.remove("hidden");
 }
@@ -105,7 +102,6 @@ function rejectTask() {
         });
 }
 
-// Close popup when clicking outside
 document.addEventListener("click", (event) => {
     const popup = document.getElementById("popup");
     if (!popup) return;
@@ -124,90 +120,29 @@ document.addEventListener("click", (event) => {
     }
 });
 
-// ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
-    if (task.paperSize && task.paperType) return "Flyer";
+    if (task.paperSize || task.paperType) return "Flyer";
     if (task.posterSize) return "Poster";
     if (task.photoCount) return "Slideshow";
     if (task.lengthSec) return "Video";
     if (task.questionCount) return "Poll";
-    if (task.format && task.resolution) return "Photo";
+    if (task.format) return "Photo";
     return "General Task";
 }
 
-// ✅ NEW: Helper function for Max File Size (replaces Format)
-function getMaxFileSize(task) {
-    if (task.maxFileSizeMb) {
-        return `${task.maxFileSizeMb}MB`;
-    }
+function getTaskFormat(task) {
+    if (task.paperSize) return task.paperSize;
+    if (task.format) return task.format;
+    if (task.resolution) return task.resolution;
     return "-";
 }
 
-// ✅ UPDATED: Helper function for Specific Requirements (removed Max File Size)
-function getSpecificRequirements(task) {
+function getOtherRequirements(task) {
     let requirements = [];
 
-    // Flyer-specific requirements
-    if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
-
-    // Video-specific requirements
-    if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
-    if (task.voiceover !== null && task.voiceover !== undefined)
-        requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
-    if (task.disclaimer !== null && task.disclaimer !== undefined)
-        requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
-    if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
-    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
-
-    // Photo-specific requirements (shared fields reused from Video)
-    if (task.format) requirements.push(`Format: ${task.format}`);
-    if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
-    if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
+    if (task.maxFileSizeMb) requirements.push(`Max file size: ${task.maxFileSizeMb}MB`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
 
-    // Slideshow-specific requirements
-    if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
-
-    // Poster-specific requirements
-    if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
-    if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
-    if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
-
-    // Poll-specific requirements
-    if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
-    if (task.questionType) requirements.push(`Type: ${task.questionType}`);
-    if (task.startDate) requirements.push(`Start: ${task.startDate}`);
-    if (task.endDate) requirements.push(`End: ${task.endDate}`);
-    if (task.anonymous !== null && task.anonymous !== undefined)
-        requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
-    if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
-
-    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
-}
-
-function showRejectConfirm() {
-    document.getElementById("popupMessage").textContent = "Are you sure you want to reject the task?";
-
-    document.getElementById("popupOverlay2").style.display = "block";
-    document.getElementById("popupContainer2").style.display = "block";
-
-    document.getElementById("acceptBtn").onclick = function() {
-        rejectTask();
-        closePopup2();
-
-    };
-
-    document.getElementById("rejectBtn").onclick = function() {
-        closePopup2();
-
-    };
-}
-
-function closePopup2() {
-    document.getElementById("popupOverlay2").style.display = "none";
-    document.getElementById("popupContainer2").style.display = "none";
-
-
-
+    return requirements.length > 0 ? requirements.join(", ") : "No additional requirements";
 }

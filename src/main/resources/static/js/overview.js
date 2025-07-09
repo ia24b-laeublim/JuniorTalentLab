@@ -1,7 +1,6 @@
 let selectedTaskId = null;
 
-
-// This function is called when the dropdown value changes
+// Diese Funktion wird aufgerufen, wenn der Status geändert wird
 function updateTaskStatus() {
     const statusDropdown = document.getElementById("popup-status");
     const newStatus = statusDropdown.value;
@@ -37,18 +36,20 @@ function updateTaskStatus() {
 function openPopup(task) {
     selectedTaskId = task.id;
 
+    const clientName = task.client ? `${task.client.prename || ''} ${task.client.name || ''}`.trim() : "-";
+
     document.getElementById("popup-title").textContent = task.title ?? "-";
-    document.getElementById("popup-name").textContent = task.apprentice?.name ?? "-";
-    document.getElementById("popup-gpn").textContent = task.apprentice?.gpn ?? "-";
+    document.getElementById("popup-name").textContent = clientName;
+    document.getElementById("popup-gpn").textContent = task.client?.gpn ?? "-";
     document.getElementById("popup-deadline").textContent = task.deadline ?? "-";
     document.getElementById("popup-channel").textContent = task.channel ?? "-";
     document.getElementById("popup-type").textContent = getTaskType(task);
-    document.getElementById("popup-format").textContent = task.format ?? "-";
+    document.getElementById("popup-format").textContent = getMaxFileSize(task);
     document.getElementById("popup-target").textContent = task.targetAudience ?? "-";
     document.getElementById("popup-budget").textContent = task.budgetChf ?? "-";
     document.getElementById("popup-handover").textContent = task.handoverMethod ?? "-";
     document.getElementById("popup-description").textContent = task.description ?? "-";
-    document.getElementById("popup-other").textContent = task.otherRequirements ?? "—";
+    document.getElementById("popup-other").textContent = getSpecificRequirements(task);
 
     const statusDropdown = document.getElementById("popup-status");
     const validOptions = Array.from(statusDropdown.options).map(opt => opt.value);
@@ -64,7 +65,6 @@ function openPopup(task) {
     loadComments(task.id);
     document.getElementById("popup").classList.remove("hidden");
 }
-
 
 function closePopup() {
     document.getElementById("popup").classList.add("hidden");
@@ -83,9 +83,7 @@ function submitComment() {
     })
         .then(res => {
             if (res.ok) {
-                // Wenn das Senden erfolgreich war, lade die Kommentare neu
                 loadComments(selectedTaskId);
-                // Leere das Textfeld
                 document.getElementById("popup-comment").value = "";
             } else {
                 alert("Failed to submit comment");
@@ -93,13 +91,12 @@ function submitComment() {
         });
 }
 
-// ⭐ KORRIGIERTE FUNKTION: Passt zur neuen DTO-Struktur
 function loadComments(taskId) {
     fetch(`/api/tasks/${taskId}/comments`)
         .then(res => {
             if (!res.ok) {
                 console.error("Failed to load comments, server responded with status: " + res.status);
-                return []; // Gib ein leeres Array zurück, um Fehler zu vermeiden
+                return [];
             }
             return res.json();
         })
@@ -108,10 +105,7 @@ function loadComments(taskId) {
             list.innerHTML = "";
             comments.forEach(c => {
                 const div = document.createElement("div");
-
-                // Greift jetzt auf die DTO-Struktur zu: { content: "...", authorName: "..." }
                 div.innerHTML = `<strong>${c.authorName}:</strong> ${c.content}`;
-
                 div.style.borderBottom = "1px solid #eee";
                 div.style.padding = "8px 0";
                 list.appendChild(div);
@@ -123,11 +117,15 @@ function loadComments(taskId) {
 }
 
 function getTaskType(task) {
-    if (task.paperSize) return "Poster";
+    if (task.paperSize && task.paperType) return "Flyer";
+    if (task.posterSize) return "Poster";
     if (task.photoCount) return "Slideshow";
     if (task.lengthSec) return "Video";
-    return "Other";
+    if (task.questionCount) return "Poll";
+    if (task.format && task.resolution) return "Photo";
+    return "General Task";
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("/api/tasks/accepted")
@@ -138,12 +136,16 @@ document.addEventListener("DOMContentLoaded", () => {
             data.forEach(task => {
                 const card = document.createElement("div");
                 card.className = "task-card";
+
+                const clientName = task.client ? `${task.client.prename || ''} ${task.client.name || ''}`.trim() : "-";
+                const clientGpn = task.client?.gpn ?? "-";
+
                 card.innerHTML = `
                   <h2 style="font-size: 1.5rem; font-weight: bold; color: #000000;">${task.title}</h2>
                   <div style="display: flex; gap: 1rem;">
                     <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
-                      <div class="popup-row"><span>Name</span><span>${task.apprentice?.name ?? "-"}</span></div>
-                      <div class="popup-row"><span>GPN</span><span>${task.apprentice?.gpn ?? "-"}</span></div>
+                      <div class="popup-row"><span>Name</span><span>${clientName}</span></div>
+                      <div class="popup-row"><span>GPN</span><span>${clientGpn}</span></div>
                       <div class="popup-row"><span>Deadline</span><span>${task.deadline ?? "-"}</span></div>
                     </div>
                     <div style="flex: 1; background-color: #f5f5f5; padding: 1rem; border-radius: 4px;">
@@ -169,7 +171,6 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Füge Listener für PDF-Button ein:
     const popup = document.getElementById("popup");
     popup.querySelector('[title="Download as PDF"]').addEventListener("click", () => {
         if (!selectedTaskId) return;
@@ -182,3 +183,54 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.removeChild(link);
     });
 });
+
+function getMaxFileSize(task) {
+    // This assumes maxFileSizeMb comes from the child table (e.g., FlyerTask)
+    if (task.maxFileSizeMb) {
+        return `${task.maxFileSizeMb}MB`;
+    }
+    return "-";
+}
+
+// ✅ UPDATED: Helper function for Specific Requirements (removed Max File Size)
+function getSpecificRequirements(task) {
+    let requirements = [];
+
+    // Flyer-specific requirements
+    if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
+    if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
+
+    // Video-specific requirements
+    if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
+    if (task.voiceover !== null && task.voiceover !== undefined)
+        requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
+    if (task.disclaimer !== null && task.disclaimer !== undefined)
+        requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
+    if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
+    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
+
+    // Photo-specific requirements (shared fields reused from Video)
+    if (task.format) requirements.push(`Format: ${task.format}`);
+    if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
+    if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
+    if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
+
+    // Slideshow-specific requirements
+    if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
+
+    // Poster-specific requirements
+    if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
+    if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
+    if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
+
+    // Poll-specific requirements
+    if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
+    if (task.questionType) requirements.push(`Type: ${task.questionType}`);
+    if (task.startDate) requirements.push(`Start: ${task.startDate}`);
+    if (task.endDate) requirements.push(`End: ${task.endDate}`);
+    if (task.anonymous !== null && task.anonymous !== undefined)
+        requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
+    if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
+
+    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
+}

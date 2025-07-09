@@ -6,12 +6,13 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/createTask.css}" />
     <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/createTask.js}"></script>
 </head>
 
 <body>
 
 <!-- Header -->
-<div th:replace="fragments/header_employee :: header"></div>
+<div th:replace="~{fragments/header_employee :: header}"></div>
 
 <!-- Main Content -->
 <main class="create-task-wrapper">
@@ -21,11 +22,11 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-flyer-form" action="/api/create-task/flyer" method="post" novalidate>
+        <form id="create-flyer-form" action="/create-task/flyer" method="post" novalidate>
             <input type="hidden" name="taskType" value="flyer">
 
-            <!-- Basic Task Details -->
-            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+            <!-- Basic Task Details (includes all Task and Person fields) -->
+            <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
 
             <!-- Flyer Specific Details -->
             <div class="form-section">
@@ -33,19 +34,16 @@
 
                 <div class="form-row">
                     <div class="form-field">
-                        <label for="paper-size" class="form-label">Size</label>
+                        <label for="paper-size" class="form-label">Paper Size</label>
                         <input type="text" id="paper-size" name="paperSize" class="form-input"
                                list="size-options" placeholder="Select or enter custom size" />
                         <datalist id="size-options">
-                            <option value="A4">
-                            <option value="A5">
-                            <option value="A6">
-                            <option value="Letter">
-                            <option value="Legal">
-                            <option value="Tabloid">
-                            <option value="210 x 297 mm">
-                            <option value="148 x 210 mm">
-                            <option value="105 x 148 mm">
+                            <option value="A4">A4 (210 × 297 mm)</option>
+                            <option value="A5">A5 (148 × 210 mm)</option>
+                            <option value="A6">A6 (105 × 148 mm)</option>
+                            <option value="Letter">Letter (8.5 × 11 in)</option>
+                            <option value="Legal">Legal (8.5 × 14 in)</option>
+                            <option value="Tabloid">Tabloid (11 × 17 in)</option>
                         </datalist>
                     </div>
 
@@ -55,48 +53,23 @@
                             <option value="">Select Paper Type</option>
                             <option value="Standard">Standard (80gsm)</option>
                             <option value="Premium">Premium (120gsm)</option>
-                            <option value="Glossy">Glossy</option>
-                            <option value="Matte">Matte</option>
-                            <option value="Recycled">Recycled</option>
+                            <option value="Glossy">Glossy Finish</option>
+                            <option value="Matte">Matte Finish</option>
+                            <option value="Recycled">Recycled Paper</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="target-audience" class="form-label">Target Audience</label>
-                        <input type="text" id="target-audience" name="targetAudience" class="form-input"
-                               placeholder="e.g., UBS clients, employees, general public" />
-                    </div>
-
-                    <div class="form-field">
-                        <label for="channel" class="form-label">Channel</label>
-                        <select id="channel" name="channel" class="form-select">
-                            <option value="">Select Channel</option>
-                            <option value="Internal">Internal Distribution</option>
-                            <option value="External">External Distribution</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-field">
-                    <label for="handover-method" class="form-label">Handover</label>
-                    <select id="handover-method" name="handover" class="form-select">
-                        <option value="">Select Handover Method</option>
-                        <option value="email">Email</option>
-                        <option value="teams">Microsoft Teams</option>
-                        <option value="sharepoint">SharePoint</option>
-                        <option value="direct">Direct Meeting</option>
-                        <option value="download">Download Portal</option>
-                    </select>
                 </div>
             </div>
 
             <!-- Submit Section -->
-            <div class="form-section">
+            <div class="form-section form-actions-section">
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" class="btn-primary">Create Flyer Task</button>
+                    <button type="button" class="btn-secondary" onclick="window.history.back()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        Create Flyer Task
+                    </button>
                 </div>
             </div>
         </form>
@@ -104,7 +77,7 @@
 </main>
 
 <!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

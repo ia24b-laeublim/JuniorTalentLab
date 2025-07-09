@@ -7,12 +7,6 @@ import java.time.LocalDate;
 @Table(name = "PollTask")
 public class PollTask extends Task {
 
-    @Column(name = "Title", length = 255)
-    private String title;
-
-    @Column(name = "Description", columnDefinition = "NVARCHAR(MAX)")
-    private String description;
-
     @Column(name = "QuestionCount")
     private Integer questionCount;
 
@@ -28,31 +22,12 @@ public class PollTask extends Task {
     @Column(name = "Anonymous")
     private Boolean anonymous;
 
-    @Column(name = "DistributionMethod", length = 50)
-    private String distributionMethod;
-
     // Konstruktoren
     public PollTask() {
     }
 
 
     // Getter & Setter
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public Integer getQuestionCount() {
         return questionCount;
@@ -92,13 +67,5 @@ public class PollTask extends Task {
 
     public void setAnonymous(Boolean anonymous) {
         this.anonymous = anonymous;
-    }
-
-    public String getDistributionMethod() {
-        return distributionMethod;
-    }
-
-    public void setDistributionMethod(String distributionMethod) {
-        this.distributionMethod = distributionMethod;
     }
 }

@@ -1,6 +1,7 @@
 package ch.ubs.juniorlab.service;
 
 import ch.ubs.juniorlab.entity.*;
+import jakarta.persistence.*;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -13,6 +14,9 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class PDFService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void generatePDF(Task task) throws IOException {
         PDDocument document = new PDDocument();
@@ -28,26 +32,26 @@ public class PDFService {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-        // === Titel-Balken ===
-        cs.setNonStrokingColor(0, 102, 204);
+        // === Title Bar ===
+        cs.setNonStrokingColor(245, 245, 245); // Light gray background
         cs.addRect(0, yStart - 20, page.getMediaBox().getWidth(), 30);
         cs.fill();
 
         cs.beginText();
-        cs.setNonStrokingColor(255, 255, 255);
+        cs.setNonStrokingColor(0, 0, 0); // Black text
         cs.setFont(PDType1Font.HELVETICA_BOLD, 16);
         cs.newLineAtOffset(margin, yStart - 10);
         cs.showText("PDF Task #" + task.getId());
         cs.endText();
 
-        // Linke Spalte (Allgemeine Daten & Spezifikationen)
+        // Left Column (General Info & Specs)
         cs.beginText();
         cs.setFont(PDType1Font.HELVETICA, 12);
         cs.setNonStrokingColor(0, 0, 0);
         cs.setLeading(16f);
         cs.newLineAtOffset(margin, yStart - 60);
 
-        underlineSection(cs, "Allgemeine Daten");
+        underlineSection(cs, "General Information");
         writeField(cs, "Title", task.getTitle());
         writeField(cs, "Description", task.getDescription());
         writeField(cs, "Target Audience", task.getTargetAudience());
@@ -59,33 +63,34 @@ public class PDFService {
         writeField(cs, "Handover Method", task.getHandoverMethod());
 
         cs.newLine();
-        underlineSection(cs, "Spezifikationen");
+        underlineSection(cs, "Specifications");
 
         if (task instanceof FlyerTask flyer) {
-            writeField(cs, "Typ", "Flyer");
+            writeField(cs, "Type", "Flyer");
             writeField(cs, "Paper Size", flyer.getPaperSize());
             writeField(cs, "Paper Type", flyer.getPaperType());
         } else if (task instanceof PosterTask poster) {
-            writeField(cs, "Typ", "Poster");
+            writeField(cs, "Type", "Poster");
             writeField(cs, "Format", poster.getFormat());
             writeField(cs, "Poster Size", poster.getPosterSize());
             writeField(cs, "Paper Type", poster.getPaperType());
+            writeField(cs, "Print Quality (DPI)", poster.getPrintQualityDpi() != null ? poster.getPrintQualityDpi().toString() : null);
             writeField(cs, "Mounting Type", poster.getMountingType());
         } else if (task instanceof PhotoTask photo) {
-            writeField(cs, "Typ", "Photo");
+            writeField(cs, "Type", "Photo");
             writeField(cs, "Format", photo.getFormat());
             writeField(cs, "File Format", photo.getFileFormat());
             writeField(cs, "Platforms", photo.getSocialMediaPlatforms());
             writeField(cs, "Resolution", photo.getResolution());
         } else if (task instanceof SlideshowTask slide) {
-            writeField(cs, "Typ", "Slideshow");
+            writeField(cs, "Type", "Slideshow");
             writeField(cs, "Format", slide.getFormat());
             writeField(cs, "File Format", slide.getFileFormat());
             writeField(cs, "Platforms", slide.getSocialMediaPlatforms());
             writeField(cs, "Resolution", slide.getResolution());
             writeField(cs, "Photo Count", slide.getPhotoCount() != null ? slide.getPhotoCount().toString() : null);
         } else if (task instanceof VideoTask video) {
-            writeField(cs, "Typ", "Video");
+            writeField(cs, "Type", "Video");
             writeField(cs, "Length (sec)", video.getLengthSec() != null ? video.getLengthSec().toString() : null);
             writeField(cs, "Voiceover", video.getVoiceover() != null ? video.getVoiceover().toString() : null);
             writeField(cs, "Disclaimer", video.getDisclaimer() != null ? video.getDisclaimer().toString() : null);
@@ -96,11 +101,11 @@ public class PDFService {
             writeField(cs, "Resolution", video.getResolution());
             writeField(cs, "Music Style", video.getMusicStyle());
         } else {
-            writeField(cs, "Typ", "Allgemein");
+            writeField(cs, "Type", "General");
         }
         cs.endText();
 
-        // Rechte Spalte (Client & Apprentice)
+        // Right Column (Client & Apprentice)
         float yRightStart = yStart - 60;
         cs.beginText();
         cs.setFont(PDType1Font.HELVETICA, 12);
@@ -142,7 +147,7 @@ public class PDFService {
         document.save(pdfFile);
         document.close();
 
-        System.out.println("✅ PDF gespeichert unter: " + pdfFile.getAbsolutePath());
+        System.out.println("✅ PDF saved at: " + pdfFile.getAbsolutePath());
     }
 
     private void writeField(PDPageContentStream cs, String label, String value) throws IOException {
@@ -161,8 +166,8 @@ public class PDFService {
     }
 
     private void writePerson(PDPageContentStream cs, Person p) throws IOException {
-        writeField(cs, "Vorname", p.getPrename());
-        writeField(cs, "Nachname", p.getName());
+        writeField(cs, "First Name", p.getPrename());
+        writeField(cs, "Last Name", p.getName());
         writeField(cs, "E-Mail", p.getEmail());
         writeField(cs, "GPN", p.getGpn());
     }
@@ -175,12 +180,19 @@ public class PDFService {
         File pdfFile = new File(dir, "Task_" + task.getId() + ".pdf");
 
         if (pdfFile.exists()) {
-            System.out.println("ℹ️ PDF existiert bereits: " + pdfFile.getAbsolutePath());
+            System.out.println("ℹ️ PDF already exists: " + pdfFile.getAbsolutePath());
             return pdfFile;
         }
 
-        generatePDF(task);  // erstellt das PDF neu, wenn es noch nicht existiert
+        generatePDF(task);
         return pdfFile;
     }
 
+    public File checkPDF(Long taskId) throws IOException {
+        Task task = entityManager.find(Task.class, taskId);
+        if (task == null) {
+            throw new IllegalArgumentException("Task with ID " + taskId + " not found.");
+        }
+        return checkPDF(task);
+    }
 }

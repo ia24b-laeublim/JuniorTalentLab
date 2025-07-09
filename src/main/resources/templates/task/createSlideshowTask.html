@@ -11,7 +11,7 @@
 <body>
 
 <!-- Header -->
-<div th:replace="fragments/header_employee :: header"></div>
+<div th:replace="~{fragments/header_employee :: header}"></div>
 
 <!-- Main Content -->
 <main class="create-task-wrapper">
@@ -21,11 +21,11 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-slideshow-form" action="/api/create-task/slideshow" method="post" novalidate>
+        <form id="create-slideshow-form" action="/create-task/slideshow" method="post" novalidate>
             <input type="hidden" name="taskType" value="slideshow">
             
             <!-- Basic Task Details -->
-            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+            <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
 
             <!-- Slideshow Specific Details -->
             <div class="form-section">
@@ -86,38 +86,6 @@
                             <option value="Presentation">Live Presentation Only</option>
                         </select>
                     </div>
-                    
-                    <div class="form-field">
-                        <label for="target-audience" class="form-label">Target Audience</label>
-                        <input type="text" id="target-audience" name="targetAudience" class="form-input" 
-                               placeholder="e.g., UBS clients, employees, general public" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="channel" class="form-label">Channel</label>
-                        <select id="channel" name="channel" class="form-select">
-                            <option value="">Select Channel</option>
-                            <option value="Internal">Internal Distribution</option>
-                            <option value="External">External Distribution</option>
-                            <option value="Digital">Digital Only</option>
-                            <option value="Print">Print Only</option>
-                            <option value="Both">Digital & Print</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label for="handover-method" class="form-label">Handover</label>
-                        <select id="handover-method" name="handover" class="form-select">
-                            <option value="">Select Handover Method</option>
-                            <option value="email">Email</option>
-                            <option value="teams">Microsoft Teams</option>
-                            <option value="sharepoint">SharePoint</option>
-                            <option value="direct">Direct Meeting</option>
-                            <option value="download">Download Portal</option>
-                        </select>
-                    </div>
                 </div>
             </div>
 
@@ -133,7 +101,7 @@
 </main>
 
 <!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

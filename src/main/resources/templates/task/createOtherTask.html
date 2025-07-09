@@ -11,7 +11,7 @@
 <body>
 
 <!-- Header -->
-<div th:replace="fragments/header_employee :: header"></div>
+<div th:replace="~{fragments/header_employee :: header}"></div>
 
 <!-- Main Content -->
 <main class="create-task-wrapper">
@@ -21,11 +21,11 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-flyer-form" action="/api/create-task/other" method="post" novalidate>
+        <form id="create-flyer-form" action="/create-task/flyer" method="post" novalidate>
             <input type="hidden" name="taskType" value="flyer">
 
             <!-- Basic Task Details -->
-            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+            <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
 
             <!-- Submit Section -->
             <div class="form-section">
@@ -39,7 +39,7 @@
 </main>
 
 <!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>
