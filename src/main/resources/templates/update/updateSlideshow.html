@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Slideshow Task - Junior Talent Lab</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+  <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+
+
+<!-- Main Content -->
+<main class="create-task-wrapper">
+  <div class="page-title-container">
+    <h1>Create Slideshow Task</h1>
+    <div class="red-underline"></div>
+  </div>
+
+  <div class="create-task-container">
+    <form id="create-slideshow-form" action="/create-task/slideshow" method="post" novalidate>
+      <input type="hidden" name="taskType" value="slideshow">
+
+      <!-- Basic Task Details -->
+      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+
+      <!-- Slideshow Specific Details -->
+      <div class="form-section">
+        <h2>Slideshow Specifications</h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="format" class="form-label">Format</label>
+            <select id="format" name="format" class="form-select">
+              <option value="">Select Format</option>
+              <option value="Landscape">Landscape (16:9)</option>
+              <option value="Square">Square (1:1)</option>
+              <option value="Portrait">Portrait (9:16)</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="file-format" class="form-label">File Format</label>
+            <select id="file-format" name="fileFormat" class="form-select">
+              <option value="">Select File Format</option>
+              <option value="PPTX">PowerPoint (PPTX)</option>
+              <option value="PDF">PDF</option>
+              <option value="KEY">Keynote</option>
+              <option value="HTML">HTML Slideshow</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="photo-count" class="form-label">Photo Count</label>
+            <input type="number" id="photo-count" name="photoCount" class="form-input"
+                   min="1" max="100" placeholder="e.g., 15" />
+          </div>
+
+          <div class="form-field">
+            <label for="resolution" class="form-label">Resolution</label>
+            <input type="text" id="resolution" name="resolution" class="form-input"
+                   list="slideshow-resolution-options" placeholder="Select or enter resolution" />
+            <datalist id="slideshow-resolution-options">
+              <option value="1920x1080">
+              <option value="1280x720">
+              <option value="3840x2160">
+              <option value="1024x768">
+            </datalist>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="social-media-platforms" class="form-label">Social Media Platforms</label>
+            <select id="social-media-platforms" name="socialMediaPlatforms" class="form-select">
+              <option value="">Select Platform</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="Instagram">Instagram</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Multiple">Multiple Platforms</option>
+              <option value="Presentation">Live Presentation Only</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Section -->
+      <div class="form-section">
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+
+
+</body>
+</html>
