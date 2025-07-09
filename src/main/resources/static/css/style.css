@@ -15,13 +15,19 @@ body {
 
 /* Header Styles */
 .ubs-header {
+    position: sticky;
+    top: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
     padding: 20px 40px;
+    background: #fff;
     border-bottom: 1px solid #ccc;
+    z-index: 1000;
+    box-sizing: border-box;
 }
+
 
 .dropdown {
     position: relative;
@@ -432,7 +438,8 @@ footer {
 /* ============================================= */
 .page-title-container {
     text-align: center;
-    margin: 40px 0;
+    margin-top: 25px;
+    margin-bottom: 50px;
 }
 
 .page-title-container h1 {
@@ -656,4 +663,11 @@ footer {
 .contact-button:disabled {
     background: #ccc !important;
     cursor: not-allowed;
+}
+
+html, body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
 }
