@@ -185,3 +185,29 @@ function getSpecificRequirements(task) {
 
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
+
+function showRejectConfirm() {
+    document.getElementById("popupMessage").textContent = "Are you sure you want to reject the task?";
+
+    document.getElementById("popupOverlay2").style.display = "block";
+    document.getElementById("popupContainer2").style.display = "block";
+
+    document.getElementById("acceptBtn").onclick = function() {
+        rejectTask();
+        closePopup2();
+
+    };
+
+    document.getElementById("rejectBtn").onclick = function() {
+        closePopup2();
+
+    };
+}
+
+function closePopup2() {
+    document.getElementById("popupOverlay2").style.display = "none";
+    document.getElementById("popupContainer2").style.display = "none";
+
+
+
+}

@@ -2,6 +2,7 @@ package ch.ubs.juniorlab.controller;
 
 import ch.ubs.juniorlab.entity.*;
 import ch.ubs.juniorlab.repository.*;
+import ch.ubs.juniorlab.service.MailService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ public class CreateTaskController {
     private final SlideshowTaskRepository slideshowTaskRepository;
     private final PosterTaskRepository posterTaskRepository;
     private final PollTaskRepository pollTaskRepository;
+    private final MailService mailService;
 
     public CreateTaskController(
             TaskRepository taskRepository,
@@ -31,7 +33,8 @@ public class CreateTaskController {
             PhotoTaskRepository photoTaskRepository,
             SlideshowTaskRepository slideshowTaskRepository,
             PosterTaskRepository posterTaskRepository,
-            PollTaskRepository pollTaskRepository
+            PollTaskRepository pollTaskRepository,
+            MailService mailService
     ) {
         this.taskRepository = taskRepository;
         this.personRepository = personRepository;
@@ -41,6 +44,7 @@ public class CreateTaskController {
         this.slideshowTaskRepository = slideshowTaskRepository;
         this.posterTaskRepository = posterTaskRepository;
         this.pollTaskRepository = pollTaskRepository;
+        this.mailService = mailService;
     }
 
     @PostMapping("/create-task/flyer")
@@ -100,8 +104,12 @@ public class CreateTaskController {
     ) {
         try {
             Person client = findOrCreatePerson(gpn, name, prename, email);
+
             VideoTask videoTask = new VideoTask();
-            populateBaseTaskFields(videoTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
+            populateBaseTaskFields(videoTask, title, description, targetAudience,
+                    budgetChf, deadline, maxFileSizeMb,
+                    channel, handoverMethod, client);
+
             videoTask.setLengthSec(lengthSec);
             videoTask.setVoiceover(voiceover);
             videoTask.setDisclaimer(disclaimer);
@@ -111,7 +119,13 @@ public class CreateTaskController {
             videoTask.setSocialMediaPlatforms(socialMediaPlatforms);
             videoTask.setResolution(resolution);
             videoTask.setMusicStyle(musicStyle);
+
             videoTaskRepository.save(videoTask);
+
+            // --- send confirmation e-mail to the creator -------------------
+            sendTaskCreatedMail(videoTask, client);
+            // ----------------------------------------------------------------
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -293,7 +307,6 @@ public class CreateTaskController {
     }
 
     // === Shared Logic ===
-
     private Person findOrCreatePerson(String gpn, String name, String prename, String email) {
         return personRepository.findByGpn(gpn)
                 .orElseGet(() -> {
@@ -328,5 +341,15 @@ public class CreateTaskController {
         task.setHandoverMethod(handoverMethod);
         task.setClient(client);
         task.setStatus("open");
+    }
+
+
+    private void sendTaskCreatedMail(Task task, Person client) {
+        String subject = "Your new task \"" + task.getTitle() + "\" has been created";
+        String body =
+                "Hi " + client.getName() + ",\n\n" +
+                        "Thanks for submitting your request. We’ve recorded it under ID " + task.getId() + ".\n\n" +
+                        "Kind regards,\nJunior Talent Lab";
+        mailService.sendEmail(client.getEmail(), subject, body);
     }
 }

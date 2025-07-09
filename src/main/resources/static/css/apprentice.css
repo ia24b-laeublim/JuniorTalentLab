@@ -1,22 +1,18 @@
-/* ============================================= */
-/*         COMMENT SECTION STYLES                */
-/* ============================================= */
-
 .popup-section.comment-section {
-    flex-grow: 1; /* Weist die Kommentar-Sektion an, allen verfügbaren Platz einzunehmen */
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    min-height: 0; /* Wichtiger Fix, um Überlaufen zu verhindern */
+    min-height: 0;
     padding: 16px;
 }
 
 #comment-list {
-    flex-grow: 1; /* Lässt die Liste den verfügbaren Platz füllen */
-    overflow-y: auto; /* Fügt einen Scrollbalken hinzu, NUR wenn nötig */
-    margin-bottom: 16px; /* Abstand zur Eingabebox */
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 16px;
 }
 
-#comment-list div { /* Stil für einzelne Kommentare */
+#comment-list div {
     padding: 4px 0;
     border-bottom: 1px solid #e0e0e0;
 }
@@ -25,14 +21,14 @@
 }
 
 .comment-section textarea {
-    flex-shrink: 0; /* Verhindert, dass die Textbox schrumpft */
+    flex-shrink: 0;
     width: 100%;
     resize: vertical;
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
     box-sizing: border-box;
-    min-height: 60px; /* Mindesthöhe */
+    min-height: 60px;
 }
 
 .comment-section button {
@@ -45,7 +41,7 @@
     font-weight: bold;
     border-radius: 4px;
     cursor: pointer;
-    align-self: flex-start; /* Richtet den Button links aus */
+    align-self: flex-start;
     transition: background-color 0.2s;
 }
 
@@ -62,10 +58,6 @@
     padding: 16px;
     background-color: #f5f5f5;
 }
-
-/* ============================================= */
-/*         CARDS STYLES                          */
-/* ============================================= */
 
 .task-grid {
     display: flex;
@@ -95,10 +87,6 @@
     background-color: #e5e5e5;
     transform: translateY(-2px);
 }
-
-/* ============================================= */
-/*         POP UP STYLES                         */
-/* ============================================= */
 
 .popup {
     position: fixed;
@@ -179,10 +167,6 @@
     border-radius: 4px;
 }
 
-/* ============================================= */
-/*         POP UP BUTTON STYLES                  */
-/* ============================================= */
-
 .popup-buttons {
     display: flex;
     justify-content: flex-end;
@@ -216,10 +200,6 @@
 .popup-buttons button:last-of-type:hover {
     background-color: #b50015;
 }
-
-/* ============================================= */
-/*         HELPER STYLES                         */
-/* ============================================= */
 
 .hidden {
     display: none !important;
