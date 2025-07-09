@@ -397,7 +397,7 @@ footer {
 .red-underline {
     width: 80px;
     height: 10px;
-    background-color: #E2001A;
+    background-color: #E60100;
     margin-top: 8px;
     margin-bottom: 24px;
 }
@@ -410,7 +410,7 @@ footer {
 }
 
 .impressum-container a:hover {
-    color: #E2001A;
+    color: #E60100;
     text-decoration: underline;
 }
 
@@ -452,7 +452,7 @@ footer {
 .page-title-container .red-underline {
     width: 80px;
     height: 10px;
-    background-color: #E2001A;
+    background-color: #E60100;
     margin: 8px auto 0;
 }
 
@@ -494,7 +494,7 @@ footer {
 }
 
 .privacy-box a:hover {
-    color: #E2001A;
+    color: #E60100;
     text-decoration: underline;
 }
 
@@ -599,7 +599,7 @@ footer {
 }
 
 .dot.active {
-    background-color: #e74c3c;
+    background-color: #e60100;
 }
 
 /* Make sure index section matches carousel width */
@@ -648,19 +648,19 @@ footer {
 .feedback.success {
     display: block;
     background-color: #d4edda;
-    color: #155724;
+    color: #4a9c57;
     border: 1px solid #c3e6cb;
 }
 
 .feedback.error {
     display: block;
     background-color: #f8d7da;
-    color: #721c24;
+    color: #E60100;
     border: 1px solid #f5c6cb;
 }
 
 .contact-button:disabled {
-    background: #ccc !important;
+    background: #F5F5F5 !important;
     cursor: not-allowed;
 }
 
