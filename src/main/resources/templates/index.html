@@ -5,81 +5,6 @@
     <title>Startseite</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <script th:src="@{/js/script.js}"></script>
-
-    <style>
-        .card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 40px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 1145px;
-            width: 100%;
-        }
-
-        .cards {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 28px;
-            font-weight: bold;
-            position: relative;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        .card-title::after {
-            content: "";
-            display: block;
-            width: 60px;
-            height: 6px;
-            background-color: #e60100;
-            margin-top: 5px;
-        }
-
-        .more-text {
-            display: none;
-        }
-
-        .read-more-btn {
-            color: #e60100;
-            cursor: pointer;
-            font-weight: bold;
-            border: none;
-            background: none;
-            padding: 0;
-            margin-top: 10px;
-        }
-
-        p {
-            margin-bottom: 15px;
-        }
-        /* Overrride des JS display:none/display:inline */
-        .more-text {
-            display: block !important;
-            font-size: 19px;
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition:
-                    max-height 1s ease,
-                    opacity    1s ease;
-        }
-
-        /* Wenn toggleText() display:inline setzt, wird hier ge-matched */
-        .more-text[style*="display: inline"] {
-            max-height: 800px;
-            opacity:    1;
-        }
-        .cardText {
-            font-size: 19px;
-        }
-
-
-    </style>
 </head>
 <body>
 
@@ -90,11 +15,12 @@
 <div class="carousel-container">
     <div class="carousel">
         <div class="carousel-images">
-            <img src="/img/img1.jpg" alt="Image 1" class="carousel-image active">
-            <img src="/img/img2.jpg" alt="Image 2" class="carousel-image">
-            <img src="/img/img3.jpg" alt="Image 3" class="carousel-image">
-            <img src="/img/img4.jpg" alt="Image 4" class="carousel-image">
-            <img src="/img/img5.jpg" alt="Image 5" class="carousel-image">
+            <img src="/img/apprentice_img.jpg" alt="Image 1" class="carousel-image active">
+            <img src="/img/bahnhofstrasse_img.jpg" alt="Image 2" class="carousel-image">
+            <img src="/img/brainstorm_img.jpg" alt="Image 3" class="carousel-image">
+            <img src="/img/graduation_img.jpg" alt="Image 4" class="carousel-image">
+            <img src="/img/hike_img.jpg" alt="Image 5" class="carousel-image">
+            <img src="/img/laptop_img.jpg" alt="Image 6" class="carousel-image">
         </div>
         <button class="carousel-button left"  onclick="previousSlide()">‹</button>
         <button class="carousel-button right" onclick="nextSlide()">›</button>
@@ -104,52 +30,84 @@
             <span class="dot"          onclick="currentSlide(3)"></span>
             <span class="dot"          onclick="currentSlide(4)"></span>
             <span class="dot"          onclick="currentSlide(5)"></span>
+            <span class="dot"          onclick="currentSlide(6)"></span>
         </div>
     </div>
 </div>
+
+<!-- Welcome Section -->
+<section class="welcome-section">
+    <div class="welcome-content">
+        <h2>Welcome to the UBS Junior Talent Lab</h2>
+        <p>
+            Our collaborative learning and project portal connecting UBS apprentices with professional employees.
+            Explore real-world assignments, collaborate in teams, and develop valuable skills through hands-on projects
+            while contributing to meaningful business solutions.
+        </p>
+    </div>
+</section>
 
 <!-- Deine Karten mit Read more/less -->
 <div class="cards">
     <div class="card">
         <div class="card-title">About Junior Talent Lab</div>
         <p class="cardText">
-            The UBS Junior Talent Lab is a fresh learning format where mediamatics trainees receive real assignments
-            from UBS-Professionals and implement them independently as a team. In a creative, self-organized
-            environment, the learners develop practical solutions, strengthen their professional skills, and tackle new
-            challenges.
+            The UBS Junior Talent Lab is an innovative learning platform that bridges the gap between education and
+            professional practice. Here, media specialist apprentices receive authentic assignments from UBS professionals
+            and work on them independently as teams, fostering creativity, self-organization, and practical problem-solving
+            skills in a real business environment.
         </p>
         <div class="more-text">
             <p>
-                The Lab offers a simple platform where professional employees can submit their project ideas and small
-                tasks. The learners then review and work on these assignments, providing clear feedback upon completion.
-                The system ensures structured workflows, open communication, and a transparent overview of all active
-                projects.
+                The Lab provides a streamlined platform where UBS employees can submit project ideas, tasks, and
+                business challenges of various types - from creative photo assignments to technical development tasks.
+                Apprentices can browse, accept, and work on these assignments, receiving guidance and feedback from
+                experienced professionals throughout the process.
             </p>
             <p>
-                This way, not only useful products and services are created, but also strong personalities for the
-                future.
+                This collaborative approach ensures structured workflows, transparent communication, and clear project
+                oversight. The platform tracks progress, facilitates feedback exchange, and maintains a comprehensive
+                overview of all active and completed projects, creating a valuable learning ecosystem.
+            </p>
+            <p>
+                By working on real business challenges, apprentices not only develop technical skills but also gain
+                insights into professional workflows, client requirements, and business priorities - preparing them
+                for successful careers while delivering tangible value to the organization.
             </p>
         </div>
         <button class="read-more-btn" onclick="toggleText(this)">Read more</button>
     </div>
 
-    <div class="card">
+    <div class="card" style="margin-top: 0px !important; ">
         <div class="card-title">How to Use the Platform</div>
         <p class="cardText">
-            Getting started is simple! Browse available tasks in the <strong>Requests</strong> section and click "Accept
-            Task" on any project that interests you. Once accepted, the task moves to your <strong>Overview</strong>
-            where you can track your progress and communicate with the task creator.
+            Getting started is straightforward! First, select your role (Apprentice or Employee) from the dropdown menu in the header. <strong>Apprentices</strong> can browse and accept tasks from the <strong>Requests</strong> section, while <strong>employees</strong> can create new tasks for apprentices to work on.
         </p>
         <div class="more-text">
             <p>
-                <strong>Requests:</strong> All new tasks from UBS professionals waiting to be accepted<br>
-                <strong>Overview:</strong> Your active tasks that you're currently working on<br>
-                <strong>Finished:</strong> Completed tasks where you can view feedback and results
+                <strong>For Apprentices:</strong><br>
+                <strong>Requests:</strong> Discover new tasks and projects submitted by UBS employees. Each task includes
+                detailed requirements, deadlines, and specifications. You can filter by task type, department, or complexity level.<br>
+                <strong>Overview:</strong> Your personal dashboard showing all active assignments you're currently working on.
+                Track deadlines, communicate with task creators, upload progress updates, and manage your workload effectively.<br>
+                <strong>Finished:</strong> Archive of completed tasks where you can review feedback, see final results,
+                and reflect on your learning journey. This section also showcases your accomplishments and skill development.
             </p>
             <p>
-                When you complete a task, submit your work, and it will automatically move to the
-                <strong>Finished</strong> section. The platform keeps everything organized so you can focus on what
-                matters most – learning and creating great solutions!
+                <strong>For Employees:</strong><br>
+                Create various types of tasks including video, photo, slideshow, poster, flyer, poll and other assignments.
+                Monitor progress of your submitted tasks, communicate with apprentices, and provide feedback on completed work.
+            </p>
+            <p>
+                The platform supports various task types including video, photo, slideshow, poster, flyer, poll and other
+                assignments. Each task type has specific submission requirements and evaluation criteria.
+                When you complete a task, mark it as finished through the platform, and it will automatically move
+                to the <strong>Finished</strong> section for review.
+            </p>
+            <p>
+                Communication tools are built into each task, allowing direct messaging with task creators, progress updates,
+                and collaborative feedback. The platform keeps everything organized and accessible, so you can focus on
+                learning, creating innovative solutions, and building professional relationships within UBS.
             </p>
         </div>
         <button class="read-more-btn" onclick="toggleText(this)">Read more</button>
