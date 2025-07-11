@@ -3,8 +3,8 @@ package ch.ubs.juniorlab.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "File")
-public class File {
+@Table(name = "uploaded_files")
+public class UploadedFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
