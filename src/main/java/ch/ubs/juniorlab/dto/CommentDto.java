@@ -1,4 +1,4 @@
-package ch.ubs.juniorlab.controller; // Oder ch.ubs.juniorlab.dto
+package ch.ubs.juniorlab.dto; // Oder ch.ubs.juniorlab.dto
 
 public class CommentDto {
 

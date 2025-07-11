@@ -6,6 +6,7 @@ import ch.ubs.juniorlab.service.MailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ch.ubs.juniorlab.dto.*;
 
 import java.util.Optional;
 
