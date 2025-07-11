@@ -2,7 +2,7 @@ package ch.ubs.juniorlab.controller;
 
 import ch.ubs.juniorlab.entity.*;
 import ch.ubs.juniorlab.repository.*;
-import ch.ubs.juniorlab.service.MailService;
+import ch.ubs.juniorlab.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +24,7 @@ public class CreateTaskController {
     private final PosterTaskRepository posterTaskRepository;
     private final PollTaskRepository pollTaskRepository;
     private final MailService mailService;
+    private final HashService hashService;
 
     public CreateTaskController(
             TaskRepository taskRepository,
@@ -34,7 +35,8 @@ public class CreateTaskController {
             SlideshowTaskRepository slideshowTaskRepository,
             PosterTaskRepository posterTaskRepository,
             PollTaskRepository pollTaskRepository,
-            MailService mailService
+            MailService mailService,
+            HashService hashService
     ) {
         this.taskRepository = taskRepository;
         this.personRepository = personRepository;
@@ -45,6 +47,7 @@ public class CreateTaskController {
         this.posterTaskRepository = posterTaskRepository;
         this.pollTaskRepository = pollTaskRepository;
         this.mailService = mailService;
+        this.hashService = hashService;
     }
 
     @PostMapping("/create-task/flyer")
@@ -71,6 +74,10 @@ public class CreateTaskController {
             flyerTask.setPaperSize(paperSize);
             flyerTask.setPaperType(paperType);
             flyerTaskRepository.save(flyerTask);
+
+            // Send email
+            sendTaskCreatedMail(flyerTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,9 +129,7 @@ public class CreateTaskController {
 
             videoTaskRepository.save(videoTask);
 
-            // --- send confirmation e-mail to the creator -------------------
             sendTaskCreatedMail(videoTask, client);
-            // ----------------------------------------------------------------
 
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
@@ -161,6 +166,9 @@ public class CreateTaskController {
             photoTask.setSocialMediaPlatforms(socialMediaPlatforms);
             photoTask.setResolution(resolution);
             photoTaskRepository.save(photoTask);
+
+            sendTaskCreatedMail(photoTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,19 +197,36 @@ public class CreateTaskController {
             @RequestParam(required = false) String resolution
     ) {
         try {
+            // Find or create the person
             Person client = findOrCreatePerson(gpn, name, prename, email);
-            SlideshowTask slideshowTask = new SlideshowTask();
-            populateBaseTaskFields(slideshowTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
+
+            // Create the main task
+            Task task = new SlideshowTask();
+            populateBaseTaskFields(task, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
+
+            // Save the task first to get the ID
+            task = taskRepository.save(task);
+
+            // Set slideshow-specific fields
+            SlideshowTask slideshowTask = (SlideshowTask) task;
             slideshowTask.setFormat(format);
             slideshowTask.setFileFormat(fileFormat);
             slideshowTask.setSocialMediaPlatforms(socialMediaPlatforms);
             slideshowTask.setPhotoCount(photoCount);
             slideshowTask.setResolution(resolution);
+
+            // Save the slideshow task
             slideshowTaskRepository.save(slideshowTask);
+
+            // Send the email - ADD THIS LINE
+            sendTaskCreatedMail(task, client);
+
             return new ModelAndView("redirect:/");
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ModelAndView("redirect:/create-task/slideshow?error=true");
+            ModelAndView modelAndView = new ModelAndView("task/createSlideshowTask");
+            modelAndView.addObject("error", "Error creating slideshow task: " + e.getMessage());
+            return modelAndView;
         }
     }
 
@@ -235,6 +260,9 @@ public class CreateTaskController {
             posterTask.setPrintQualityDpi(printQualityDpi);
             posterTask.setMountingType(mountingType);
             posterTaskRepository.save(posterTask);
+
+            sendTaskCreatedMail(posterTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -272,6 +300,9 @@ public class CreateTaskController {
             pollTask.setEndDate(endDate);
             pollTask.setAnonymous(anonymous);
             pollTaskRepository.save(pollTask);
+
+            sendTaskCreatedMail(pollTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -299,6 +330,9 @@ public class CreateTaskController {
             Task task = new Task();
             populateBaseTaskFields(task, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
             taskRepository.save(task); // ✅ This line
+
+            sendTaskCreatedMail(task, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -345,11 +379,30 @@ public class CreateTaskController {
 
 
     private void sendTaskCreatedMail(Task task, Person client) {
-        String subject = "Your new task \"" + task.getTitle() + "\" has been created";
-        String body =
-                "Hi " + client.getName() + ",\n\n" +
-                        "Thanks for submitting your request. We’ve recorded it under ID " + task.getId() + ".\n\n" +
-                        "Kind regards,\nJunior Talent Lab";
-        mailService.sendEmail(client.getEmail(), subject, body);
+        String taskUrl = hashService.getInfoUrl(task.getId());
+
+        String subject = "Task Created: " + task.getTitle();
+        String message = String.format(
+                """
+                        Hello %s,
+                        
+                        Your task has been successfully created!
+                        
+                        If you wish to edit, delete, or review your task, here is the corresponding link:
+                        %s
+                        
+                        Thank you for using Junior Talent Lab!
+                        
+                        Best regards,
+                        Junior Talent Lab Team""",
+                client.getPrename(),
+                taskUrl
+        );
+
+        mailService.sendEmail(client.getEmail(), subject, message);
+
+        // Also print to console for debugging
+        System.out.println("Task created with URL: " + taskUrl);
+        System.out.println("Email sent to: " + client.getEmail());
     }
 }
