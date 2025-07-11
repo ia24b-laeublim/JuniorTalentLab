@@ -383,13 +383,18 @@ public class CreateTaskController {
 
         String subject = "Task Created: " + task.getTitle();
         String message = String.format(
-                "Hello %s,\n\n" +
-                        "Your task has been successfully created!\n\n" +
-                        "If you wish to edit, delete, or review your task, here is the corresponding link:\n" +
-                        "%s\n\n" +
-                        "Thank you for using Junior Talent Lab!\n\n" +
-                        "Best regards,\n" +
-                        "Junior Talent Lab Team",
+                """
+                        Hello %s,
+                        
+                        Your task has been successfully created!
+                        
+                        If you wish to edit, delete, or review your task, here is the corresponding link:
+                        %s
+                        
+                        Thank you for using Junior Talent Lab!
+                        
+                        Best regards,
+                        Junior Talent Lab Team""",
                 client.getPrename(),
                 taskUrl
         );
