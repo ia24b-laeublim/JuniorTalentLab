@@ -74,6 +74,10 @@ public class CreateTaskController {
             flyerTask.setPaperSize(paperSize);
             flyerTask.setPaperType(paperType);
             flyerTaskRepository.save(flyerTask);
+
+            // Send email
+            sendTaskCreatedMail(flyerTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,9 +129,7 @@ public class CreateTaskController {
 
             videoTaskRepository.save(videoTask);
 
-            // --- send confirmation e-mail to the creator -------------------
             sendTaskCreatedMail(videoTask, client);
-            // ----------------------------------------------------------------
 
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
@@ -164,6 +166,9 @@ public class CreateTaskController {
             photoTask.setSocialMediaPlatforms(socialMediaPlatforms);
             photoTask.setResolution(resolution);
             photoTaskRepository.save(photoTask);
+
+            sendTaskCreatedMail(photoTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -255,6 +260,9 @@ public class CreateTaskController {
             posterTask.setPrintQualityDpi(printQualityDpi);
             posterTask.setMountingType(mountingType);
             posterTaskRepository.save(posterTask);
+
+            sendTaskCreatedMail(posterTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -292,6 +300,9 @@ public class CreateTaskController {
             pollTask.setEndDate(endDate);
             pollTask.setAnonymous(anonymous);
             pollTaskRepository.save(pollTask);
+
+            sendTaskCreatedMail(pollTask, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -319,6 +330,9 @@ public class CreateTaskController {
             Task task = new Task();
             populateBaseTaskFields(task, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
             taskRepository.save(task); // ✅ This line
+
+            sendTaskCreatedMail(task, client);
+
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             e.printStackTrace();
