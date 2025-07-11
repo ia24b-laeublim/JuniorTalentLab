@@ -7,6 +7,7 @@ import ch.ubs.juniorlab.repository.CommentRepository;
 import ch.ubs.juniorlab.repository.TaskRepository;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -20,6 +21,7 @@ import ch.ubs.juniorlab.service.PDFService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -141,4 +143,7 @@ public class TaskController {
                 .contentLength(pdf.length())
                 .body(resource);
     }
+
+
+
 }

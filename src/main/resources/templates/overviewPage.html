@@ -24,19 +24,20 @@
     <div class="popup-content">
         <h2 id="popup-title" class="popup-heading">Titel</h2>
         <div class="red-underline"></div>
-
         <div class="popup-layout">
+
             <!-- Linke Spalte (unverändert) -->
             <div class="popup-left">
-                <div class="popup-row"><span>Name</span><span id="popup-name"></span></div>
-                <div class="popup-row"><span>GPN</span><span id="popup-gpn"></span></div>
-                <div class="popup-row"><span>Deadline</span><span id="popup-deadline"></span></div>
-                <div class="popup-row"><span>Channel</span><span id="popup-channel"></span></div>
-                <div class="popup-row"><span>Content Type</span><span id="popup-type"></span></div>
-                <div class="popup-row"><span>Max File Size</span><span id="popup-format"></span></div>
-                <div class="popup-row"><span>Target Audience</span><span id="popup-target"></span></div>
-                <div class="popup-row"><span>Budget</span><span id="popup-budget"></span></div>
-                <div class="popup-row"><span>Handover</span><span id="popup-handover"></span></div>
+                <div class="popup-row"><span>Name</span>"popup-name"></span></div>
+                <div class="popup-row"><span>GPN</span>"popup-gpn"></span></div>
+                <div class="popup-row"><span>Deadline</span>"popup-deadline"></span></div>
+                <div class="popup-row"><span>Channel</span>"popup-channel"></span></div>
+                <div class="popup-row"><span>Content Type</span>"popup-type"></span></div>
+                <div class="popup-row"><span>Max File Size</span>"popup-format"></span></div>
+                <div class="popup-row"><span>Target Audience</span>"popup-target"></span></div>
+                <div class="popup-row"><span>Budget</span>"popup-budget"></span></div>
+                <div class="popup-row"><span>Handover</span>"popup-handover"></span></div>
+
                 <div class="popup-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                     <label for="popup-status" style="font-weight: bold;">Status</label>
                     <select id="popup-status" onchange="updateTaskStatus()" style="width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #ccc;">
@@ -56,6 +57,7 @@
                     <strong>Description</strong>
                     <p id="popup-description"></p>
                 </div>
+
                 <div class="popup-section">
                     <strong>Specific Requirements</strong>
                     <p id="popup-other"></p>
@@ -78,6 +80,7 @@
                     </button>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
