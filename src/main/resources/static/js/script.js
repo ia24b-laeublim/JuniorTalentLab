@@ -322,3 +322,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Drag & Drop für alle Create Seiten
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileNameSpan = document.getElementById('file-name');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    ['dragenter', 'dragover'].forEach(ev =>
+        dropZone.addEventListener(ev, e => {
+            e.preventDefault(); e.stopPropagation();
+            dropZone.classList.add('dragover');
+        })
+    );
+    ['dragleave', 'drop'].forEach(ev =>
+        dropZone.addEventListener(ev, e => {
+            e.preventDefault(); e.stopPropagation();
+            dropZone.classList.remove('dragover');
+        })
+    );
+    dropZone.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        if (!files.length) return;
+        fileInput.files = files;
+        fileNameSpan.textContent = files[0].name;
+    });
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) {
+            fileNameSpan.textContent = fileInput.files[0].name;
+        }
+    });
+});
