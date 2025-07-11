@@ -248,3 +248,25 @@
         flex-direction: column;
     }
 }
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.drop-zone.dragover {
+    background-color: #f0f0f0;
+}
+.drop-zone p {
+    margin: 0;
+    font-size: 1rem;
+    color: #666;
+}
+#file-name {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #333;
+}
