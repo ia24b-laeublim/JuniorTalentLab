@@ -4,12 +4,12 @@ public class ContactFormDto {
     private String firstName;
     private String lastName;
 
-    public String getConcern() {
-        return concern;
+    public String getMessage() {
+        return message;
     }
 
-    public void setConcern(String concern) {
-        this.concern = concern;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getEmail() {
@@ -46,7 +46,7 @@ public class ContactFormDto {
 
     private String gpn;
     private String email;
-    private String concern;
+    private String message;
 
 
 }

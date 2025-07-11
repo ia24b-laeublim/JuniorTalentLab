@@ -28,11 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
                   <h2 style="font-size: 1.5rem; font-weight: bold; color: #000000;">${task.title}</h2>
                   <div style="display: flex; gap: 1rem;">
                     <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
-                      <div class="popup-row" style="background-color: #ddd; padding: 0.5rem;"><span>Client Name</span><span>${clientName}</span></div>
-                      <div class="popup-row" style="background-color: #ddd; padding: 0.5rem;"><span>GPN</span><span>${clientGpn}</span></div>
-                      <div class="popup-row" style="background-color: #ddd; padding: 0.5rem;"><span>Deadline</span><span>${deadlineText}</span></div>
+                      <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Client Name</span><span>${clientName}</span></div>
+                      <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>GPN</span><span>${clientGpn}</span></div>
+                      <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Deadline</span><span>${deadlineText}</span></div>
                     </div>
-                    <div style="flex: 1; background-color: #ddd; padding: 0.5rem;">
+                    <div style="flex: 1; background-color: #f5f5f5; padding: 0.5rem;">
                       <div><strong>Description</strong></div>
                       <div>${(task.description?.substring(0, 300) ?? "No description provided") + (task.description?.length > 300 ? '...' : '')}</div>
                     </div>
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => {
             console.error("Could not fetch open tasks:", error);
             const container = document.getElementById("task-container");
-            if(container) container.innerHTML = "<p style='text-align: center; color: red;'>Could not load tasks. Please try again later.</p>";
+            if(container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
         });
 });
 

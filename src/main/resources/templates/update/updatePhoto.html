@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Photo Task - Junior Talent Lab</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/css/createTask.css}" />
+  <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+
+<!-- Main Content -->
+<main class="create-task-wrapper">
+  <div class="page-title-container">
+    <h1>Update Photo Task</h1>
+    <div class="red-underline"></div>
+  </div>
+
+  <div class="create-task-container">
+    <form id="create-photo-form" action="/create-task/photo" method="post" novalidate>
+      <input type="hidden" name="taskType" value="photo">
+
+      <!-- Basic Task Details -->
+      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+
+      <!-- Photo Specific Details -->
+      <div class="form-section">
+        <h2>Photo Specifications</h2>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="format" class="form-label">Format</label>
+            <select id="format" name="format" class="form-select">
+              <option value="">Select Format</option>
+              <option value="Landscape">Landscape</option>
+              <option value="Portrait">Portrait</option>
+              <option value="Square">Square</option>
+              <option value="Panoramic">Panoramic</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="file-format" class="form-label">File Format</label>
+            <select id="file-format" name="fileFormat" class="form-select">
+              <option value="">Select File Format</option>
+              <option value="JPEG">JPEG</option>
+              <option value="PNG">PNG</option>
+              <option value="TIFF">TIFF</option>
+              <option value="RAW">RAW</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="resolution" class="form-label">Resolution</label>
+            <input type="text" id="resolution" name="resolution" class="form-input"
+                   list="photo-resolution-options" placeholder="Select or enter resolution" />
+            <datalist id="photo-resolution-options">
+              <option value="300 DPI">
+              <option value="150 DPI">
+              <option value="72 DPI">
+              <option value="4000x3000">
+              <option value="3000x2000">
+            </datalist>
+          </div>
+
+          <div class="form-field">
+            <label for="social-media-platforms" class="form-label">Social Media Platforms</label>
+            <select id="social-media-platforms" name="socialMediaPlatforms" class="form-select">
+              <option value="">Select Platform</option>
+              <option value="Instagram">Instagram</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Twitter">Twitter</option>
+              <option value="Multiple">Multiple Platforms</option>
+              <option value="Print">Print Only</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Section -->
+      <div class="form-section">
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+
+
+</body>
+</html>

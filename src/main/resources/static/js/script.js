@@ -240,7 +240,7 @@ function showFieldError(field, message) {
     const errorElement = document.createElement('div');
     errorElement.className = 'error-message';
     errorElement.textContent = message;
-    errorElement.style.color = '#e00000';
+    errorElement.style.color = '#E60100';
     errorElement.style.fontSize = '0.9rem';
     errorElement.style.marginTop = '5px';
 
@@ -287,3 +287,38 @@ function toggleText(button) {
         button.textContent = "Read less";
     }
 }
+
+/* Imprint JS */
+document.addEventListener('DOMContentLoaded', function() {
+    const teamMembers = document.querySelectorAll('.team-member');
+    const businessCard = document.getElementById('businessCard');
+
+    teamMembers.forEach(member => {
+        member.addEventListener('mouseenter', function(e) {
+            const name = this.textContent;
+            const email = this.getAttribute('data-email');
+            const role = this.getAttribute('data-role');
+
+            businessCard.querySelector('.card-name').textContent = name;
+            businessCard.querySelector('.card-role').textContent = role;
+            businessCard.querySelector('.card-email').textContent = email;
+
+            businessCard.style.display = 'block';
+        });
+
+        member.addEventListener('mousemove', function(e) {
+            businessCard.style.left = e.pageX + 10 + 'px';
+            businessCard.style.top = e.pageY + 10 + 'px';
+        });
+
+        member.addEventListener('mouseleave', function() {
+            businessCard.style.display = 'none';
+        });
+
+        // Add click event to open email client
+        member.addEventListener('click', function() {
+            const email = this.getAttribute('data-email');
+            window.location.href = 'mailto:' + email;
+        });
+    });
+});
