@@ -74,7 +74,8 @@ public class TaskProcessingService {
                 System.out.println("Musikstil: " + video.getMusicStyle());
 
             } else {
-                System.out.println("⚠️ Unbekannter Task-Typ: " + task.getClass().getSimpleName());
+                System.out.println("GeneralTask (Other)");
+                System.out.println("Typ: " + task.getTaskType());
             }
         }
     }

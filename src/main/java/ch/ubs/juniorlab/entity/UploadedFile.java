@@ -13,7 +13,7 @@ public class UploadedFile {
     @Column(name = "filename", length = 100, nullable = false)
     private String filename;
 
-    @Column(name = "content_type", length = 50, nullable = false)
+    @Column(name = "content_type", length = 255, nullable = false)
     private String contentType;
 
     @Lob
