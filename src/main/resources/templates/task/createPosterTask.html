@@ -5,7 +5,7 @@
     <title>Create Poster Task - Junior Talent Lab</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/script.js}" defer></script>
 </head>
 
 <body>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-poster-form" action="/create-task/poster" method="post" novalidate>
+        <form id="create-poster-form" action="/create-task/poster" method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="taskType" value="poster">
             
             <!-- Basic Task Details -->
@@ -98,6 +98,16 @@
                             <option value="Wooden Frame">Wooden Frame</option>
                         </select>
                     </div>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="form-section">
+                <h2>Attachment (optional)</h2>
+                <div id="drop-zone" class="drop-zone">
+                    <p>Drag &amp; drop a file here, or click to select</p>
+                    <input type="file" id="file-input" name="file" style="display:none;" />
+                    <span id="file-name"></span>
                 </div>
             </div>
 

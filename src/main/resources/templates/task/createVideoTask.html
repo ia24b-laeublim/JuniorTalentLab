@@ -5,11 +5,10 @@
     <title>Create Video Task - Junior Talent Lab</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/script.js}" defer></script>
 </head>
 
 <body>
-
 <!-- Header -->
 <div th:replace="~{fragments/header_employee :: header}"></div>
 
@@ -21,7 +20,7 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-video-form" action="/create-task/video" method="post" novalidate>
+        <form id="create-video-form" action="/create-task/video" method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="taskType" value="video">
             
             <!-- Basic Task Details -->
@@ -122,6 +121,16 @@
                     <label for="branding-requirements" class="form-label">Branding Requirements</label>
                     <textarea id="branding-requirements" name="brandingRequirements" class="form-textarea" rows="3" 
                               placeholder="Specific branding guidelines, colors, logos, etc."></textarea>
+                </div>
+            </div>
+            <br>
+            <!-- File Upload Section -->
+            <div class="form-section">
+                <h2>Attachment (optional)</h2>
+                <div id="drop-zone" class="drop-zone">
+                    <p>Drag &amp; drop a file here, or click to select</p>
+                    <input type="file" id="file-input" name="file" style="display:none;" />
+                    <span id="file-name"></span>
                 </div>
             </div>
 

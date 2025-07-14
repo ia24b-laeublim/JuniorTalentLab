@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/createTask.css}" />
     <script th:src="@{/js/script.js}"></script>
-    <script th:src="@{/js/createTask.js}"></script>
+    <script th:src="@{/js/createTask.js}" defer></script>
 </head>
 
 <body>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-flyer-form" action="/create-task/flyer" method="post" novalidate>
+        <form id="create-flyer-form" action="/create-task/flyer" method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="taskType" value="flyer">
 
             <!-- Basic Task Details (includes all Task and Person fields) -->
@@ -58,6 +58,16 @@
                             <option value="Recycled">Recycled Paper</option>
                         </select>
                     </div>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="form-section">
+                <h2>Attachment (optional)</h2>
+                <div id="drop-zone" class="drop-zone">
+                    <p>Drag &amp; drop a file here, or click to select</p>
+                    <input type="file" id="file-input" name="file" style="display:none;" />
+                    <span id="file-name"></span>
                 </div>
             </div>
 

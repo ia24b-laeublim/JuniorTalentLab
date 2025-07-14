@@ -40,9 +40,8 @@ public class TaskController {
     }
 
     @GetMapping("/open")
-    public List<Task> getOpenTasks() {
+    public List<TaskWithAttachmentDto> getOpenTasks() {
         List<Task> allTasks = taskRepository.findAllWithClients();
-
 
         return allTasks.stream()
                 .filter(task -> {
@@ -53,11 +52,12 @@ public class TaskController {
                     return isOpen;
                 })
                 .sorted(Comparator.comparing(Task::getId).reversed())
+                .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/accepted")
-    public List<Task> getAcceptedTasks() {
+    public List<TaskWithAttachmentDto> getAcceptedTasks() {
         return taskRepository.findAllWithClients().stream()
                 .filter(task -> {
                     String status = task.getStatus();
@@ -66,14 +66,16 @@ public class TaskController {
                             !"Finished".equalsIgnoreCase(progress);
                 })
                 .sorted(Comparator.comparing(Task::getId).reversed())
+                .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/finished")
-    public List<Task> getFinishedTasks() {
+    public List<TaskWithAttachmentDto> getFinishedTasks() {
         return taskRepository.findAllWithClients().stream()
                 .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
                 .sorted(Comparator.comparing(Task::getId).reversed())
+                .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -142,7 +144,5 @@ public class TaskController {
                 .contentLength(pdf.length())
                 .body(resource);
     }
-
-
 
 }

@@ -5,7 +5,7 @@
     <title>Create Other Task - Junior Talent Lab</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/script.js}" defer></script>
 </head>
 
 <body>
@@ -21,17 +21,27 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-flyer-form" action="/create-task/flyer" method="post" novalidate>
-            <input type="hidden" name="taskType" value="flyer">
+        <form id="create-other-form" action="/create-task/other" method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="taskType" value="other">
 
             <!-- Basic Task Details -->
             <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
 
+
+            <!-- File Upload Section -->
+            <div class="form-section">
+                <h2>Attachment (optional)</h2>
+                <div id="drop-zone" class="drop-zone">
+                    <p>Drag &amp; drop a file here, or click to select</p>
+                    <input type="file" id="file-input" name="file" style="display:none;" />
+                    <span id="file-name"></span>
+                </div>
+            </div>
             <!-- Submit Section -->
             <div class="form-section">
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" class="btn-primary">Create Flyer Task</button>
+                    <button type="submit" class="btn-primary">Create Task</button>
                 </div>
             </div>
         </form>
