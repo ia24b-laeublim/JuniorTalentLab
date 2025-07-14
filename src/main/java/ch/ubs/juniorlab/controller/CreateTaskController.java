@@ -7,8 +7,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -25,6 +27,9 @@ public class CreateTaskController {
     private final PollTaskRepository pollTaskRepository;
     private final MailService mailService;
     private final HashService hashService;
+    private final TaskRepository taskRepo;
+    private final FileService fileService;
+
 
     public CreateTaskController(
             TaskRepository taskRepository,
@@ -36,7 +41,9 @@ public class CreateTaskController {
             PosterTaskRepository posterTaskRepository,
             PollTaskRepository pollTaskRepository,
             MailService mailService,
-            HashService hashService
+            HashService hashService,
+            TaskRepository taskRepo,
+            FileService fileService
     ) {
         this.taskRepository = taskRepository;
         this.personRepository = personRepository;
@@ -48,6 +55,8 @@ public class CreateTaskController {
         this.pollTaskRepository = pollTaskRepository;
         this.mailService = mailService;
         this.hashService = hashService;
+        this.taskRepo    = taskRepo;
+        this.fileService = fileService;
     }
 
     @PostMapping("/create-task/flyer")
@@ -404,5 +413,34 @@ public class CreateTaskController {
         // Also print to console for debugging
         System.out.println("Task created with URL: " + taskUrl);
         System.out.println("Email sent to: " + client.getEmail());
+    }
+
+    @PostMapping("/create-task/poster")
+    public ModelAndView createPosterTask(
+            @RequestParam("format") String format,
+            @RequestParam("posterSize") String posterSize,
+            // … alle weiteren Poster-Parameter …
+            @RequestParam(name = "file", required = false) MultipartFile file
+    ) {
+        // 1) Task anlegen
+        PosterTask task = new PosterTask();
+        task.setFormat(format);
+        task.setPosterSize(posterSize);
+        // … weitere Felder …
+        task = taskRepository.save(task);
+
+        // 2) Optionales Attachment speichern
+        if (file != null && !file.isEmpty()) {
+            try {
+                UploadedFile uf = fileService.store(file);
+                task.setAttachment(uf);
+                taskRepository.save(task);
+            } catch (IOException e) {
+                throw new RuntimeException("Fehler beim Speichern der Datei", e);
+            }
+        }
+
+        // 3) Weiterleiten zur Detailseite
+        return new ModelAndView("redirect:/tasks/" + task.getId());
     }
 }
