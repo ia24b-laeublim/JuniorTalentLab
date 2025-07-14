@@ -7,14 +7,14 @@
 }
 
 #comment-list {
-    flex-grow: 1;
-    overflow-y: auto;
     margin-bottom: 16px;
 }
 
 #comment-list div {
-    padding: 4px 0;
+    padding: 6px 8px;
     border-bottom: 1px solid #e0e0e0;
+    line-height: 1.3;
+    font-size: 14px;
 }
 #comment-list div:last-child {
     border-bottom: none;

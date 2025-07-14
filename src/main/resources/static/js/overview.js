@@ -1,4 +1,5 @@
 let selectedTaskId = null;
+let statusChanged = false;
 
 // Diese Funktion wird aufgerufen, wenn der Status geändert wird
 function updateTaskStatus() {
@@ -24,6 +25,7 @@ function updateTaskStatus() {
                 alert('Failed to update status. Please try again.');
             } else {
                 console.log("Status updated successfully!");
+                statusChanged = true;
             }
         })
         .catch(error => {
@@ -35,6 +37,7 @@ function updateTaskStatus() {
 
 function openPopup(task) {
     selectedTaskId = task.id;
+    statusChanged = false;
 
     const clientName = task.client ? `${task.client.prename || ''} ${task.client.name || ''}`.trim() : "-";
 
@@ -62,6 +65,24 @@ function openPopup(task) {
         statusDropdown.value = "Started";
     }
 
+    // Handle attachment section
+    const attachmentSection = document.getElementById('attachment-section');
+    const attachBtn = document.getElementById('popup-attachment-btn');
+    const attachFilename = document.getElementById('attachment-filename');
+    
+    console.log('Task object:', task);
+    console.log('Task attachment:', task.attachment);
+    
+    if (task.attachment && task.attachment.id) {
+        console.log('Showing attachment:', task.attachment.filename);
+        attachBtn.href = `/api/files/download/${task.attachment.id}`;
+        attachFilename.textContent = task.attachment.filename || 'Unknown file';
+        attachmentSection.style.display = 'flex';
+    } else {
+        console.log('No attachment found, hiding section');
+        attachmentSection.style.display = 'none';
+    }
+
     loadComments(task.id);
     document.getElementById("popup").classList.remove("hidden");
 }
@@ -69,7 +90,11 @@ function openPopup(task) {
 function closePopup() {
     document.getElementById("popup").classList.add("hidden");
     selectedTaskId = null;
-    location.reload();
+    
+    // Nur neu laden wenn Status geändert wurde
+    if (statusChanged) {
+        location.reload();
+    }
 }
 
 function submitComment() {
@@ -103,13 +128,36 @@ function loadComments(taskId) {
         .then(comments => {
             const list = document.getElementById("comment-list");
             list.innerHTML = "";
+            
+            // Entferne alle Box-Styles von der Liste
+            list.style.background = "transparent";
+            list.style.border = "none";
+            list.style.padding = "0";
+            
+            // Alle Kommentare hinzufügen
             comments.forEach(c => {
                 const div = document.createElement("div");
                 div.innerHTML = `<strong>${c.authorName}:</strong> ${c.content}`;
-                div.style.borderBottom = "1px solid #eee";
                 div.style.padding = "8px 0";
+                div.style.borderBottom = "1px solid #e0e0e0";
                 list.appendChild(div);
             });
+            
+            // Nach dem Hinzufügen: Höhe dynamisch berechnen basierend auf ersten 2 Kommentaren
+            if (comments.length <= 2) {
+                // Maximal 2 Kommentare: keine feste Höhe, wachsen natürlich
+                list.style.height = "auto";
+                list.style.overflowY = "visible";
+            } else {
+                // Mehr als 2 Kommentare: Höhe der ersten 2 Kommentare messen + Scroll
+                const firstTwoComments = list.querySelectorAll('div:nth-child(-n+2)');
+                let totalHeight = 0;
+                firstTwoComments.forEach(div => {
+                    totalHeight += div.offsetHeight;
+                });
+                list.style.height = totalHeight + "px";
+                list.style.overflowY = "auto";
+            }
         })
         .catch(error => {
             console.error("Error fetching or parsing comments:", error);

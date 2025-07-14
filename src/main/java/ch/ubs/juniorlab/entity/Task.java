@@ -1,5 +1,6 @@
 package ch.ubs.juniorlab.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -39,6 +40,12 @@ public class Task {
 
     @Column(name = "Status", length = 20)
     private String status;
+
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "attachment_id")
+    @JsonIgnore
+    private UploadedFile attachment;
 
     // ✅ FIXED: Force eager loading to ensure client data is always fetched
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
@@ -160,6 +167,14 @@ public class Task {
 
     public void setProgress(String progress) {
         this.progress = progress;
+    }
+
+    public UploadedFile getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(UploadedFile attachment) {
+        this.attachment = attachment;
     }
 
     public String getTaskType() {
