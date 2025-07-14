@@ -74,7 +74,8 @@ public class CreateTaskController {
             @RequestParam(required = false) String channel,
             @RequestParam(required = false) String handoverMethod,
             @RequestParam(required = false) String paperSize,
-            @RequestParam(required = false) String paperType
+            @RequestParam(required = false) String paperType,
+            @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
             Person client = findOrCreatePerson(gpn, name, prename, email);
@@ -82,10 +83,23 @@ public class CreateTaskController {
             populateBaseTaskFields(flyerTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
             flyerTask.setPaperSize(paperSize);
             flyerTask.setPaperType(paperType);
-            flyerTaskRepository.save(flyerTask);
+            flyerTask = flyerTaskRepository.save(flyerTask);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadedFile uploadedFile = fileService.store(file);
+                    flyerTask.setAttachment(uploadedFile);
+                    flyerTaskRepository.save(flyerTask);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return new ModelAndView("redirect:/create-task/flyer?error=true");
+                }
+            }
 
             // Send email
             sendTaskCreatedMail(flyerTask, client);
+
 
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
@@ -116,7 +130,8 @@ public class CreateTaskController {
             @RequestParam(required = false) String fileFormat,
             @RequestParam(required = false) String socialMediaPlatforms,
             @RequestParam(required = false) String resolution,
-            @RequestParam(required = false) String musicStyle
+            @RequestParam(required = false) String musicStyle,
+            @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
             Person client = findOrCreatePerson(gpn, name, prename, email);
@@ -136,7 +151,19 @@ public class CreateTaskController {
             videoTask.setResolution(resolution);
             videoTask.setMusicStyle(musicStyle);
 
-            videoTaskRepository.save(videoTask);
+            videoTask = videoTaskRepository.save(videoTask);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadedFile uploadedFile = fileService.store(file);
+                    videoTask.setAttachment(uploadedFile);
+                    videoTask = videoTaskRepository.save(videoTask);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return new ModelAndView("redirect:/create-task/video?error=true");
+                }
+            }
 
             sendTaskCreatedMail(videoTask, client);
 
@@ -164,7 +191,8 @@ public class CreateTaskController {
             @RequestParam(required = false) String format,
             @RequestParam(required = false) String fileFormat,
             @RequestParam(required = false) String socialMediaPlatforms,
-            @RequestParam(required = false) String resolution
+            @RequestParam(required = false) String resolution,
+            @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
             Person client = findOrCreatePerson(gpn, name, prename, email);
@@ -174,7 +202,19 @@ public class CreateTaskController {
             photoTask.setFileFormat(fileFormat);
             photoTask.setSocialMediaPlatforms(socialMediaPlatforms);
             photoTask.setResolution(resolution);
-            photoTaskRepository.save(photoTask);
+            photoTask = photoTaskRepository.save(photoTask);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadedFile uploadedFile = fileService.store(file);
+                    photoTask.setAttachment(uploadedFile);
+                    photoTaskRepository.save(photoTask);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return new ModelAndView("redirect:/create-task/photo?error=true");
+                }
+            }
 
             sendTaskCreatedMail(photoTask, client);
 
@@ -203,7 +243,8 @@ public class CreateTaskController {
             @RequestParam(required = false) String fileFormat,
             @RequestParam(required = false) String socialMediaPlatforms,
             @RequestParam(required = false) Integer photoCount,
-            @RequestParam(required = false) String resolution
+            @RequestParam(required = false) String resolution,
+            @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
             // Find or create the person
@@ -225,7 +266,21 @@ public class CreateTaskController {
             slideshowTask.setResolution(resolution);
 
             // Save the slideshow task
-            slideshowTaskRepository.save(slideshowTask);
+            slideshowTask = slideshowTaskRepository.save(slideshowTask);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadedFile uploadedFile = fileService.store(file);
+                    slideshowTask.setAttachment(uploadedFile);
+                    slideshowTaskRepository.save(slideshowTask);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    ModelAndView errorView = new ModelAndView("task/createSlideshowTask");
+                    errorView.addObject("error", "Error uploading file: " + e.getMessage());
+                    return errorView;
+                }
+            }
 
             // Send the email - ADD THIS LINE
             sendTaskCreatedMail(task, client);
@@ -257,7 +312,8 @@ public class CreateTaskController {
             @RequestParam(required = false) String posterSize,
             @RequestParam(required = false) String paperType,
             @RequestParam(required = false) Integer printQualityDpi,
-            @RequestParam(required = false) String mountingType
+            @RequestParam(required = false) String mountingType,
+            @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
             Person client = findOrCreatePerson(gpn, name, prename, email);
@@ -268,7 +324,19 @@ public class CreateTaskController {
             posterTask.setPaperType(paperType);
             posterTask.setPrintQualityDpi(printQualityDpi);
             posterTask.setMountingType(mountingType);
-            posterTaskRepository.save(posterTask);
+            posterTask = posterTaskRepository.save(posterTask);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadedFile uploadedFile = fileService.store(file);
+                    posterTask.setAttachment(uploadedFile);
+                    posterTaskRepository.save(posterTask);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return new ModelAndView("redirect:/create-task/poster?error=true");
+                }
+            }
 
             sendTaskCreatedMail(posterTask, client);
 
@@ -297,7 +365,8 @@ public class CreateTaskController {
             @RequestParam(required = false) String questionType,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-            @RequestParam(required = false) Boolean anonymous
+            @RequestParam(required = false) Boolean anonymous,
+            @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
             Person client = findOrCreatePerson(gpn, name, prename, email);
@@ -308,7 +377,19 @@ public class CreateTaskController {
             pollTask.setStartDate(startDate);
             pollTask.setEndDate(endDate);
             pollTask.setAnonymous(anonymous);
-            pollTaskRepository.save(pollTask);
+            pollTask = pollTaskRepository.save(pollTask);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadedFile uploadedFile = fileService.store(file);
+                    pollTask.setAttachment(uploadedFile);
+                    pollTaskRepository.save(pollTask);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return new ModelAndView("redirect:/create-task/poll?error=true");
+                }
+            }
 
             sendTaskCreatedMail(pollTask, client);
 
@@ -332,13 +413,26 @@ public class CreateTaskController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate deadline,
             @RequestParam(required = false) Integer maxFileSizeMb,
             @RequestParam(required = false) String channel,
-            @RequestParam(required = false) String handoverMethod
+            @RequestParam(required = false) String handoverMethod,
+            @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
             Person client = findOrCreatePerson(gpn, name, prename, email);
             Task task = new Task();
             populateBaseTaskFields(task, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
-            taskRepository.save(task); // ✅ This line
+            task = taskRepository.save(task);
+
+            // Handle file upload
+            if (file != null && !file.isEmpty()) {
+                try {
+                    UploadedFile uploadedFile = fileService.store(file);
+                    task.setAttachment(uploadedFile);
+                    taskRepository.save(task);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return new ModelAndView("redirect:/create-task/other?error=true");
+                }
+            }
 
             sendTaskCreatedMail(task, client);
 
@@ -415,32 +509,4 @@ public class CreateTaskController {
         System.out.println("Email sent to: " + client.getEmail());
     }
 
-    @PostMapping("/create-task/poster")
-    public ModelAndView createPosterTask(
-            @RequestParam("format") String format,
-            @RequestParam("posterSize") String posterSize,
-            // … alle weiteren Poster-Parameter …
-            @RequestParam(name = "file", required = false) MultipartFile file
-    ) {
-        // 1) Task anlegen
-        PosterTask task = new PosterTask();
-        task.setFormat(format);
-        task.setPosterSize(posterSize);
-        // … weitere Felder …
-        task = taskRepository.save(task);
-
-        // 2) Optionales Attachment speichern
-        if (file != null && !file.isEmpty()) {
-            try {
-                UploadedFile uf = fileService.store(file);
-                task.setAttachment(uf);
-                taskRepository.save(task);
-            } catch (IOException e) {
-                throw new RuntimeException("Fehler beim Speichern der Datei", e);
-            }
-        }
-
-        // 3) Weiterleiten zur Detailseite
-        return new ModelAndView("redirect:/tasks/" + task.getId());
-    }
 }
