@@ -13,7 +13,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Title", nullable = false, length = 255)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
     @Column(name = "Description", columnDefinition = "NVARCHAR(MAX)")
@@ -160,5 +160,79 @@ public class Task {
 
     public void setProgress(String progress) {
         this.progress = progress;
+    }
+
+    public String getTaskType() {
+        if (this instanceof FlyerTask) {
+            return "Flyer";
+        }
+        if (this instanceof PosterTask) {
+            return "Poster";
+        }
+        if (this instanceof VideoTask) {
+            return "Video";
+        }
+        if (this instanceof SlideshowTask) {
+            return "Slideshow";
+        }
+        if (this instanceof PollTask) {
+            return "Poll";
+        }
+        if (this instanceof PhotoTask) {
+            return "Photo";
+        }
+        return "General Task";
+    }
+
+    public String getSpecificRequirements() {
+        StringBuilder sb = new StringBuilder();
+
+        if (this instanceof FlyerTask flyer) {
+            appendField(sb, "Paper Size", flyer.getPaperSize());
+            appendField(sb, "Paper Type", flyer.getPaperType());
+        } else if (this instanceof PosterTask poster) {
+            appendField(sb, "Format", poster.getFormat());
+            appendField(sb, "Poster Size", poster.getPosterSize());
+            appendField(sb, "Paper Type", poster.getPaperType());
+            appendField(sb, "Print Quality (DPI)", poster.getPrintQualityDpi() != null ? poster.getPrintQualityDpi().toString() : null);
+            appendField(sb, "Mounting Type", poster.getMountingType());
+        } else if (this instanceof PhotoTask photo) {
+            appendField(sb, "Format", photo.getFormat());
+            appendField(sb, "File Format", photo.getFileFormat());
+            appendField(sb, "Platforms", photo.getSocialMediaPlatforms());
+            appendField(sb, "Resolution", photo.getResolution());
+        } else if (this instanceof SlideshowTask slide) {
+            appendField(sb, "Format", slide.getFormat());
+            appendField(sb, "File Format", slide.getFileFormat());
+            appendField(sb, "Platforms", slide.getSocialMediaPlatforms());
+            appendField(sb, "Resolution", slide.getResolution());
+            appendField(sb, "Photo Count", slide.getPhotoCount() != null ? slide.getPhotoCount().toString() : null);
+        } else if (this instanceof VideoTask video) {
+            appendField(sb, "Length (sec)", video.getLengthSec() != null ? video.getLengthSec().toString() : null);
+            appendField(sb, "Voiceover", video.getVoiceover() != null ? (video.getVoiceover() ? "Yes" : "No") : null);
+            appendField(sb, "Disclaimer", video.getDisclaimer() != null ? (video.getDisclaimer() ? "Yes" : "No") : null);
+            appendField(sb, "Branding", video.getBrandingRequirements());
+            appendField(sb, "Format", video.getFormat());
+            appendField(sb, "File Format", video.getFileFormat());
+            appendField(sb, "Platforms", video.getSocialMediaPlatforms());
+            appendField(sb, "Resolution", video.getResolution());
+            appendField(sb, "Music Style", video.getMusicStyle());
+        } else if (this instanceof PollTask poll) {
+            appendField(sb, "Questions", poll.getQuestionCount() != null ? poll.getQuestionCount().toString() : null);
+            appendField(sb, "Type", poll.getQuestionType());
+            appendField(sb, "Start", poll.getStartDate() != null ? poll.getStartDate().toString() : null);
+            appendField(sb, "End", poll.getEndDate() != null ? poll.getEndDate().toString() : null);
+            appendField(sb, "Anonymous", poll.getAnonymous() != null ? (poll.getAnonymous() ? "Yes" : "No") : null);
+
+        }
+
+        return sb.length() > 0 ? sb.toString() : "No specific requirements";
+    }
+
+    private void appendField(StringBuilder sb, String label, String value) {
+        if (value != null && !value.isBlank()) {
+            if (sb.length() > 0) sb.append(", ");
+            sb.append(label).append(": ").append(value);
+        }
     }
 }

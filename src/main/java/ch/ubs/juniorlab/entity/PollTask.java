@@ -68,4 +68,5 @@ public class PollTask extends Task {
     public void setAnonymous(Boolean anonymous) {
         this.anonymous = anonymous;
     }
+
 }

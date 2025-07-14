@@ -12,7 +12,7 @@
 <!-- Header -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<!-- Main Content -->
+
 <main class="privacy-wrapper" style="align-self: start;">
     <div class="privacy-box">
         <h2>Imprint</h2>
@@ -25,8 +25,8 @@
             Switzerland</p>
 
         <p><strong>Project team:</strong><br>
-            - <span class="team-member" data-email="darian.germann@ubs.com" data-role="Product Owner">Darian Germann</span> (Product Owner)<br>
-            - <span class="team-member" data-email="zoran.varnicic@ubs.com" data-role="Scrum Master">Zoran Varnicic</span> (Scrum Master)<br>
+            - <span class="team-member" data-email="darian.germann@ubs.com" data-role="Product Owner">Darian Germann</span><br>
+            - <span class="team-member" data-email="zoran.varnicic@ubs.com" data-role="Scrum Master">Zoran Varnicic</span><br>
             - <span class="team-member" data-email="nils.spycher@ubs.com" data-role="Developer">Nils Spycher</span><br>
             - <span class="team-member" data-email="elin.sigg@ubs.com" data-role="Developer">Elin Sigg</span><br>
             - <span class="team-member" data-email="tanushree.varma@ubs.com" data-role="Developer">Tanushree Varma</span><br>
@@ -42,46 +42,11 @@
         <div class="card-role"></div>
         <div class="card-email"></div>
     </div>
+
 </main>
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const teamMembers = document.querySelectorAll('.team-member');
-        const businessCard = document.getElementById('businessCard');
-
-        teamMembers.forEach(member => {
-            member.addEventListener('mouseenter', function(e) {
-                const name = this.textContent;
-                const email = this.getAttribute('data-email');
-                const role = this.getAttribute('data-role');
-
-                businessCard.querySelector('.card-name').textContent = name;
-                businessCard.querySelector('.card-role').textContent = role;
-                businessCard.querySelector('.card-email').textContent = email;
-
-                businessCard.style.display = 'block';
-            });
-
-            member.addEventListener('mousemove', function(e) {
-                businessCard.style.left = e.pageX + 10 + 'px';
-                businessCard.style.top = e.pageY + 10 + 'px';
-            });
-
-            member.addEventListener('mouseleave', function() {
-                businessCard.style.display = 'none';
-            });
-
-            // Add click event to open email client
-            member.addEventListener('click', function() {
-                const email = this.getAttribute('data-email');
-                window.location.href = 'mailto:' + email;
-            });
-        });
-    });
-</script>
 
 </body>
 </html>

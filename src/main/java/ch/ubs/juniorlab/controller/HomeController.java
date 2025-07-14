@@ -1,18 +1,29 @@
 package ch.ubs.juniorlab.controller;
 
+import ch.ubs.juniorlab.repository.TaskRepository;
+import ch.ubs.juniorlab.service.HashService;
 import ch.ubs.juniorlab.service.MailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ch.ubs.juniorlab.dto.*;
+
+import java.util.Optional;
 
 @Controller
 public class HomeController {
 
     private final MailService mailService;
+    private final TaskRepository taskRepository;
+    private final HashService hashService;
 
-    public HomeController(MailService mailService) {
+    public HomeController(MailService mailService, TaskRepository taskRepository, HashService hashService) {
         this.mailService = mailService;
+        this.taskRepository = taskRepository;
+        this.hashService = hashService;
     }
+
+
 
     @GetMapping("/")
     public String index(Model model) {
@@ -103,61 +114,13 @@ public class HomeController {
         return "contact";
     }
 
-    @PostMapping("/api/create-task")
-    public String createTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement task creation logic
-        // For now, redirect to a success page or back to the form with a success message
-        model.addAttribute("taskCreated", "Task created successfully!");
-        return "createTaskPage";
+    // For reaching the update Task page
+    @GetMapping("/test-task-url")
+    public String testTaskUrl() {
+        String taskUrl = hashService.getInfoUrl(27);
+        System.out.println("URL for task 27: " + taskUrl);
+        return "redirect:/";
     }
 
-    // Specific task creation endpoints
-    @PostMapping("/api/create-task/flyer")
-    public String createFlyerTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement flyer task creation logic
-        model.addAttribute("taskCreated", "Flyer task created successfully!");
-        return "task/createFlyerTask";
-    }
 
-    @PostMapping("/api/create-task/poll")
-    public String createPollTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement poll task creation logic
-        model.addAttribute("taskCreated", "Poll task created successfully!");
-        return "task/createPollTask";
-    }
-
-    @PostMapping("/api/create-task/video")
-    public String createVideoTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement video task creation logic
-        model.addAttribute("taskCreated", "Video task created successfully!");
-        return "task/createVideoTask";
-    }
-
-    @PostMapping("/api/create-task/photo")
-    public String createPhotoTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement photo task creation logic
-        model.addAttribute("taskCreated", "Photo task created successfully!");
-        return "task/createPhotoTask";
-    }
-
-    @PostMapping("/api/create-task/slideshow")
-    public String createSlideshowTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement slideshow task creation logic
-        model.addAttribute("taskCreated", "Slideshow task created successfully!");
-        return "task/createSlideshowTask";
-    }
-
-    @PostMapping("/api/create-task/poster")
-    public String createPosterTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement poster task creation logic
-        model.addAttribute("taskCreated", "Poster task created successfully!");
-        return "task/createPosterTask";
-    }
-
-    @PostMapping("/api/create-task/other")
-    public String createOtherTask(@ModelAttribute CreateTaskDto taskDto, Model model) {
-        // TODO: Implement other task creation logic
-        model.addAttribute("taskCreated", "Custom task created successfully!");
-        return "task/createOtherTask";
-    }
 }

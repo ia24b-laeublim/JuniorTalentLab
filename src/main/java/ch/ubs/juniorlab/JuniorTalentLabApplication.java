@@ -1,5 +1,6 @@
 package ch.ubs.juniorlab;
 
+import ch.ubs.juniorlab.service.HashService;
 import ch.ubs.juniorlab.service.TaskProcessingService;
 
 import org.springframework.boot.SpringApplication;
@@ -19,6 +20,10 @@ public class JuniorTalentLabApplication {
 
         // Methode aufrufen
         taskService.printAllTasks();
+
+        HashService hs = context.getBean(HashService.class);
+
+        System.out.println(hs.getInfoUrl(1));
 
 
     }

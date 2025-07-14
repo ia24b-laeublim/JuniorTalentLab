@@ -1,4 +1,4 @@
-package ch.ubs.juniorlab.controller;
+package ch.ubs.juniorlab.dto;
 
 public class ContactFormDto {
     private String firstName;
