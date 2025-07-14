@@ -9,7 +9,7 @@
 </head>
 
 <body>
-
+claude
 <!-- Header -->
 <div th:replace="~{fragments/header_employee :: header}"></div>
 
@@ -21,7 +21,7 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-video-form" action="/create-task/video" method="post" novalidate>
+        <form id="create-video-form" action="/create-task/video" method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="taskType" value="video">
             
             <!-- Basic Task Details -->

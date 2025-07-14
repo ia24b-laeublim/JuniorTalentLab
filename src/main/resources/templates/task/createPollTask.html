@@ -21,7 +21,7 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-poll-form" action="/create-task/poll" method="post" novalidate>
+        <form id="create-poll-form" action="/create-task/poll" method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="taskType" value="poll">
 
             <!-- Basic Task Details -->

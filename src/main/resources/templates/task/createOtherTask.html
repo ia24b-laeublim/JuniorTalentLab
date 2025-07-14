@@ -21,8 +21,8 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-flyer-form" action="/create-task/flyer" method="post" novalidate>
-            <input type="hidden" name="taskType" value="flyer">
+        <form id="create-other-form" action="/create-task/other" method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="taskType" value="other">
 
             <!-- Basic Task Details -->
             <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
