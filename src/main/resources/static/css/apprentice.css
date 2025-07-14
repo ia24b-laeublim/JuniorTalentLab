@@ -206,3 +206,46 @@
 }
 
 
+.popup-content {
+    width: 800px;
+    max-width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.popup-layout {
+    display: flex;
+    flex-wrap: wrap;      /* WICHTIG */
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.popup-left,
+.popup-right {
+    min-width: 0;
+}
+
+.popup-left {
+    flex: 0 1 200px;
+}
+.popup-right {
+    flex: 1 1 0;
+}
+
+.popup-section p {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+@media (max-width: 700px) {
+    .popup-layout {
+        flex-direction: column;
+    }
+    .popup-left,
+    .popup-right {
+        flex: 1 1 auto;
+    }
+}
+
