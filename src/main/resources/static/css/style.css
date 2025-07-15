@@ -85,7 +85,14 @@ body {
 }
 
 .dropdown-content {
-    display: none;
+    visibility: hidden;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+        max-height 0.5s ease-in-out,
+        opacity 0.4s ease-in-out,
+        visibility 0s linear 0.5s;
     position: absolute;
     right: 0;
     background-color: #f2f2f2;
@@ -93,8 +100,14 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     z-index: 1;
     border-radius: 4px;
-    overflow: hidden;
 }
+
+.dropdown.open .dropdown-content {
+    visibility: visible;
+    opacity: 1;
+    max-height: 400px;
+}
+
 
 .dropdown-content a {
     color: black;
@@ -116,8 +129,23 @@ body {
 }
 
 .dropdown.show .dropdown-content {
-    display: block;
+    visibility: visible;
+    opacity: 1;
+    max-height: 400px;                      /* an deinen Inhalt anpassen */
+    transition:
+            max-height 0.5s ease-in-out,
+            opacity 0.4s ease-in-out;
 }
+
+.arrow {
+    transform: rotate(-135deg);         /* Startwinkel umgedreht */
+    transition: transform 0.5s ease-in-out;
+}
+
+.dropdown.show .arrow {
+    transform: rotate(45deg);           /* Zielwinkel bei geöffnetem Menü */
+}
+
 
 /* Footer Styles*/
 footer {

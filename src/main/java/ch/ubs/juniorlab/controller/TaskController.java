@@ -144,5 +144,4 @@ public class TaskController {
                 .contentLength(pdf.length())
                 .body(resource);
     }
-
 }

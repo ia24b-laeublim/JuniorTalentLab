@@ -6,7 +6,7 @@
         <a th:href="@{/}">
             <img th:src="@{/img/ubsLogo.svg}" alt="UBS Logo" class="ubs-logo">
         </a>
-        <div class="dropdown">
+        <div class="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
             <button class="role-button">
                 Choose role <span class="arrow"></span>
             </button>
@@ -17,5 +17,12 @@
         </div>
     </header>
 </div>
+<script>
+    document.querySelectorAll('.role-button').forEach(btn =>
+        btn.addEventListener('click', () => {
+            btn.closest('.dropdown').classList.toggle('show');
+        })
+    );
+</script>
 </body>
 </html>
