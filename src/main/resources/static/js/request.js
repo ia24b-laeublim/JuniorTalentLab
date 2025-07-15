@@ -208,3 +208,42 @@ function closePopup2() {
     document.getElementById("popupOverlay2").style.display = "none";
     document.getElementById("popupContainer2").style.display = "none";
 }
+
+
+document.addEventListener("click", (event) => {
+    const overlay2 = document.getElementById("popupOverlay2");
+    if (overlay2.style.display === "block") return;
+
+    const popup = document.getElementById("popup");
+    if (!popup || popup.classList.contains("hidden")) return;
+    if (event.target.closest(".task-card")) return;
+
+    const content = popup.querySelector(".popup-content");
+    if (content && !content.contains(event.target)) {
+        closePopup();
+    }
+});
+
+
+function showRejectConfirm() {
+    const overlay2 = document.getElementById("popupOverlay2");
+    const box2     = document.getElementById("popupContainer2");
+    const msg      = document.getElementById("popupMessage");
+    const btnOK    = document.getElementById("acceptBtn");
+    const btnCancel= document.getElementById("rejectBtn");
+
+    msg.textContent        = "Are you sure you want to reject the task?";
+    overlay2.style.display = "block";
+    box2.style.display     = "block";
+
+    overlay2.addEventListener("click", e => e.stopPropagation());
+    box2.addEventListener   ("click", e => e.stopPropagation());
+
+    btnOK.onclick     = () => { rejectTask(); closePopup2(); };
+    btnCancel.onclick = () => closePopup2();
+}
+
+function closePopup2() {
+    document.getElementById("popupOverlay2").style.display   = "none";
+    document.getElementById("popupContainer2").style.display = "none";
+}
