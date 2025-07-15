@@ -15,21 +15,20 @@
 <div th:replace="~{fragments/header_apprentice :: header}"></div>
 
 <main>
-    <!-- UPDATED: Centered black title with a red line -->
     <div class="page-title-container">
-        <h1>Open Requests </h1>
+        <h1>Open Requests</h1>
     </div>
 
-    <!-- Aufgabenübersicht (Container for the original cards) -->
     <div id="task-container" class="task-grid"></div>
 
-    <!-- Pop-up für Details (Reverted to the original design) -->
+    <!-- Popup -->
     <div id="popup" class="popup hidden">
         <div class="popup-content">
             <h2 id="popup-title" class="popup-heading">Titel</h2>
             <div class="red-underline"></div>
 
             <div class="popup-layout">
+                <!-- Linke Spalte -->
                 <div class="popup-left">
                     <div class="popup-row"><span>Name</span><span id="popup-name"></span></div>
                     <div class="popup-row"><span>GPN</span><span id="popup-gpn"></span></div>
@@ -42,14 +41,24 @@
                     <div class="popup-row"><span>Handover</span><span id="popup-handover"></span></div>
                 </div>
 
-                <div class="popup-right">
+                <!-- Rechte Spalte – Vertikal gestapelt -->
+                <div class="popup-right popup-right-vertical">
                     <div class="popup-section">
                         <strong>Description</strong>
-                        <p id="popup-description"></p>
+                        <div class="description-scroll">
+                            <p id="popup-description"></p>
+                        </div>
                     </div>
+
                     <div class="popup-section">
                         <strong>Specific Requirements</strong>
                         <p id="popup-other"></p>
+                    </div>
+
+                    <div class="popup-section popup-bottom-buttons">
+                        <button title="Download as PDF">
+                            <img src="/img/download-file-icon2.svg" alt="Download" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -60,57 +69,16 @@
             </div>
         </div>
     </div>
-
 </main>
 
 <!-- Overlay -->
-<div id="popupOverlay2" style="
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.5);
-    z-index: 9999;
-"></div>
+<div id="popupOverlay2" class="popup-overlay hidden"></div>
 
-<!-- Popup Box -->
-<div id="popupContainer2" style="
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    z-index: 10000;
-    text-align: center;
-    max-width: 90%;
-    width: 400px;
-">
-    <p id="popupMessage" style="margin-bottom: 20px; font-size: 18px;"></p>
-    <button id="acceptBtn" style="
-        background: green;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        margin-right: 10px;
-        cursor: pointer;
-    ">
-        Continue
-    </button>
-    <button id="rejectBtn" style="
-        background: red;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    ">
-        Return
-    </button>
+<!-- Confirm Popup -->
+<div id="popupContainer2" class="popup-confirm hidden">
+    <p id="popupMessage"></p>
+    <button id="acceptBtn">Continue</button>
+    <button id="rejectBtn">Return</button>
 </div>
 
 <!-- Footer einbinden -->
