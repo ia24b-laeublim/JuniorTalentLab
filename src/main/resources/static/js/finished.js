@@ -126,19 +126,14 @@ function loadComments(taskId) {
                 list.appendChild(div);
             });
             
-            // Nach dem Hinzufügen: Höhe dynamisch berechnen basierend auf ersten 2 Kommentaren
+            // Nach dem Hinzufügen: Höhe basierend auf Anzahl der Kommentare setzen
             if (comments.length <= 2) {
                 // Maximal 2 Kommentare: keine feste Höhe, wachsen natürlich
                 list.style.height = "auto";
                 list.style.overflowY = "visible";
             } else {
-                // Mehr als 2 Kommentare: Höhe der ersten 2 Kommentare messen + Scroll
-                const firstTwoComments = list.querySelectorAll('div:nth-child(-n+2)');
-                let totalHeight = 0;
-                firstTwoComments.forEach(div => {
-                    totalHeight += div.offsetHeight;
-                });
-                list.style.height = totalHeight + "px";
+                // Mehr als 2 Kommentare: feste Höhe für 2 Kommentare + Scroll
+                list.style.height = "100px";
                 list.style.overflowY = "auto";
             }
         })
