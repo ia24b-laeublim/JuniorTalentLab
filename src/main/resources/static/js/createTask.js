@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => {
             console.error("Could not fetch open tasks:", error);
             const container = document.getElementById("task-container");
-            if(container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
+            if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
         });
 });
 
@@ -80,7 +80,7 @@ function closePopup() {
 
 function acceptTask() {
     if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/accept`, { method: "POST" })
+    fetch(`/api/tasks/${selectedTaskId}/accept`, {method: "POST"})
         .then(res => {
             if (res.ok) {
                 location.reload();
@@ -92,7 +92,7 @@ function acceptTask() {
 
 function rejectTask() {
     if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/reject`, { method: "POST" })
+    fetch(`/api/tasks/${selectedTaskId}/reject`, {method: "POST"})
         .then(res => {
             if (res.ok) {
                 location.reload();
@@ -146,3 +146,95 @@ function getOtherRequirements(task) {
 
     return requirements.length > 0 ? requirements.join(", ") : "No additional requirements";
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-flyer-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        popup.style.display = 'block';
+    });
+    continueBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        form.submit();
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-photo-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        popup.style.display = 'block';
+    });
+    continueBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        form.submit();
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-other-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        popup.style.display = 'block';
+    });
+    continueBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        form.submit();
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-poll-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        popup.style.display = 'block';
+    });
+    continueBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        form.submit();
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-poster-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        popup.style.display = 'block';
+    });
+    continueBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        form.submit();
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-video-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        popup.style.display = 'block';
+    });
+    continueBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        form.submit();
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-slideshow-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        popup.style.display = 'block';
+    });
+    continueBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        form.submit();
+    });
+});
