@@ -53,6 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function openPopup(task) {
     selectedTaskId = task.id;
+    console.log("openPopup called with task:", task);
+    console.log("selectedTaskId set to:", selectedTaskId);
 
     // ✅ FIXED: Show client information, not apprentice
     const clientName = task.client ?
@@ -102,6 +104,10 @@ function rejectTask() {
             } else {
                 alert("Failed to reject the task.");
             }
+        })
+        .catch(error => {
+            console.error('Error rejecting task:', error);
+            alert('An error occurred while rejecting the task.');
         });
 }
 
@@ -186,33 +192,10 @@ function getSpecificRequirements(task) {
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
 
-function showRejectConfirm() {
-    document.getElementById("popupMessage").textContent = "Are you sure you want to reject the task?";
-
-    document.getElementById("popupOverlay2").style.display = "block";
-    document.getElementById("popupContainer2").style.display = "block";
-
-    document.getElementById("acceptBtn").onclick = function() {
-        rejectTask();
-        closePopup2();
-
-    };
-
-    document.getElementById("rejectBtn").onclick = function() {
-        closePopup2();
-
-    };
-}
-
-function closePopup2() {
-    document.getElementById("popupOverlay2").style.display = "none";
-    document.getElementById("popupContainer2").style.display = "none";
-}
-
 
 document.addEventListener("click", (event) => {
     const overlay2 = document.getElementById("popupOverlay2");
-    if (overlay2.style.display === "block") return;
+    if (overlay2.style.display === "block" || !overlay2.classList.contains("hidden")) return;
 
     const popup = document.getElementById("popup");
     if (!popup || popup.classList.contains("hidden")) return;
@@ -226,24 +209,41 @@ document.addEventListener("click", (event) => {
 
 
 function showRejectConfirm() {
+    console.log("showRejectConfirm called, selectedTaskId:", selectedTaskId);
+
     const overlay2 = document.getElementById("popupOverlay2");
     const box2     = document.getElementById("popupContainer2");
     const msg      = document.getElementById("popupMessage");
     const btnOK    = document.getElementById("acceptBtn");
     const btnCancel= document.getElementById("rejectBtn");
 
-    msg.textContent        = "Are you sure you want to reject the task?";
-    overlay2.style.display = "block";
-    box2.style.display     = "block";
+    console.log("Elements found:", {overlay2, box2, msg, btnOK, btnCancel});
 
-    overlay2.addEventListener("click", e => e.stopPropagation());
-    box2.addEventListener   ("click", e => e.stopPropagation());
+    if (!overlay2 || !box2 || !msg || !btnOK || !btnCancel) {
+        console.error("Required popup elements not found");
+        alert("Popup elements not found - check console");
+        return;
+    }
+
+    if (!selectedTaskId) {
+        console.error("No task selected");
+        alert("No task selected");
+        return;
+    }
+
+    msg.textContent        = "Are you sure you want to reject the task?";
+    overlay2.classList.remove("hidden");
+    overlay2.style.display = "flex";
 
     btnOK.onclick     = () => { rejectTask(); closePopup2(); };
     btnCancel.onclick = () => closePopup2();
 }
 
 function closePopup2() {
-    document.getElementById("popupOverlay2").style.display   = "none";
-    document.getElementById("popupContainer2").style.display = "none";
+    const overlay2 = document.getElementById("popupOverlay2");
+
+    if (overlay2) {
+        overlay2.classList.add("hidden");
+        overlay2.style.display = "none";
+    }
 }

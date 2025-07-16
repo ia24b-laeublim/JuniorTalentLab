@@ -5,8 +5,8 @@
     <title>Request Page</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/apprentice.css}" />
-    <script defer th:src="@{/js/request.js}"></script>
-    <script defer th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/request.js}" defer ></script>
+    <script th:src="@{/js/script.js}" defer></script>
 </head>
 
 <body>
@@ -65,20 +65,20 @@
 
             <div class="popup-buttons">
                 <button onclick="acceptTask()">Accept</button>
-                <button onclick="showRejectConfirm()">Reject</button>
+                <button type="button" onclick="showRejectConfirm()">Reject</button>
             </div>
         </div>
     </div>
 </main>
 
 <!-- Overlay -->
-<div id="popupOverlay2" class="popup-overlay hidden"></div>
-
-<!-- Confirm Popup -->
-<div id="popupContainer2" class="popup-confirm hidden">
-    <p id="popupMessage"></p>
-    <button id="acceptBtn">Continue</button>
-    <button id="rejectBtn">Return</button>
+<div id="popupOverlay2" class="popup-overlay hidden">
+    <!-- Confirm Popup -->
+    <div id="popupContainer2" class="popup-confirm">
+        <p id="popupMessage"></p>
+        <button id="acceptBtn">Continue</button>
+        <button id="rejectBtn">Return</button>
+    </div>
 </div>
 
 <!-- Footer einbinden -->

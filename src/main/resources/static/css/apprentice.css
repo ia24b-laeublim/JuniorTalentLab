@@ -272,9 +272,9 @@
 }
 /* Shorter description height */
 .description-scroll {
-    max-height: 180px; /* 👈 shorter */
+    max-height: 180px;
     overflow-y: auto;
-    padding-right: 6px;
+padding-right: 6px;
     background-color: #f5f5f5;
     border-radius: 4px;
     margin-top: 8px;
@@ -317,4 +317,51 @@
     border: none;
     cursor: pointer;
     padding: 0;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-confirm {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    text-align: center;
+    z-index: 10001;
+}
+
+.popup-confirm p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.popup-confirm button {
+    margin: 0 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.popup-confirm #acceptBtn {
+    background-color: #E60100;
+    color: white;
+}
+
+.popup-confirm #rejectBtn {
+    background-color: #ccc;
+    color: #333;
 }
