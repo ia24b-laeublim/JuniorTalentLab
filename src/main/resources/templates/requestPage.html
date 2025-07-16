@@ -71,13 +71,27 @@
     </div>
 </main>
 
-<!-- Overlay -->
+<!-- Reject Confirmation Overlay -->
 <div id="popupOverlay2" class="popup-overlay hidden">
     <!-- Confirm Popup -->
     <div id="popupContainer2" class="popup-confirm">
         <p id="popupMessage"></p>
         <button id="acceptBtn">Continue</button>
         <button id="rejectBtn">Return</button>
+    </div>
+</div>
+
+<!-- Accept Name Input Overlay -->
+<div id="acceptOverlay" class="popup-overlay hidden">
+    <div id="acceptContainer" class="popup-confirm">
+        <p>Please enter your information to accept this task:</p>
+        <div style="margin: 20px 0;">
+            <input type="text" id="firstNameInput" placeholder="First Name" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="text" id="lastNameInput" placeholder="Last Name" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="number" id="gpnInput" placeholder="GPN" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <button id="confirmAcceptBtn">Accept Task</button>
+        <button id="cancelAcceptBtn">Cancel</button>
     </div>
 </div>
 

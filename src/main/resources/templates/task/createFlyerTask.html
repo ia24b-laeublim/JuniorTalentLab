@@ -36,7 +36,7 @@
                     <div class="form-field">
                         <label for="paper-size" class="form-label">Paper Size</label>
                         <input type="text" id="paper-size" name="paperSize" class="form-input"
-                               list="size-options" placeholder="Select or enter custom size" />
+                               list="size-options" placeholder="Select or enter custom size" required />
                         <datalist id="size-options">
                             <option value="A4">A4 (210 × 297 mm)</option>
                             <option value="A5">A5 (148 × 210 mm)</option>
@@ -49,7 +49,7 @@
 
                     <div class="form-field">
                         <label for="paper-type" class="form-label">Paper Type</label>
-                        <select id="paper-type" name="paperType" class="form-select">
+                        <select id="paper-type" name="paperType" class="form-select" required>
                             <option value="">Select Paper Type</option>
                             <option value="Standard">Standard (80gsm)</option>
                             <option value="Premium">Premium (120gsm)</option>

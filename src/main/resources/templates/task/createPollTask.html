@@ -36,12 +36,12 @@
                     <div class="form-field">
                         <label for="question-count" class="form-label">Question Count</label>
                         <input type="number" id="question-count" name="questionCount" class="form-input"
-                               min="1" max="50" placeholder="e.g., 10" />
+                               min="1" max="50" placeholder="e.g., 10" required />
                     </div>
 
                     <div class="form-field">
                         <label for="question-type" class="form-label">Question Type</label>
-                        <select id="question-type" name="questionType" class="form-select">
+                        <select id="question-type" name="questionType" class="form-select" required>
                             <option value="">Select Question Type</option>
                             <option value="multiple-choice">Multiple Choice</option>
                             <option value="single-choice">Single Choice</option>
@@ -55,19 +55,19 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label for="start-date" class="form-label">Start Date</label>
-                        <input type="date" id="start-date" name="startDate" class="form-input" />
+                        <input type="date" id="start-date" name="startDate" class="form-input" required />
                     </div>
 
                     <div class="form-field">
                         <label for="end-date" class="form-label">End Date</label>
-                        <input type="date" id="end-date" name="endDate" class="form-input" />
+                        <input type="date" id="end-date" name="endDate" class="form-input" required />
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-field">
                         <label for="anonymous" class="form-label">Anonymous Poll</label>
-                        <select id="anonymous" name="anonymous" class="form-select">
+                        <select id="anonymous" name="anonymous" class="form-select" required>
                             <option value="">Select Option</option>
                             <option value="true">Yes, Anonymous</option>
                             <option value="false">No, Collect Names</option>
