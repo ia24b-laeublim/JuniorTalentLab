@@ -479,7 +479,14 @@ public class CreateTaskController {
         task.setBudgetChf(budgetChf);
         task.setDeadline(deadline);
         task.setMaxFileSizeMb(maxFileSizeMb);
-        task.setChannel(channel);
+        
+        // Validate channel value - only allow "Internal" or "External"
+        if (channel != null && (channel.equals("Internal") || channel.equals("External"))) {
+            task.setChannel(channel);
+        } else {
+            task.setChannel("Internal"); // Default to Internal if invalid
+        }
+        
         task.setHandoverMethod(handoverMethod);
         task.setClient(client);
         task.setStatus("open");

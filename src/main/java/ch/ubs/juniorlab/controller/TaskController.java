@@ -1,10 +1,12 @@
 package ch.ubs.juniorlab.controller;
 
 import ch.ubs.juniorlab.entity.Comment;
+import ch.ubs.juniorlab.entity.Person;
 
 import ch.ubs.juniorlab.dto.*;
 import ch.ubs.juniorlab.entity.Task;
 import ch.ubs.juniorlab.repository.CommentRepository;
+import ch.ubs.juniorlab.repository.PersonRepository;
 import ch.ubs.juniorlab.repository.TaskRepository;
 
 import org.springframework.http.ResponseEntity;
@@ -28,13 +30,13 @@ import java.util.stream.Collectors;
 public class TaskController {
 
     private final TaskRepository taskRepository;
-
+    private final PersonRepository personRepository;
     private final CommentRepository commentRepository;
-
     private final PDFService pdfService;
 
-    public TaskController(TaskRepository taskRepository, CommentRepository commentRepository, PDFService pdfService) {
+    public TaskController(TaskRepository taskRepository, PersonRepository personRepository, CommentRepository commentRepository, PDFService pdfService) {
         this.taskRepository = taskRepository;
+        this.personRepository = personRepository;
         this.commentRepository = commentRepository;
         this.pdfService = pdfService;
     }
@@ -80,9 +82,23 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/accept")
-    public ResponseEntity<Void> acceptTask(@PathVariable Long id) {
+    public ResponseEntity<Void> acceptTask(@PathVariable Long id, @RequestBody AcceptTaskRequest request) {
         Task task = taskRepository.findById(id).orElseThrow();
+        
+        // Find or create a person based on first name, last name, and GPN
+        String gpnString = String.valueOf(request.getGpn());
+        Person apprentice = personRepository.findByGpn(gpnString)
+                .orElseGet(() -> {
+                    Person newPerson = new Person();
+                    newPerson.setPrename(request.getFirstName());
+                    newPerson.setName(request.getLastName());
+                    newPerson.setGpn(gpnString);
+                    newPerson.setEmail(request.getFirstName().toLowerCase() + "." + request.getLastName().toLowerCase() + "@example.com");
+                    return personRepository.save(newPerson);
+                });
+        
         task.setStatus("ACCEPTED");
+        task.setApprentice(apprentice);
         if (task.getProgress() == null) {
             task.setProgress("Started");
         }
