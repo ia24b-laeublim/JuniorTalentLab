@@ -82,14 +82,102 @@ function closePopup() {
 
 function acceptTask() {
     if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/accept`, { method: "POST" })
-        .then(res => {
-            if (res.ok) {
-                location.reload();
-            } else {
-                alert("Failed to accept the task.");
-            }
-        });
+    showAcceptNamePopup();
+}
+
+function showAcceptNamePopup() {
+    const overlay = document.getElementById("acceptOverlay");
+    const firstNameInput = document.getElementById("firstNameInput");
+    const lastNameInput = document.getElementById("lastNameInput");
+    const gpnInput = document.getElementById("gpnInput");
+    const confirmBtn = document.getElementById("confirmAcceptBtn");
+    const cancelBtn = document.getElementById("cancelAcceptBtn");
+    
+    // Clear previous inputs
+    firstNameInput.value = "";
+    lastNameInput.value = "";
+    gpnInput.value = "";
+    
+    // Show overlay
+    overlay.classList.remove("hidden");
+    overlay.style.display = "flex";
+    
+    // Focus on first input
+    firstNameInput.focus();
+    
+    // Set up event handlers
+    confirmBtn.onclick = () => confirmAcceptTask();
+    cancelBtn.onclick = () => closeAcceptNamePopup();
+    
+    // Allow Enter key navigation
+    firstNameInput.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+            lastNameInput.focus();
+        }
+    };
+    
+    lastNameInput.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+            gpnInput.focus();
+        }
+    };
+    
+    gpnInput.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+            confirmAcceptTask();
+        }
+    };
+    
+    // GPN input validation - only numbers (handled by HTML5 type="number")
+}
+
+function closeAcceptNamePopup() {
+    const overlay = document.getElementById("acceptOverlay");
+    overlay.classList.add("hidden");
+    overlay.style.display = "none";
+}
+
+function confirmAcceptTask() {
+    const firstName = document.getElementById("firstNameInput").value.trim();
+    const lastName = document.getElementById("lastNameInput").value.trim();
+    const gpnValue = document.getElementById("gpnInput").value.trim();
+    
+    if (!firstName || !lastName || !gpnValue) {
+        alert("Please enter first name, last name, and GPN.");
+        return;
+    }
+    
+    const gpn = parseInt(gpnValue);
+    if (isNaN(gpn) || gpn <= 0) {
+        alert("GPN must be a valid positive number.");
+        return;
+    }
+    
+    if (!selectedTaskId) return;
+    
+    fetch(`/api/tasks/${selectedTaskId}/accept`, { 
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            firstName: firstName,
+            lastName: lastName,
+            gpn: gpn
+        })
+    })
+    .then(res => {
+        if (res.ok) {
+            closeAcceptNamePopup();
+            location.reload();
+        } else {
+            alert("Failed to accept the task.");
+        }
+    })
+    .catch(error => {
+        console.error('Error accepting task:', error);
+        alert('An error occurred while accepting the task.');
+    });
 }
 
 function rejectTask() {
