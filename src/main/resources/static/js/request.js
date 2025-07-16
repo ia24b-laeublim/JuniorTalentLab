@@ -9,12 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return res.json();
         })
         .then(data => {
-
             const container = document.getElementById("task-container");
             if (!container) return; // Guard clause
 
             data.forEach(task => {
-
                 const card = document.createElement("div");
                 card.className = "task-card";
 
@@ -47,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => {
             console.error("Could not fetch open tasks:", error);
             const container = document.getElementById("task-container");
-            if(container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
+            if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
         });
 });
 
@@ -56,7 +54,6 @@ function openPopup(task) {
     console.log("openPopup called with task:", task);
     console.log("selectedTaskId set to:", selectedTaskId);
 
-    // ✅ FIXED: Show client information, not apprentice
     const clientName = task.client ?
         `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
         "Unknown";
@@ -80,7 +77,7 @@ function openPopup(task) {
 
 function closePopup() {
     document.getElementById("popup").classList.add("hidden");
-    selectedTaskId = null; // Deselect task when closing
+    selectedTaskId = null;
 }
 
 function acceptTask() {
@@ -111,24 +108,62 @@ function rejectTask() {
         });
 }
 
-// Close popup when clicking outside
+// ——————————————————————————————————
+// CLOSE MAIN POPUP WHEN CLICKING OUTSIDE
+// (but NOT when the “Are you sure?” confirm overlay is visible)
+// ——————————————————————————————————
 document.addEventListener("click", (event) => {
+    const overlay2 = document.getElementById("popupOverlay2");
+    // ← CHANGED: bail out immediately if confirm‐overlay is open
+    if (overlay2 && !overlay2.classList.contains("hidden")) {
+        return;
+    }
+
     const popup = document.getElementById("popup");
-    if (!popup) return;
-
-    if (popup.classList.contains("hidden")) {
-        return;
-    }
-
-    if (event.target.closest(".task-card")) {
-        return;
-    }
+    if (!popup || popup.classList.contains("hidden")) return;
+    if (event.target.closest(".task-card")) return;
 
     const content = popup.querySelector(".popup-content");
     if (content && !content.contains(event.target)) {
         closePopup();
     }
 });
+
+function showRejectConfirm() {
+    console.log("showRejectConfirm called, selectedTaskId:", selectedTaskId);
+
+    const overlay2   = document.getElementById("popupOverlay2");
+    const box2       = document.getElementById("popupContainer2");
+    const msg        = document.getElementById("popupMessage");
+    const btnOK      = document.getElementById("acceptBtn");
+    const btnCancel  = document.getElementById("rejectBtn");
+
+    if (!overlay2 || !box2 || !msg || !btnOK || !btnCancel) {
+        console.error("Required popup elements not found");
+        alert("Popup elements not found - check console");
+        return;
+    }
+    if (!selectedTaskId) {
+        console.error("No task selected");
+        alert("No task selected");
+        return;
+    }
+
+    msg.textContent = "Are you sure you want to reject the task?";
+    overlay2.classList.remove("hidden");
+    overlay2.style.display = "flex";
+
+    btnOK.onclick     = () => { rejectTask(); closePopup2(); };
+    btnCancel.onclick = () => closePopup2();
+}
+
+function closePopup2() {
+    const overlay2 = document.getElementById("popupOverlay2");
+    if (overlay2) {
+        overlay2.classList.add("hidden");
+        overlay2.style.display = "none";
+    }
+}
 
 // ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
@@ -149,101 +184,44 @@ function getMaxFileSize(task) {
     return "-";
 }
 
-// ✅ UPDATED: Helper function for Specific Requirements (removed Max File Size)
+// ✅ UPDATED: Helper function for Specific Requirements
 function getSpecificRequirements(task) {
     let requirements = [];
 
-    // Flyer-specific requirements
+    // Flyer-specific
     if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
 
-    // Video-specific requirements
+    // Video-specific
     if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
-    if (task.voiceover !== null && task.voiceover !== undefined)
-        requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
-    if (task.disclaimer !== null && task.disclaimer !== undefined)
-        requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
+    if (task.voiceover != null) requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
+    if (task.disclaimer != null) requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
     if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
     if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
 
-    // Photo-specific requirements (shared fields reused from Video)
+    // Photo-specific
     if (task.format) requirements.push(`Format: ${task.format}`);
     if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
     if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
 
-    // Slideshow-specific requirements
+    // Slideshow-specific
     if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
 
-    // Poster-specific requirements
+    // Poster-specific
     if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
     if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
     if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
 
-    // Poll-specific requirements
+    // Poll-specific
     if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
     if (task.questionType) requirements.push(`Type: ${task.questionType}`);
     if (task.startDate) requirements.push(`Start: ${task.startDate}`);
     if (task.endDate) requirements.push(`End: ${task.endDate}`);
-    if (task.anonymous !== null && task.anonymous !== undefined)
-        requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
+    if (task.anonymous != null) requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
     if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
 
-    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
-}
-
-
-document.addEventListener("click", (event) => {
-    const overlay2 = document.getElementById("popupOverlay2");
-    if (overlay2.style.display === "block" || !overlay2.classList.contains("hidden")) return;
-
-    const popup = document.getElementById("popup");
-    if (!popup || popup.classList.contains("hidden")) return;
-    if (event.target.closest(".task-card")) return;
-
-    const content = popup.querySelector(".popup-content");
-    if (content && !content.contains(event.target)) {
-        closePopup();
-    }
-});
-
-
-function showRejectConfirm() {
-    console.log("showRejectConfirm called, selectedTaskId:", selectedTaskId);
-
-    const overlay2 = document.getElementById("popupOverlay2");
-    const box2     = document.getElementById("popupContainer2");
-    const msg      = document.getElementById("popupMessage");
-    const btnOK    = document.getElementById("acceptBtn");
-    const btnCancel= document.getElementById("rejectBtn");
-
-    console.log("Elements found:", {overlay2, box2, msg, btnOK, btnCancel});
-
-    if (!overlay2 || !box2 || !msg || !btnOK || !btnCancel) {
-        console.error("Required popup elements not found");
-        alert("Popup elements not found - check console");
-        return;
-    }
-
-    if (!selectedTaskId) {
-        console.error("No task selected");
-        alert("No task selected");
-        return;
-    }
-
-    msg.textContent        = "Are you sure you want to reject the task?";
-    overlay2.classList.remove("hidden");
-    overlay2.style.display = "flex";
-
-    btnOK.onclick     = () => { rejectTask(); closePopup2(); };
-    btnCancel.onclick = () => closePopup2();
-}
-
-function closePopup2() {
-    const overlay2 = document.getElementById("popupOverlay2");
-
-    if (overlay2) {
-        overlay2.classList.add("hidden");
-        overlay2.style.display = "none";
-    }
+    return requirements.length > 0
+        ? requirements.join(", ")
+        : "No specific requirements";
 }
