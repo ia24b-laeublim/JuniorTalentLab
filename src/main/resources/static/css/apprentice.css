@@ -365,3 +365,18 @@ padding-right: 6px;
     background-color: #ccc;
     color: #333;
 }
+.accept-taskbtn { /* Accept */
+    background-color: #008000;
+    color: white;
+}
+.accept-taskbtn:hover {
+    background-color: #006400;
+}
+
+.cancel-taskbtn { /* Reject */
+    background-color: #E2001A;
+    color: white;
+}
+.cancel-taskbtn:hover {
+    background-color: #b50015;
+}
