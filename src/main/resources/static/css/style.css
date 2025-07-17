@@ -154,6 +154,8 @@ footer {
     border-top: 1px solid #ccc;
     padding: 30px 40px;
     box-sizing: border-box;
+    z-index: 1;
+    position: relative;
 }
 
 /* Link-Container */
@@ -362,8 +364,8 @@ footer {
 /*
 .carousel-button {
     background-color: white;
-    border: 2px solid #E2001A;
-    color: #E2001A;
+    border: 2px solid #E60100;
+    color: #E60100;
     border-radius: 30px;
     padding: 10px 20px;
     font-size: 1rem;
@@ -373,7 +375,7 @@ footer {
 }
 
 .carousel-button:hover {
-    background-color: #E2001A;
+    background-color: #E60100;
     color: white;
 }
 */
