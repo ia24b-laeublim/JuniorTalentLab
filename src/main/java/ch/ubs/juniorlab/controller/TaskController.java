@@ -9,7 +9,10 @@ import ch.ubs.juniorlab.repository.CommentRepository;
 import ch.ubs.juniorlab.repository.PersonRepository;
 import ch.ubs.juniorlab.repository.TaskRepository;
 
+import ch.ubs.juniorlab.service.HashService;
 import ch.ubs.juniorlab.service.MailService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.InputStreamResource;
@@ -26,22 +29,31 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.System.out;
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
 
+    @Autowired
     private final TaskRepository taskRepository;
     private final PersonRepository personRepository;
     private final CommentRepository commentRepository;
     private final PDFService pdfService;
+
+    @Autowired
     private final MailService mailService;
 
-    public TaskController(TaskRepository taskRepository, PersonRepository personRepository, CommentRepository commentRepository, PDFService pdfService, MailService mailService) {
+    @Autowired
+    private final HashService hashService;
+
+    public TaskController(TaskRepository taskRepository, PersonRepository personRepository, CommentRepository commentRepository, PDFService pdfService, MailService mailService, HashService hashService) {
         this.taskRepository = taskRepository;
         this.personRepository = personRepository;
         this.commentRepository = commentRepository;
         this.pdfService = pdfService;
         this.mailService = mailService;
+        this.hashService = hashService;
     }
 
     @GetMapping("/open")
@@ -126,10 +138,82 @@ public class TaskController {
     @PostMapping("/{id}/status")
     public ResponseEntity<Void> updateTaskStatus(@PathVariable Long id, @RequestBody StatusUpdateRequest request) {
         Task task = taskRepository.findById(id).orElseThrow();
+
         task.setProgress(request.getStatus());
         taskRepository.save(task);
+
+        Person client = task.getClient();
+        if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
+            if ("Finished".equalsIgnoreCase(task.getProgress())) {
+                sendTaskFinishedEmail(task, client);
+            } else {
+                sendTaskStatusChangedMail(task, client);
+            }
+        }
+
         return ResponseEntity.ok().build();
     }
+
+
+    private void sendTaskStatusChangedMail(Task task, Person client) {
+        String taskUrl = hashService.getInfoUrl(task.getId());
+
+        String subject = "Status‑Update to your Task \"" + task.getTitle() + "\"";
+        String message = String.format(
+                """
+                Hello %s,
+        
+                The status on your Task "%s" has just been updated to: %s
+                
+                If you wish to edit, delete, or review your task, here is the corresponding link:
+                %s
+        
+                Thank you for using Junior Talent Lab!
+        
+                Best regards,
+                Junior Talent Lab Team
+                """,
+                client.getPrename(),
+                task.getTitle(),
+                task.getProgress(),
+                taskUrl
+        );
+
+        mailService.sendEmail(client.getEmail(), subject, message);
+
+        out.println("Task created with URL: " + taskUrl);
+        System.out.println("Status‑Mail sent to: " + client.getEmail());
+    }
+
+    private void sendTaskFinishedEmail(Task task, Person client) {
+        String taskUrl = hashService.getInfoUrl(task.getId());
+
+        String subject = "Your Task \"" + task.getTitle() + "\" is now finished!";
+        String message = String.format(
+                """
+                Hello %s,
+        
+                Your Task "%s" has been marked as finished.
+                
+                If you wish to edit, delete, or review your task, here is the corresponding link:
+                %s
+        
+                Thank you for using Junior Talent Lab!
+        
+                Best regards,
+                Junior Talent Lab Team
+                """,
+                client.getPrename(),
+                task.getTitle(),
+                taskUrl
+        );
+
+        mailService.sendEmail(client.getEmail(), subject, message);
+
+        out.println("Task created with URL: " + taskUrl);
+        System.out.println("Finished‑Mail sent to: " + client.getEmail());
+    }
+
 
     @PostMapping("/{taskId}/comments")
     public ResponseEntity<Void> addCommentToTask(@PathVariable Long taskId, @RequestBody CommentRequest commentRequest) {
@@ -171,12 +255,17 @@ public class TaskController {
     }
 
     private void sendTaskAcceptedMail(Task task, Person client, Person apprentice) {
+        String taskUrl = hashService.getInfoUrl(task.getId());
+
         String subject = "Your Task \"" + task.getTitle() + "\" has been accepted!";
         String message = String.format(
                 """
                 Hello %s,
                 
                 Your Task "%s" has been accepted by %s %s (%s).
+                
+                If you wish to edit, delete, or review your task, here is the corresponding link:
+                %s
                 
                 Thank you for using Junior Talent Lab!
                 
@@ -187,11 +276,13 @@ public class TaskController {
                 task.getTitle(),
                 apprentice.getPrename(),
                 apprentice.getName(),
-                apprentice.getGpn()
+                apprentice.getGpn(),
+                taskUrl
         );
 
         mailService.sendEmail(client.getEmail(), subject, message);
 
+        out.println("Task created with URL: " + taskUrl);
         System.out.println("Acceptance‑Mail sent to: " + client.getEmail());
     }
 
