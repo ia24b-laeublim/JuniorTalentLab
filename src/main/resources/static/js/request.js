@@ -202,8 +202,12 @@ function rejectTask() {
 // ——————————————————————————————————
 document.addEventListener("click", (event) => {
     const overlay2 = document.getElementById("popupOverlay2");
-    // ← CHANGED: bail out immediately if confirm‐overlay is open
+    const acceptOverlay = document.getElementById("acceptOverlay");
+    // ← CHANGED: bail out immediately if confirm‐overlay or accept overlay is open
     if (overlay2 && !overlay2.classList.contains("hidden")) {
+        return;
+    }
+    if (acceptOverlay && !acceptOverlay.classList.contains("hidden")) {
         return;
     }
 
