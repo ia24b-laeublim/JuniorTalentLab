@@ -9,6 +9,7 @@ import ch.ubs.juniorlab.repository.CommentRepository;
 import ch.ubs.juniorlab.repository.PersonRepository;
 import ch.ubs.juniorlab.repository.TaskRepository;
 
+import ch.ubs.juniorlab.service.MailService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.InputStreamResource;
@@ -33,12 +34,14 @@ public class TaskController {
     private final PersonRepository personRepository;
     private final CommentRepository commentRepository;
     private final PDFService pdfService;
+    private final MailService mailService;
 
-    public TaskController(TaskRepository taskRepository, PersonRepository personRepository, CommentRepository commentRepository, PDFService pdfService) {
+    public TaskController(TaskRepository taskRepository, PersonRepository personRepository, CommentRepository commentRepository, PDFService pdfService, MailService mailService) {
         this.taskRepository = taskRepository;
         this.personRepository = personRepository;
         this.commentRepository = commentRepository;
         this.pdfService = pdfService;
+        this.mailService = mailService;
     }
 
     @GetMapping("/open")
@@ -103,6 +106,12 @@ public class TaskController {
             task.setProgress("Started");
         }
         taskRepository.save(task);
+
+        Person client = task.getClient();
+        if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
+            sendTaskAcceptedMail(task, client, apprentice);
+        }
+
         return ResponseEntity.ok().build();
     }
 
@@ -160,4 +169,30 @@ public class TaskController {
                 .contentLength(pdf.length())
                 .body(resource);
     }
+
+    private void sendTaskAcceptedMail(Task task, Person client, Person apprentice) {
+        String subject = "Your Task \"" + task.getTitle() + "\" has been accepted!";
+        String message = String.format(
+                """
+                Hello %s,
+                
+                Your Task "%s" has been accepted by %s %s (%s).
+                
+                Thank you for using Junior Talent Lab!
+                
+                Best regards,
+                Junior Talent Lab Team
+                """,
+                client.getPrename(),
+                task.getTitle(),
+                apprentice.getPrename(),
+                apprentice.getName(),
+                apprentice.getGpn()
+        );
+
+        mailService.sendEmail(client.getEmail(), subject, message);
+
+        System.out.println("Acceptance‑Mail sent to: " + client.getEmail());
+    }
+
 }

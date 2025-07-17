@@ -1,8 +1,16 @@
 package ch.ubs.juniorlab.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AcceptTaskRequest {
+
+    @JsonProperty("firstName")
     private String firstName;
+
+    @JsonProperty("lastName")
     private String lastName;
+
+    @JsonProperty("gpn")
     private int gpn;
 
     // Default constructor
