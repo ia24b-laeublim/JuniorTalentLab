@@ -68,7 +68,10 @@ public class TaskController {
                             "REJECTED".equalsIgnoreCase(status);
                     return isOpen;
                 })
-                .sorted(Comparator.comparing(Task::getId).reversed())
+                .sorted(Comparator.comparing(
+                        Task::getDeadline,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                ))
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
     }
@@ -82,7 +85,10 @@ public class TaskController {
                     return "ACCEPTED".equalsIgnoreCase(status) &&
                             !"Finished".equalsIgnoreCase(progress);
                 })
-                .sorted(Comparator.comparing(Task::getId).reversed())
+                .sorted(Comparator.comparing(
+                        Task::getDeadline,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                ))
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
     }
@@ -91,7 +97,10 @@ public class TaskController {
     public List<TaskWithAttachmentDto> getFinishedTasks() {
         return taskRepository.findAllWithClients().stream()
                 .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
-                .sorted(Comparator.comparing(Task::getId).reversed())
+                .sorted(Comparator.comparing(
+                        Task::getDeadline,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                ))
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
     }
@@ -154,7 +163,6 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
-
     private void sendTaskStatusChangedMail(Task task, Person client) {
         String taskUrl = hashService.getInfoUrl(task.getId());
 
@@ -213,7 +221,6 @@ public class TaskController {
         out.println("Task created with URL: " + taskUrl);
         System.out.println("Finished‑Mail sent to: " + client.getEmail());
     }
-
 
     @PostMapping("/{taskId}/comments")
     public ResponseEntity<Void> addCommentToTask(@PathVariable Long taskId, @RequestBody CommentRequest commentRequest) {
