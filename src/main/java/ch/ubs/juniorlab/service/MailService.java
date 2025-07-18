@@ -9,7 +9,6 @@ import java.util.Properties;
 @Service
 public class MailService {
 
-
     private final String smtpHost = "smtp-relay.brevo.com";
     private final int smtpPort = 587;
     private final String smtpUsername = "9009c1001@smtp-brevo.com";
