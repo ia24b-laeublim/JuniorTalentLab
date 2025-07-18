@@ -224,7 +224,45 @@ public class TaskController {
         newComment.setContent(commentRequest.getText());
         newComment.setTitle("User Comment");
         commentRepository.save(newComment);
+
+        Person client = task.getClient();
+        if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
+            sendCommentEmail(task, client, commentRequest);
+        }
+
         return ResponseEntity.ok().build();
+    }
+
+    private void sendCommentEmail(Task task, Person client, CommentRequest comment) {
+        String taskUrl = hashService.getInfoUrl(task.getId());
+
+        String subject = "Your Task \"" + task.getTitle() + "\" was commented";
+        String message = String.format(
+                """
+                Hello %s,
+        
+                Your Task "%s" has been commented.
+                
+                Comment: "%s"
+                
+                If you wish to edit, delete, or review your task, here is the corresponding link:
+                %s
+        
+                Thank you for using Junior Talent Lab!
+        
+                Best regards,
+                Junior Talent Lab Team
+                """,
+                client.getPrename(),
+                task.getTitle(),
+                comment.getText(),
+                taskUrl
+        );
+
+        mailService.sendEmail(client.getEmail(), subject, message);
+
+        out.println("Task created with URL: " + taskUrl);
+        System.out.println("Finished‑Mail sent to: " + client.getEmail());
     }
 
     @GetMapping("/{taskId}/comments")
