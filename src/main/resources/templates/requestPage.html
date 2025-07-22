@@ -102,5 +102,25 @@
     <!-- Footer einbinden -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 
+<!-- Reject Reason Input Overlay -->
+<div id="rejectOverlay" class="popup-overlay hidden">
+    <div id="rejectContainer" class="popup-confirm">
+        <p>Please enter your information to reject this task:</p>
+
+        <div class="popup-confirm" style="margin:0 20px 10px 20px; display:flex; flex-direction:column; align-items:center;">
+            <div style="margin:10px 0 15px 0; width:320px;">
+                <input type="text" id="rejFirstName" placeholder="First Name" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+                <input type="text" id="rejLastName"  placeholder="Last Name"  required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+                <textarea id="rejReason" placeholder="Why are you rejecting this task?" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; min-height:80px;"></textarea>
+            </div>
+            <div style="display:flex; gap:16px; justify-content:center;">
+                <button id="confirmRejectBtn" class="cancel-taskbtn">Reject Task</button>
+                <button id="cancelRejectBtn"  class="accept-taskbtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
 </html>

@@ -328,3 +328,74 @@ function getSpecificRequirements(task) {
         ? requirements.join(", ")
         : "No specific requirements";
 }
+
+function showRejectConfirm() {
+    // Statt sofort rejectTask() zu rufen, öffnest du jetzt das Formular:
+    if (!selectedTaskId) {
+        alert("No task selected");
+        return;
+    }
+    showRejectForm();
+}
+
+function showRejectForm() {
+    const overlay = document.getElementById("rejectOverlay");
+    const f = document.getElementById("rejFirstName");
+    const l = document.getElementById("rejLastName");
+    const r = document.getElementById("rejReason");
+    const ok = document.getElementById("confirmRejectBtn");
+    const cancel = document.getElementById("cancelRejectBtn");
+
+    f.value = ""; l.value = ""; r.value = "";
+    overlay.classList.remove("hidden");
+    overlay.style.display = "flex";
+    f.focus();
+
+    ok.onclick = () => confirmRejectTask();
+    cancel.onclick = (e) => { e.stopPropagation(); closeRejectForm(); };
+
+    // optional: Enter-Handling
+    r.onkeypress = (e) => { if (e.key === "Enter" && e.shiftKey === false) { e.preventDefault(); confirmRejectTask(); } };
+}
+
+function closeRejectForm() {
+    const overlay = document.getElementById("rejectOverlay");
+    overlay.classList.add("hidden");
+    overlay.style.display = "none";
+    // Hauptpopup sichtbar lassen
+    document.getElementById("popup")?.classList.remove("hidden");
+}
+
+function confirmRejectTask() {
+    const firstName = document.getElementById("rejFirstName").value.trim();
+    const lastName  = document.getElementById("rejLastName").value.trim();
+    const reason    = document.getElementById("rejReason").value.trim();
+
+    if (!firstName || !lastName || !reason) {
+        alert("Please fill in first name, last name and reason.");
+        return;
+    }
+    if (!selectedTaskId) return;
+
+    fetch(`/api/tasks/${selectedTaskId}/reject`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            firstName: firstName,
+            lastName:  lastName,
+            reason:    reason
+        })
+    })
+        .then(res => {
+            if (res.ok) {
+                closeRejectForm();
+                location.reload();
+            } else {
+                alert("Failed to reject the task.");
+            }
+        })
+        .catch(err => {
+            console.error("Error rejecting task:", err);
+            alert("An error occurred while rejecting the task.");
+        });
+}
