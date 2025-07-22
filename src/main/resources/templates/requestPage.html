@@ -85,34 +85,6 @@
     <div id="acceptContainer" class="popup-confirm">
         <p>Please enter your information to accept this task:</p>
 
-        <div class ="popup-confirm" style=" margin: 20px auto; width: 320px; display: flex; flex-direction: column; align-items: center;">
-            <input type="text" id="firstNameInput" placeholder="First Name" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-            <input type="text" id="lastNameInput" placeholder="Last Name" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-            <input type="number" id="gpnInput" placeholder="GPN" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-        <button id="confirmAcceptBtn" class="accept-taskbtn">Accept Task</button>
-        <button id="cancelAcceptBtn" class="cancel-taskbtn">Cancel</button>
-    </div>
-</div>
-
-<!-- Footer einbinden -->
-<div th:replace="~{fragments/footer :: footer}"></div>
-<div id="rejectPopup" class="popup-overlay hidden">
-    <div class="popup-confirm reject-popup">
-        <p>Please enter your information to reject this task:</p>
-        <input type="text" id="rejectFirstName" placeholder="First Name">
-        <input type="text" id="rejectLastName" placeholder="Last Name">
-        <input type="text" id="reasonInput" placeholder="Reason for rejection">
-        <div style="margin-top: 12px;">
-            <button id="confirmRejectSubmit" class="accept-taskbtn">Reject Task</button>
-            <button id="cancelRejectBtn" class="cancel-taskbtn">Cancel</button>
-        </div>
-    </div>
-</div>
-
-
-=======
-
         <div class ="popup-confirm" style="margin: 0px 20px 10px 20px; display: flex; flex-direction: column; align-items: center;">
 
             <div style="margin: 10px 0 15px 0; width: 320px;">
@@ -129,7 +101,6 @@
 </div>
     <!-- Footer einbinden -->
     <div th:replace="~{fragments/footer :: footer}"></div>
-
 
 </body>
 </html>
