@@ -141,7 +141,47 @@ public class TaskController {
         Task task = taskRepository.findById(id).orElseThrow();
         task.setStatus("REJECTED");
         taskRepository.save(task);
+
+        Person client = task.getClient();
+        if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
+            sendRejectedReasonMail(task, client);
+        }
+
         return ResponseEntity.ok().build();
+    }
+
+    private void sendRejectedReasonMail(Task task, Person client) {
+        String taskUrl = hashService.getInfoUrl(task.getId());
+
+        String subject = "Your Task \"" + task.getTitle() + "\" has been rejected";
+        String message = String.format(
+                """
+                Hello %s,
+        
+                Your Task "%s" has been rejected by %s %s because %s.
+                
+                If you wish to edit, delete, or review your task, here is the corresponding link:
+                %s
+        
+                Thank you for using Junior Talent Lab!
+        
+                Best regards,
+                Junior Talent Lab Team
+                """,
+                client.getPrename(),
+                task.getTitle(),
+                task.getTitle(),
+                task.getTitle(),
+                task.getTitle(),
+
+
+                taskUrl
+        );
+
+        mailService.sendEmail(client.getEmail(), subject, message);
+
+        out.println("Task created with URL: " + taskUrl);
+        System.out.println("Status‑Mail sent to: " + client.getEmail());
     }
 
     @PostMapping("/{id}/status")
