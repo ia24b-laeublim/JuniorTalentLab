@@ -404,3 +404,17 @@ function confirmRejectTask() {
 }
 
 
+// Block ALL Outside-Clicks while the reject popup is visible
+document.addEventListener("click", function (e) {
+    const overlay   = document.getElementById("rejectOverlay");
+    if (!overlay || overlay.classList.contains("hidden")) return; // not open
+
+    const container = document.getElementById("rejectContainer");
+    if (container && !container.contains(e.target)) {
+        // User clicked outside -> ignore completely
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}, true);
+
+
