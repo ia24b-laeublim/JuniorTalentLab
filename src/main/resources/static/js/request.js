@@ -92,42 +92,42 @@ function showAcceptNamePopup() {
     const gpnInput = document.getElementById("gpnInput");
     const confirmBtn = document.getElementById("confirmAcceptBtn");
     const cancelBtn = document.getElementById("cancelAcceptBtn");
-    
+
     // Clear previous inputs
     firstNameInput.value = "";
     lastNameInput.value = "";
     gpnInput.value = "";
-    
+
     // Show overlay
     overlay.classList.remove("hidden");
     overlay.style.display = "flex";
-    
+
     // Focus on first input
     firstNameInput.focus();
-    
+
     // Set up event handlers
     confirmBtn.onclick = () => confirmAcceptTask();
     cancelBtn.onclick = () => closeAcceptNamePopup();
-    
+
     // Allow Enter key navigation
     firstNameInput.onkeypress = (e) => {
         if (e.key === 'Enter') {
             lastNameInput.focus();
         }
     };
-    
+
     lastNameInput.onkeypress = (e) => {
         if (e.key === 'Enter') {
             gpnInput.focus();
         }
     };
-    
+
     gpnInput.onkeypress = (e) => {
         if (e.key === 'Enter') {
             confirmAcceptTask();
         }
     };
-    
+
     // GPN input validation - only numbers (handled by HTML5 type="number")
 }
 
@@ -141,21 +141,21 @@ function confirmAcceptTask() {
     const firstName = document.getElementById("firstNameInput").value.trim();
     const lastName = document.getElementById("lastNameInput").value.trim();
     const gpnValue = document.getElementById("gpnInput").value.trim();
-    
+
     if (!firstName || !lastName || !gpnValue) {
         alert("Please enter first name, last name, and GPN.");
         return;
     }
-    
+
     const gpn = parseInt(gpnValue);
     if (isNaN(gpn) || gpn <= 0) {
         alert("GPN must be a valid positive number.");
         return;
     }
-    
+
     if (!selectedTaskId) return;
-    
-    fetch(`/api/tasks/${selectedTaskId}/accept`, { 
+
+    fetch(`/api/tasks/${selectedTaskId}/accept`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -245,9 +245,82 @@ function showRejectConfirm() {
     overlay2.classList.remove("hidden");
     overlay2.style.display = "flex";
 
-    btnOK.onclick     = () => { rejectTask(); closePopup2(); };
+    btnOK.onclick = () => {
+        closePopup2(); // close the "are you sure?" popup
+        openPopup3();  // open the form to enter first name, last name, reason
+    };
+
     btnCancel.onclick = () => closePopup2();
 }
+function openPopup3() {
+    const rejectOverlay = document.getElementById("rejectPopup");
+    if (!rejectOverlay) {
+        alert("Reject popup not found.");
+        return;
+    }
+
+    // Show the rejection popup
+    rejectOverlay.classList.remove("hidden");
+    rejectOverlay.style.display = "flex";
+
+    // Clear inputs
+    document.getElementById("rejectFirstName").value = "";
+    document.getElementById("rejectLastName").value = "";
+    document.getElementById("reasonInput").value = "";
+
+    const submitBtn = document.getElementById("confirmRejectSubmit");
+    const cancelBtn = document.getElementById("cancelRejectBtn");
+
+    // Attach submit logic
+    submitBtn.onclick = function () {
+        const firstName = document.getElementById("rejectFirstName").value.trim();
+        const lastName = document.getElementById("rejectLastName").value.trim();
+        const reason = document.getElementById("reasonInput").value.trim();
+
+        if (!firstName || !lastName || !reason) {
+            alert("Please enter first name, last name, and reason.");
+            return;
+        }
+
+        // ✅ Send rejection data to backend
+        fetch(`/api/tasks/${selectedTaskId}/reject`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName,
+                reason: reason
+            })
+        })
+            .then(res => {
+                if (res.ok) {
+                    closeRejectPopup();
+                    location.reload();
+                } else {
+                    alert("Failed to reject the task.");
+                }
+            })
+            .catch(error => {
+                console.error("Error rejecting task:", error);
+                alert("An error occurred while rejecting the task.");
+            });
+    };
+
+
+    cancelBtn.onclick = () => closeRejectPopup();
+
+}
+function closeRejectPopup() {
+    const popup = document.getElementById("rejectPopup");
+    if (popup) {
+        popup.classList.add("hidden");
+        popup.style.display = "none";
+    }
+}
+
+
 
 function closePopup2() {
     const overlay2 = document.getElementById("popupOverlay2");
