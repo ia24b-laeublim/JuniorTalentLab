@@ -137,20 +137,20 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/reject")
-    public ResponseEntity<Void> rejectTask(@PathVariable Long id) {
+    public ResponseEntity<Void> rejectTask(@PathVariable Long id, @RequestBody RejectTaskDto request) {
         Task task = taskRepository.findById(id).orElseThrow();
         task.setStatus("REJECTED");
         taskRepository.save(task);
 
         Person client = task.getClient();
         if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
-            sendRejectedReasonMail(task, client);
+            sendRejectedReasonMail(task, client, request);
         }
 
         return ResponseEntity.ok().build();
     }
 
-    private void sendRejectedReasonMail(Task task, Person client) {
+    private void sendRejectedReasonMail(Task task, Person client, RejectTaskDto rtd) {
         String taskUrl = hashService.getInfoUrl(task.getId());
 
         String subject = "Your Task \"" + task.getTitle() + "\" has been rejected";
@@ -158,7 +158,7 @@ public class TaskController {
                 """
                 Hello %s,
         
-                Your Task "%s" has been rejected by %s %s because %s.
+                Your Task "%s" has been rejected by %s %s because: "%s".
                 
                 If you wish to edit, delete, or review your task, here is the corresponding link:
                 %s
@@ -170,11 +170,9 @@ public class TaskController {
                 """,
                 client.getPrename(),
                 task.getTitle(),
-                task.getTitle(),
-                task.getTitle(),
-                task.getTitle(),
-
-
+                rtd.getFirstName(),
+                rtd.getLastName(),
+                rtd.getReason(),
                 taskUrl
         );
 
