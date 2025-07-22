@@ -440,4 +440,57 @@ Tanu_1
     box-shadow: 0 0 0 0.2rem rgba(230, 1, 0, 0.25);
 }
 
+/* INPUT STYLE — applies to both accept & reject popups */
+.popup-confirm input[type="text"],
+.popup-confirm input[type="number"] {
+    width: 300px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
 
+/* Focus effect (red UBS style) */
+.popup-confirm input:focus {
+    outline: none;
+    border-color: #e60100;
+    box-shadow: 0 0 0 0.2rem rgba(230, 1, 0, 0.25);
+}
+
+/* BUTTONS */
+.accept-taskbtn,
+.cancel-taskbtn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    margin-right: 8px;
+}
+
+/* Accept-style button */
+.accept-taskbtn {
+    background-color: #f4f4f4;
+    color: black;
+}
+
+/* UBS Red-style Cancel button */
+.cancel-taskbtn {
+    background-color: #e60100;
+    color: white;
+}
+
+/* Hover effects */
+.accept-taskbtn:hover {
+    background-color: #e2e2e2;
+}
+
+.cancel-taskbtn:hover {
+    background-color: #cc0000;
+}
