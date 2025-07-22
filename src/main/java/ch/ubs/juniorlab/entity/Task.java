@@ -41,7 +41,6 @@ public class Task {
     @Column(name = "Status", length = 20)
     private String status;
 
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "attachment_id")
     @JsonIgnore

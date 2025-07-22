@@ -107,7 +107,15 @@ function showAcceptNamePopup() {
 
     // Set up event handlers
     confirmBtn.onclick = () => confirmAcceptTask();
+
     cancelBtn.onclick = () => closeAcceptNamePopup();
+
+
+    cancelBtn.onclick = (event) => {
+        event.stopPropagation();
+        closeAcceptNamePopup();
+    };
+    
 
     // Allow Enter key navigation
     firstNameInput.onkeypress = (e) => {
@@ -135,6 +143,11 @@ function closeAcceptNamePopup() {
     const overlay = document.getElementById("acceptOverlay");
     overlay.classList.add("hidden");
     overlay.style.display = "none";
+    // Ensure main popup is visible when overlay closes
+    const mainPopup = document.getElementById("popup");
+    if (mainPopup) {
+        mainPopup.classList.remove("hidden");
+    }
 }
 
 function confirmAcceptTask() {
@@ -251,6 +264,13 @@ function showRejectConfirm() {
     };
 
     btnCancel.onclick = () => closePopup2();
+
+    btnOK.onclick     = () => { rejectTask(); closePopup2(); };
+    btnCancel.onclick = (event) => {
+        event.stopPropagation();
+        closePopup2();
+    };
+
 }
 function openPopup3() {
     const rejectOverlay = document.getElementById("rejectPopup");
