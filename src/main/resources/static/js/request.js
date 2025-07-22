@@ -209,25 +209,28 @@ function rejectTask() {
 // (but NOT when the “Are you sure?” confirm overlay is visible)
 // ——————————————————————————————————
 document.addEventListener("click", (event) => {
-    const overlay2 = document.getElementById("popupOverlay2");
-    const acceptOverlay = document.getElementById("acceptOverlay");
-    // ← CHANGED: bail out immediately if confirm‐overlay or accept overlay is open
-    if (overlay2 && !overlay2.classList.contains("hidden")) {
-        return;
-    }
-    if (acceptOverlay && !acceptOverlay.classList.contains("hidden")) {
-        return;
-    }
-
     const popup = document.getElementById("popup");
     if (!popup || popup.classList.contains("hidden")) return;
+
+    // ⛔ Falls irgendein Overlay offen ist → NICHTS TUN
+    const anyOverlayOpen = ["popupOverlay2", "acceptOverlay", "rejectPopup"]
+        .some(id => {
+            const el = document.getElementById(id);
+            return el && !el.classList.contains("hidden");
+        });
+
+    if (anyOverlayOpen) return;
+
+    // ⛔ Wenn auf Task-Card geklickt wird → NICHTS TUN
     if (event.target.closest(".task-card")) return;
 
+    // ✅ Wenn außerhalb vom Popup-Content geklickt wird → Schließen
     const content = popup.querySelector(".popup-content");
     if (content && !content.contains(event.target)) {
         closePopup();
     }
 });
+
 
 function showRejectConfirm() {
     console.log("showRejectConfirm called, selectedTaskId:", selectedTaskId);
@@ -399,3 +402,5 @@ function confirmRejectTask() {
             alert("An error occurred while rejecting the task.");
         });
 }
+
+

@@ -398,7 +398,7 @@ padding-right: 6px;
 }
 
 .popup-confirm #confirmAcceptBtn {
-    background-color: #008000;
+    background-color: #6b7280;
     color: white;
 }
 
@@ -418,13 +418,13 @@ padding-right: 6px;
     transform: translateY(-2px);
     box-shadow: var(--ubs-shadow-md);
 }
-Tanu_1
+
 .accept-taskbtn { /* Accept */
-    background-color: #008000;
+    background-color: #6b7280;
     color: white;
 }
 .accept-taskbtn:hover {
-    background-color: #006400;
+    background-color: #4b5563;
 }
 
 .cancel-taskbtn { /* Reject */
@@ -441,3 +441,10 @@ Tanu_1
 }
 
 
+#rejFirstName:focus,
+#rejLastName:focus,
+#rejReason:focus {
+    border-color: #e60100; /* UBS Red */
+    box-shadow: 0 0 0 2px rgba(230, 1, 0, 0.25);
+    outline: none;
+}
