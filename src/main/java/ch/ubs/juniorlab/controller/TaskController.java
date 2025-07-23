@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
+    private final Integer paginationSize = 2;
+
     private final TaskRepository taskRepository;
 
     private final CommentRepository commentRepository;
@@ -39,11 +41,67 @@ public class TaskController {
         this.pdfService = pdfService;
     }
 
-    @GetMapping("/open")
-    public List<TaskWithAttachmentDto> getOpenTasks() {
+    private <T> List<T> paginate(List<T> list, int page, int pageSize) {
+        int fromIndex = (page - 1) * pageSize;
+        if (fromIndex >= list.size()) {
+            return List.of();
+        }
+        int toIndex = Math.min(fromIndex + pageSize, list.size());
+        return list.subList(fromIndex, toIndex);
+    }
+
+    @GetMapping("/open/pageAmount")
+    public int getOpenPageAmount() {
         List<Task> allTasks = taskRepository.findAllWithClients();
 
-        return allTasks.stream()
+        long openCount = allTasks.stream()
+                .filter(task -> {
+                    String status = task.getStatus();
+                    return status == null
+                            || "open".equalsIgnoreCase(status)
+                            || "REJECTED".equalsIgnoreCase(status);
+                })
+                .count();
+
+        return (int) Math.ceil((double) openCount / paginationSize);
+    }
+
+    @GetMapping("/accepted/pageAmount")
+    public int getAcceptedPageAmount() {
+        List<Task> allTasks = taskRepository.findAllWithClients();
+
+        long acceptedCount = allTasks.stream()
+                .filter(task -> {
+                    String status = task.getStatus();
+                    String progress = task.getProgress();
+                    return "ACCEPTED".equalsIgnoreCase(status)
+                            && !"Finished".equalsIgnoreCase(progress);
+                })
+                .count();
+
+        return (int) Math.ceil((double) acceptedCount / paginationSize);
+    }
+
+
+    @GetMapping("/finished/pageAmount")
+    public int getFinishedPageAmount() {
+        List<Task> allTasks = taskRepository.findAllWithClients();
+
+        long finishedCount = allTasks.stream()
+                .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
+                .count();
+
+        return (int) Math.ceil((double) finishedCount / paginationSize);
+    }
+
+
+
+
+    @GetMapping("/open")
+    public List<TaskWithAttachmentDto> getOpenTasks(@RequestParam(defaultValue = "1") int page) {
+        List<Task> allTasks = taskRepository.findAllWithClients();
+
+        List<TaskWithAttachmentDto> allDtos = allTasks.stream()
                 .filter(task -> {
                     String status = task.getStatus();
                     boolean isOpen = status == null ||
@@ -54,11 +112,13 @@ public class TaskController {
                 .sorted(Comparator.comparing(Task::getId).reversed())
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
+
+        return paginate(allDtos, page, paginationSize);
     }
 
     @GetMapping("/accepted")
-    public List<TaskWithAttachmentDto> getAcceptedTasks() {
-        return taskRepository.findAllWithClients().stream()
+    public List<TaskWithAttachmentDto> getAcceptedTasks(@RequestParam(defaultValue = "1") int page) {
+        List<TaskWithAttachmentDto> allDtos = taskRepository.findAllWithClients().stream()
                 .filter(task -> {
                     String status = task.getStatus();
                     String progress = task.getProgress();
@@ -68,16 +128,21 @@ public class TaskController {
                 .sorted(Comparator.comparing(Task::getId).reversed())
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
+
+        return paginate(allDtos, page, paginationSize);
     }
 
     @GetMapping("/finished")
-    public List<TaskWithAttachmentDto> getFinishedTasks() {
-        return taskRepository.findAllWithClients().stream()
+    public List<TaskWithAttachmentDto> getFinishedTasks(@RequestParam(defaultValue = "1") int page) {
+        List<TaskWithAttachmentDto> allDtos = taskRepository.findAllWithClients().stream()
                 .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
                 .sorted(Comparator.comparing(Task::getId).reversed())
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
+
+        return paginate(allDtos, page, paginationSize);
     }
+
 
     @PostMapping("/{id}/accept")
     public ResponseEntity<Void> acceptTask(@PathVariable Long id) {
