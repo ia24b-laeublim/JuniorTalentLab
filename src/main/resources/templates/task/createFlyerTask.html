@@ -36,7 +36,7 @@
                     <div class="form-field">
                         <label for="paper-size" class="form-label">Paper Size</label>
                         <input type="text" id="paper-size" name="paperSize" class="form-input"
-                               list="size-options" placeholder="Select or enter custom size" />
+                               list="size-options" placeholder="Select or enter custom size" required />
                         <datalist id="size-options">
                             <option value="A4">A4 (210 × 297 mm)</option>
                             <option value="A5">A5 (148 × 210 mm)</option>
@@ -49,7 +49,7 @@
 
                     <div class="form-field">
                         <label for="paper-type" class="form-label">Paper Type</label>
-                        <select id="paper-type" name="paperType" class="form-select">
+                        <select id="paper-type" name="paperType" class="form-select" required>
                             <option value="">Select Paper Type</option>
                             <option value="Standard">Standard (80gsm)</option>
                             <option value="Premium">Premium (120gsm)</option>
@@ -85,6 +85,37 @@
         </form>
     </div>
 </main>
+
+<!-- Popup Box -->
+<div id="popupContainerCreate" style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 10000;
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+">
+    <p id="popupMessageCreate" style="margin-bottom: 20px; font-size: 18px;">Task created successfully!</p>
+    <button id="continueBtn" style="
+        background: #e60100;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        margin-right: 10px;
+        cursor: pointer;
+    ">
+        Continue
+    </button>
+</div>
+
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>

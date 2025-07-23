@@ -3,6 +3,9 @@ package ch.ubs.juniorlab.controller;
 import ch.ubs.juniorlab.entity.*;
 import ch.ubs.juniorlab.repository.*;
 import ch.ubs.juniorlab.service.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,8 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import static java.lang.System.out;
 
 @RestController
 public class CreateTaskController {
@@ -100,8 +106,7 @@ public class CreateTaskController {
             // Send email
             sendTaskCreatedMail(flyerTask, client);
 
-
-            return new ModelAndView("redirect:/");
+            return new ModelAndView("redirect:/requestPage");
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/flyer?error=true");
@@ -167,7 +172,7 @@ public class CreateTaskController {
 
             sendTaskCreatedMail(videoTask, client);
 
-            return new ModelAndView("redirect:/");
+            return new ModelAndView("redirect:/requestPage");
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/video?error=true");
@@ -218,7 +223,7 @@ public class CreateTaskController {
 
             sendTaskCreatedMail(photoTask, client);
 
-            return new ModelAndView("redirect:/");
+            return new ModelAndView("redirect:/requestPage");
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/photo?error=true");
@@ -285,7 +290,7 @@ public class CreateTaskController {
             // Send the email - ADD THIS LINE
             sendTaskCreatedMail(task, client);
 
-            return new ModelAndView("redirect:/");
+            return new ModelAndView("redirect:/requestPage");
 
         } catch (Exception e) {
             ModelAndView modelAndView = new ModelAndView("task/createSlideshowTask");
@@ -340,7 +345,7 @@ public class CreateTaskController {
 
             sendTaskCreatedMail(posterTask, client);
 
-            return new ModelAndView("redirect:/");
+            return new ModelAndView("redirect:/requestPage");
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/poster?error=true");
@@ -393,7 +398,7 @@ public class CreateTaskController {
 
             sendTaskCreatedMail(pollTask, client);
 
-            return new ModelAndView("redirect:/");
+            return new ModelAndView("redirect:/requestPage");
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/poll?error=true");
@@ -436,7 +441,7 @@ public class CreateTaskController {
 
             sendTaskCreatedMail(task, client);
 
-            return new ModelAndView("redirect:/");
+            return new ModelAndView("redirect:/requestPage");
         } catch (Exception e) {
             e.printStackTrace();
             return new ModelAndView("redirect:/create-task/other?error=true");
@@ -474,7 +479,14 @@ public class CreateTaskController {
         task.setBudgetChf(budgetChf);
         task.setDeadline(deadline);
         task.setMaxFileSizeMb(maxFileSizeMb);
-        task.setChannel(channel);
+        
+        // Validate channel value - only allow "Internal" or "External"
+        if (channel != null && (channel.equals("Internal") || channel.equals("External"))) {
+            task.setChannel(channel);
+        } else {
+            task.setChannel("Internal"); // Default to Internal if invalid
+        }
+        
         task.setHandoverMethod(handoverMethod);
         task.setClient(client);
         task.setStatus("open");
@@ -505,8 +517,8 @@ public class CreateTaskController {
         mailService.sendEmail(client.getEmail(), subject, message);
 
         // Also print to console for debugging
-        System.out.println("Task created with URL: " + taskUrl);
-        System.out.println("Email sent to: " + client.getEmail());
+        out.println("Task created with URL: " + taskUrl);
+        out.println("Email sent to: " + client.getEmail());
     }
 
 }

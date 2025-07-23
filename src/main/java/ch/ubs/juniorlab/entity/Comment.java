@@ -24,7 +24,6 @@ public class Comment {
     public Comment() {
     }
 
-
     // Getters & Setters
     public Long getId() {
         return id;

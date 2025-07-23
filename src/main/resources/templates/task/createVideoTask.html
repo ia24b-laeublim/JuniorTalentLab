@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/createTask.css}" />
     <script th:src="@{/js/script.js}" defer></script>
+    <script th:src="@{/js/createTask.js}" defer></script>
 </head>
 
 <body>
@@ -34,12 +35,12 @@
                     <div class="form-field">
                         <label for="length-sec" class="form-label">Length (Seconds)</label>
                         <input type="number" id="length-sec" name="lengthSec" class="form-input" 
-                               min="1" max="3600" placeholder="e.g., 60" />
+                               min="1" max="3600" placeholder="e.g., 60" required />
                     </div>
                     
                     <div class="form-field">
                         <label for="format" class="form-label">Format</label>
-                        <select id="format" name="format" class="form-select">
+                        <select id="format" name="format" class="form-select" required>
                             <option value="">Select Format</option>
                             <option value="Landscape">Landscape (16:9)</option>
                             <option value="Portrait">Portrait (9:16)</option>
@@ -52,7 +53,7 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label for="file-format" class="form-label">File Format</label>
-                        <select id="file-format" name="fileFormat" class="form-select">
+                        <select id="file-format" name="fileFormat" class="form-select" required>
                             <option value="">Select File Format</option>
                             <option value="MP4">MP4</option>
                             <option value="MOV">MOV</option>
@@ -64,7 +65,7 @@
                     <div class="form-field">
                         <label for="resolution" class="form-label">Resolution</label>
                         <input type="text" id="resolution" name="resolution" class="form-input" 
-                               list="resolution-options" placeholder="Select or enter resolution" />
+                               list="resolution-options" placeholder="Select or enter resolution" required />
                         <datalist id="resolution-options">
                             <option value="1920x1080">
                             <option value="1280x720">
@@ -78,7 +79,7 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label for="voiceover" class="form-label">Voiceover Required</label>
-                        <select id="voiceover" name="voiceover" class="form-select">
+                        <select id="voiceover" name="voiceover" class="form-select" required>
                             <option value="">Select Option</option>
                             <option value="true">Yes, Include Voiceover</option>
                             <option value="false">No Voiceover Needed</option>
@@ -87,7 +88,7 @@
                     
                     <div class="form-field">
                         <label for="disclaimer" class="form-label">Disclaimer Required</label>
-                        <select id="disclaimer" name="disclaimer" class="form-select">
+                        <select id="disclaimer" name="disclaimer" class="form-select" required>
                             <option value="">Select Option</option>
                             <option value="true">Yes, Include Disclaimer</option>
                             <option value="false">No Disclaimer Needed</option>
@@ -98,7 +99,7 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label for="music-style" class="form-label">Music Style</label>
-                        <select id="music-style" name="musicStyle" class="form-select">
+                        <select id="music-style" name="musicStyle" class="form-select" required>
                             <option value="">Select Music Style</option>
                             <option value="Corporate">Corporate</option>
                             <option value="Upbeat">Upbeat</option>
@@ -113,14 +114,14 @@
                     <div class="form-field">
                         <label for="social-media-platforms" class="form-label">Social Media Platforms</label>
                         <input type="text" id="social-media-platforms" name="socialMediaPlatforms" class="form-input" 
-                               placeholder="e.g., YouTube, LinkedIn, Instagram" />
+                               placeholder="e.g., YouTube, LinkedIn, Instagram" required />
                     </div>
                 </div>
 
                 <div class="form-field">
                     <label for="branding-requirements" class="form-label">Branding Requirements</label>
                     <textarea id="branding-requirements" name="brandingRequirements" class="form-textarea" rows="3" 
-                              placeholder="Specific branding guidelines, colors, logos, etc."></textarea>
+                              placeholder="Specific branding guidelines, colors, logos, etc." required></textarea>
                 </div>
             </div>
             <br>
@@ -144,6 +145,37 @@
         </form>
     </div>
 </main>
+
+
+<!-- Popup Box -->
+<div id="popupContainerCreate" style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 10000;
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+">
+    <p id="popupMessageCreate" style="margin-bottom: 20px; font-size: 18px;">Task created successfully!</p>
+    <button id="continueBtn" style="
+        background: #e60100;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        margin-right: 10px;
+        cursor: pointer;
+    ">
+        Continue
+    </button>
+</div>
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>

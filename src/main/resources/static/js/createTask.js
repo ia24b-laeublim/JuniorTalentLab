@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => {
             console.error("Could not fetch open tasks:", error);
             const container = document.getElementById("task-container");
-            if(container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
+            if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
         });
 });
 
@@ -80,7 +80,7 @@ function closePopup() {
 
 function acceptTask() {
     if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/accept`, { method: "POST" })
+    fetch(`/api/tasks/${selectedTaskId}/accept`, {method: "POST"})
         .then(res => {
             if (res.ok) {
                 location.reload();
@@ -92,7 +92,7 @@ function acceptTask() {
 
 function rejectTask() {
     if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/reject`, { method: "POST" })
+    fetch(`/api/tasks/${selectedTaskId}/reject`, {method: "POST"})
         .then(res => {
             if (res.ok) {
                 location.reload();
@@ -146,3 +146,340 @@ function getOtherRequirements(task) {
 
     return requirements.length > 0 ? requirements.join(", ") : "No additional requirements";
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-flyer-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    const popupMessage = document.getElementById('popupMessageCreate');
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = [
+            { id: 'task-gpn', name: 'GPN' },
+            { id: 'task-name', name: 'Name' },
+            { id: 'task-email', name: 'Email' },
+            { id: 'task-title', name: 'Task Title' },
+            { id: 'task-deadline', name: 'Deadline' },
+            { id: 'task-budget', name: 'Budget' },
+            { id: 'task-target-audience', name: 'Target Audience' },
+            { id: 'task-max-file-size', name: 'Max File Size' },
+            { id: 'task-channel', name: 'Channel' },
+            { id: 'task-handover-method', name: 'Handover Method' },
+            { id: 'task-description', name: 'Description' }
+        ];
+        
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                emptyFields.push(field.name);
+            }
+        });
+        
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
+        // All fields are valid, show success message
+        popupMessage.textContent = 'Task created successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            form.submit();
+        };
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-photo-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    const popupMessage = document.getElementById('popupMessageCreate');
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = [
+            { id: 'task-gpn', name: 'GPN' },
+            { id: 'task-name', name: 'Name' },
+            { id: 'task-email', name: 'Email' },
+            { id: 'task-title', name: 'Task Title' },
+            { id: 'task-deadline', name: 'Deadline' },
+            { id: 'task-budget', name: 'Budget' },
+            { id: 'task-target-audience', name: 'Target Audience' },
+            { id: 'task-max-file-size', name: 'Max File Size' },
+            { id: 'task-channel', name: 'Channel' },
+            { id: 'task-handover-method', name: 'Handover Method' },
+            { id: 'task-description', name: 'Description' }
+        ];
+        
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                emptyFields.push(field.name);
+            }
+        });
+        
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
+        // All fields are valid, show success message
+        popupMessage.textContent = 'Task created successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            form.submit();
+        };
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-other-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    const popupMessage = document.getElementById('popupMessageCreate');
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = [
+            { id: 'task-gpn', name: 'GPN' },
+            { id: 'task-name', name: 'Name' },
+            { id: 'task-email', name: 'Email' },
+            { id: 'task-title', name: 'Task Title' },
+            { id: 'task-deadline', name: 'Deadline' },
+            { id: 'task-budget', name: 'Budget' },
+            { id: 'task-target-audience', name: 'Target Audience' },
+            { id: 'task-max-file-size', name: 'Max File Size' },
+            { id: 'task-channel', name: 'Channel' },
+            { id: 'task-handover-method', name: 'Handover Method' },
+            { id: 'task-description', name: 'Description' }
+        ];
+        
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                emptyFields.push(field.name);
+            }
+        });
+        
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
+        // All fields are valid, show success message
+        popupMessage.textContent = 'Task created successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            form.submit();
+        };
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-poll-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    const popupMessage = document.getElementById('popupMessageCreate');
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = [
+            { id: 'task-gpn', name: 'GPN' },
+            { id: 'task-name', name: 'Name' },
+            { id: 'task-email', name: 'Email' },
+            { id: 'task-title', name: 'Task Title' },
+            { id: 'task-deadline', name: 'Deadline' },
+            { id: 'task-budget', name: 'Budget' },
+            { id: 'task-target-audience', name: 'Target Audience' },
+            { id: 'task-max-file-size', name: 'Max File Size' },
+            { id: 'task-channel', name: 'Channel' },
+            { id: 'task-handover-method', name: 'Handover Method' },
+            { id: 'task-description', name: 'Description' }
+        ];
+        
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                emptyFields.push(field.name);
+            }
+        });
+        
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
+        // All fields are valid, show success message
+        popupMessage.textContent = 'Task created successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            form.submit();
+        };
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-poster-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    const popupMessage = document.getElementById('popupMessageCreate');
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = [
+            { id: 'task-gpn', name: 'GPN' },
+            { id: 'task-name', name: 'Name' },
+            { id: 'task-email', name: 'Email' },
+            { id: 'task-title', name: 'Task Title' },
+            { id: 'task-deadline', name: 'Deadline' },
+            { id: 'task-budget', name: 'Budget' },
+            { id: 'task-target-audience', name: 'Target Audience' },
+            { id: 'task-max-file-size', name: 'Max File Size' },
+            { id: 'task-channel', name: 'Channel' },
+            { id: 'task-handover-method', name: 'Handover Method' },
+            { id: 'task-description', name: 'Description' }
+        ];
+        
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                emptyFields.push(field.name);
+            }
+        });
+        
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
+        // All fields are valid, show success message
+        popupMessage.textContent = 'Task created successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            form.submit();
+        };
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-video-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    const popupMessage = document.getElementById('popupMessageCreate');
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = [
+            { id: 'task-gpn', name: 'GPN' },
+            { id: 'task-name', name: 'Name' },
+            { id: 'task-email', name: 'Email' },
+            { id: 'task-title', name: 'Task Title' },
+            { id: 'task-deadline', name: 'Deadline' },
+            { id: 'task-budget', name: 'Budget' },
+            { id: 'task-target-audience', name: 'Target Audience' },
+            { id: 'task-max-file-size', name: 'Max File Size' },
+            { id: 'task-channel', name: 'Channel' },
+            { id: 'task-handover-method', name: 'Handover Method' },
+            { id: 'task-description', name: 'Description' }
+        ];
+        
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                emptyFields.push(field.name);
+            }
+        });
+        
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
+        // All fields are valid, show success message
+        popupMessage.textContent = 'Task created successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            form.submit();
+        };
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('create-slideshow-form');
+    const popup = document.getElementById('popupContainerCreate');
+    const continueBtn = document.getElementById('continueBtn');
+    const popupMessage = document.getElementById('popupMessageCreate');
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // Validate required fields
+        const requiredFields = [
+            { id: 'task-gpn', name: 'GPN' },
+            { id: 'task-name', name: 'Name' },
+            { id: 'task-email', name: 'Email' },
+            { id: 'task-title', name: 'Task Title' },
+            { id: 'task-deadline', name: 'Deadline' },
+            { id: 'task-budget', name: 'Budget' },
+            { id: 'task-target-audience', name: 'Target Audience' },
+            { id: 'task-max-file-size', name: 'Max File Size' },
+            { id: 'task-channel', name: 'Channel' },
+            { id: 'task-handover-method', name: 'Handover Method' },
+            { id: 'task-description', name: 'Description' }
+        ];
+        
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                emptyFields.push(field.name);
+            }
+        });
+        
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
+        // All fields are valid, show success message
+        popupMessage.textContent = 'Task created successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            form.submit();
+        };
+    });
+});

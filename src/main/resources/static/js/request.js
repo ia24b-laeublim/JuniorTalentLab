@@ -103,13 +103,15 @@ function loadOpenTasks(page) {
         .catch(error => {
             console.error("Could not fetch open tasks:", error);
             const container = document.getElementById("task-container");
-            if(container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
+            if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
         });
 }
 
 /** Opens the popup for a task */
 function openPopup(task) {
     selectedTaskId = task.id;
+    console.log("openPopup called with task:", task);
+    console.log("selectedTaskId set to:", selectedTaskId);
 
     const clientName = task.client ?
         `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
@@ -138,14 +140,110 @@ function closePopup() {
 
 function acceptTask() {
     if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/accept`, { method: "POST" })
-        .then(res => {
-            if (res.ok) {
-                location.reload();
-            } else {
-                alert("Failed to accept the task.");
-            }
-        });
+    showAcceptNamePopup();
+}
+
+function showAcceptNamePopup() {
+    const overlay = document.getElementById("acceptOverlay");
+    const firstNameInput = document.getElementById("firstNameInput");
+    const lastNameInput = document.getElementById("lastNameInput");
+    const gpnInput = document.getElementById("gpnInput");
+    const confirmBtn = document.getElementById("confirmAcceptBtn");
+    const cancelBtn = document.getElementById("cancelAcceptBtn");
+
+    // Clear previous inputs
+    firstNameInput.value = "";
+    lastNameInput.value = "";
+    gpnInput.value = "";
+
+    // Show overlay
+    overlay.classList.remove("hidden");
+    overlay.style.display = "flex";
+
+    // Focus on first input
+    firstNameInput.focus();
+
+    // Set up event handlers
+    confirmBtn.onclick = () => confirmAcceptTask();
+    cancelBtn.onclick = (event) => {
+        event.stopPropagation();
+        closeAcceptNamePopup();
+    };
+
+    // Allow Enter key navigation
+    firstNameInput.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+            lastNameInput.focus();
+        }
+    };
+
+    lastNameInput.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+            gpnInput.focus();
+        }
+    };
+
+    gpnInput.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+            confirmAcceptTask();
+        }
+    };
+
+    // GPN input validation - only numbers (handled by HTML5 type="number")
+}
+
+function closeAcceptNamePopup() {
+    const overlay = document.getElementById("acceptOverlay");
+    overlay.classList.add("hidden");
+    overlay.style.display = "none";
+    // Ensure main popup is visible when overlay closes
+    const mainPopup = document.getElementById("popup");
+    if (mainPopup) {
+        mainPopup.classList.remove("hidden");
+    }
+}
+
+function confirmAcceptTask() {
+    const firstName = document.getElementById("firstNameInput").value.trim();
+    const lastName = document.getElementById("lastNameInput").value.trim();
+    const gpnValue = document.getElementById("gpnInput").value.trim();
+
+    if (!firstName || !lastName || !gpnValue) {
+        alert("Please enter first name, last name, and GPN.");
+        return;
+    }
+
+    const gpn = parseInt(gpnValue);
+    if (isNaN(gpn) || gpn <= 0) {
+        alert("GPN must be a valid positive number.");
+        return;
+    }
+
+    if (!selectedTaskId) return;
+
+    fetch(`/api/tasks/${selectedTaskId}/accept`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            firstName: firstName,
+            lastName: lastName,
+            gpn: gpn
+        })
+    })
+    .then(res => {
+        if (res.ok) {
+            closeAcceptNamePopup();
+            location.reload();
+        } else {
+            alert("Failed to accept the task.");
+        }
+    })
+    .catch(error => {
+        console.error('Error accepting task:', error);
+        alert('An error occurred while accepting the task.');
+    });
 }
 
 function rejectTask() {
@@ -157,23 +255,40 @@ function rejectTask() {
             } else {
                 alert("Failed to reject the task.");
             }
+        })
+        .catch(error => {
+            console.error('Error rejecting task:', error);
+            alert('An error occurred while rejecting the task.');
         });
 }
 
+// Close popup when clicking outside
 document.addEventListener("click", (event) => {
     const overlay2 = document.getElementById("popupOverlay2");
     if (overlay2 && overlay2.style.display === "block") return;
 
     const popup = document.getElementById("popup");
-    if (!popup || popup.classList.contains("hidden")) return;
+    if (!popup) return;
+
+    if (popup.classList.contains("hidden")) {
+        return;
+    }
+
+    if (event.target.closest(".task-card")) {
+        return;
+    }
+
+    // ⛔ Wenn auf Task-Card geklickt wird → NICHTS TUN
     if (event.target.closest(".task-card")) return;
 
+    // ✅ Wenn außerhalb vom Popup-Content geklickt wird → Schließen
     const content = popup.querySelector(".popup-content");
     if (content && !content.contains(event.target)) {
         closePopup();
     }
 });
 
+// ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
     if (task.paperSize && task.paperType) return "Flyer";
     if (task.posterSize) return "Poster";
@@ -191,59 +306,171 @@ function getMaxFileSize(task) {
     return "-";
 }
 
+// ✅ UPDATED: Helper function for Specific Requirements (removed Max File Size)
 function getSpecificRequirements(task) {
     let requirements = [];
 
+    // Flyer-specific requirements
     if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
+
+    // Video-specific requirements
     if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
-    if (task.voiceover !== null && task.voiceover !== undefined)
-        requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
-    if (task.disclaimer !== null && task.disclaimer !== undefined)
-        requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
+    if (task.voiceover != null) requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
+    if (task.disclaimer != null) requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
     if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
     if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
+
+    // Photo-specific requirements (shared fields reused from Video)
     if (task.format) requirements.push(`Format: ${task.format}`);
     if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
     if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
+
+    // Slideshow-specific requirements
     if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
+
+    // Poster-specific requirements
     if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
     if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
     if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
+
+    // Poll-specific requirements
     if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
     if (task.questionType) requirements.push(`Type: ${task.questionType}`);
     if (task.startDate) requirements.push(`Start: ${task.startDate}`);
     if (task.endDate) requirements.push(`End: ${task.endDate}`);
-    if (task.anonymous !== null && task.anonymous !== undefined)
-        requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
+    if (task.anonymous != null) requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
     if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
 
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
 
 function showRejectConfirm() {
-    const overlay2 = document.getElementById("popupOverlay2");
-    const box2     = document.getElementById("popupContainer2");
-    const msg      = document.getElementById("popupMessage");
-    const btnOK    = document.getElementById("acceptBtn");
-    const btnCancel= document.getElementById("rejectBtn");
+    document.getElementById("popupMessage").textContent = "Are you sure you want to reject the task?";
 
-    msg.textContent        = "Are you sure you want to reject the task?";
-    overlay2.style.display = "block";
-    box2.style.display     = "block";
+    document.getElementById("popupOverlay2").style.display = "block";
+    document.getElementById("popupContainer2").style.display = "block";
 
-    overlay2.addEventListener("click", e => e.stopPropagation());
-    box2.addEventListener   ("click", e => e.stopPropagation());
+    document.getElementById("acceptBtn").onclick = function() {
+        rejectTask();
+        closePopup2();
 
-    btnOK.onclick     = () => { rejectTask(); closePopup2(); };
-    btnCancel.onclick = () => closePopup2();
+    };
+
+    document.getElementById("rejectBtn").onclick = function() {
+        closePopup2();
+
+    };
 }
 
 function closePopup2() {
-    document.getElementById("popupOverlay2").style.display   = "none";
+    document.getElementById("popupOverlay2").style.display = "none";
     document.getElementById("popupContainer2").style.display = "none";
 }
+
+
+document.addEventListener("click", (event) => {
+    const overlay2 = document.getElementById("popupOverlay2");
+    if (overlay2.style.display === "block") return;
+
+    const popup = document.getElementById("popup");
+    if (!popup || popup.classList.contains("hidden")) return;
+    if (event.target.closest(".task-card")) return;
+
+    const content = popup.querySelector(".popup-content");
+    if (content && !content.contains(event.target)) {
+        closePopup();
+    }
+});
+
+
+function showRejectConfirm() {
+    // Statt sofort rejectTask() zu rufen, öffnest du jetzt das Formular:
+    if (!selectedTaskId) {
+        alert("No task selected");
+        return;
+    }
+    showRejectForm();
+}
+
+function showRejectForm() {
+    const overlay = document.getElementById("rejectOverlay");
+    const f = document.getElementById("rejFirstName");
+    const l = document.getElementById("rejLastName");
+    const r = document.getElementById("rejReason");
+    const ok = document.getElementById("confirmRejectBtn");
+    const cancel = document.getElementById("cancelRejectBtn");
+
+    f.value = ""; l.value = ""; r.value = "";
+    overlay.classList.remove("hidden");
+    overlay.style.display = "flex";
+    f.focus();
+
+    ok.onclick = () => confirmRejectTask();
+    cancel.onclick = (e) => { e.stopPropagation(); closeRejectForm(); };
+
+    // optional: Enter-Handling
+    r.onkeypress = (e) => { if (e.key === "Enter" && e.shiftKey === false) { e.preventDefault(); confirmRejectTask(); } };
+}
+
+function closeRejectForm() {
+    const overlay = document.getElementById("rejectOverlay");
+    overlay.classList.add("hidden");
+    overlay.style.display = "none";
+    // Hauptpopup sichtbar lassen
+    document.getElementById("popup")?.classList.remove("hidden");
+}
+
+function confirmRejectTask() {
+    const firstName = document.getElementById("rejFirstName").value.trim();
+    const lastName  = document.getElementById("rejLastName").value.trim();
+    const reason    = document.getElementById("rejReason").value.trim();
+
+    if (!firstName || !lastName || !reason) {
+        alert("Please fill in first name, last name and reason.");
+        return;
+    }
+    if (!selectedTaskId) return;
+
+    fetch(`/api/tasks/${selectedTaskId}/reject`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            firstName: firstName,
+            lastName:  lastName,
+            reason:    reason
+        })
+    })
+        .then(res => {
+            if (res.ok) {
+                closeRejectForm();
+                location.reload();
+            } else {
+                alert("Failed to reject the task.");
+            }
+        })
+        .catch(err => {
+            console.error("Error rejecting task:", err);
+            alert("An error occurred while rejecting the task.");
+        });
+}
+
+
+// Block ALL Outside-Clicks while the reject popup is visible
+document.addEventListener("click", function (e) {
+    const overlay   = document.getElementById("rejectOverlay");
+    if (!overlay || overlay.classList.contains("hidden")) return; // not open
+
+    const container = document.getElementById("rejectContainer");
+    if (container && !container.contains(e.target)) {
+        // User clicked outside -> ignore completely
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}, true);
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     prevBtn = document.getElementById("prevPage");

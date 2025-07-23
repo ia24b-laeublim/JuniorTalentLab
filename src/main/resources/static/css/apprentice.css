@@ -1,3 +1,11 @@
+:root {
+    --ubs-gray-500: #6b7280;
+    --ubs-gray-600: #4b5563;
+    --ubs-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --transition-fast: 0.15s ease;
+    --transition-smooth: 0.3s ease;
+}
+
 #comment-list {
     margin-bottom: 16px;
 }
@@ -36,7 +44,7 @@
     margin-top: 8px;
     padding: 8px 16px;
     border: none;
-    background-color: #E2001A;
+    background-color: #E60100;
     color: white;
     font-weight: bold;
     border-radius: 4px;
@@ -80,7 +88,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     cursor: pointer;
     transition: background-color 0.2s, transform 0.2s;
-    border-left: 5px solid #E2001A;
+    border-left: 5px solid #E60100;
 }
 
 .task-card:hover {
@@ -123,7 +131,7 @@
 .popup-content .red-underline {
     width: 60px;
     height: 5px;
-    background-color: #E2001A;
+    background-color: #E60100;
     margin-top: 8px;
     margin-bottom: 24px;
 }
@@ -178,11 +186,14 @@
 
 .popup-buttons button {
     padding: 12px 24px;
-    font-weight: bold;
-    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
     border-radius: 4px;
-    border: 1px solid transparent;
-    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
 }
 
 .popup-buttons button:first-of-type { /* Accept */
@@ -191,14 +202,18 @@
 }
 .popup-buttons button:first-of-type:hover {
     background-color: #006400;
+    transform: translateY(-2px);
+    box-shadow: var(--ubs-shadow-md);
 }
 
 .popup-buttons button:last-of-type { /* Reject */
-    background-color: #E2001A;
+    background-color: #E60100;
     color: white;
 }
 .popup-buttons button:last-of-type:hover {
     background-color: #b50015;
+    transform: translateY(-2px);
+    box-shadow: var(--ubs-shadow-md);
 }
 
 .hidden {
@@ -272,7 +287,7 @@
 }
 /* Shorter description height */
 .description-scroll {
-    max-height: 180px; /* 👈 shorter */
+    max-height: 180px;
     overflow-y: auto;
     padding-right: 6px;
     background-color: #f5f5f5;
@@ -317,4 +332,135 @@
     border: none;
     cursor: pointer;
     padding: 0;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-confirm {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    max-width: 400px;
+    text-align: center;
+    z-index: 10001;
+}
+
+
+.popup-confirm p {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.popup-confirm button {
+    margin: 15px 8px 0 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.popup-confirm #acceptBtn {
+    background-color: #E60100;
+    color: white;
+}
+
+.popup-confirm #acceptBtn:hover {
+    background-color: #b50015;
+    transform: translateY(-2px);
+    box-shadow: var(--ubs-shadow-md);
+}
+
+.popup-confirm #rejectBtn {
+    background-color: #ccc;
+    color: #333;
+}
+
+.popup-confirm #rejectBtn:hover {
+    background-color: #999;
+    transform: translateY(-2px);
+    box-shadow: var(--ubs-shadow-md);
+}
+
+.popup-confirm #confirmAcceptBtn {
+    background-color: #008000;
+    color: white;
+}
+
+.popup-confirm #confirmAcceptBtn:hover {
+    background-color: #006400;
+    transform: translateY(-2px);
+    box-shadow: var(--ubs-shadow-md);
+}
+
+.popup-confirm #cancelAcceptBtn {
+    background-color: #6b7280;
+    color: white;
+}
+
+.popup-confirm #cancelAcceptBtn:hover {
+    background-color: #4b5563;
+    transform: translateY(-2px);
+    box-shadow: var(--ubs-shadow-md);
+}
+
+.accept-taskbtn { /* Accept */
+    background-color: #6b7280;
+    color: white;
+}
+.accept-taskbtn:hover {
+    background-color: #4b5563;
+}
+
+.cancel-taskbtn { /* Reject */
+    background-color: #E60100;
+    color: white;
+}
+.cancel-taskbtn:hover {
+    background-color: #b50015;
+}
+.popup-confirm input:focus{
+    outline: none;
+    border-color: #e60100;
+    box-shadow: 0 0 0 0.2rem rgba(230, 1, 0, 0.25);
+}
+
+
+#rejFirstName:focus,
+#rejLastName:focus,
+#rejReason:focus {
+    border-color: #e60100; /* UBS Red */
+    box-shadow: 0 0 0 2px rgba(230, 1, 0, 0.25);
+    outline: none;
+}
+
+#rejReason {
+    width: 100%;
+    max-width: 100%;
+    resize: vertical;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    min-height: 80px;
+    height: 140px;
+    font-size: 14px;
+    line-height: 1.4;
+    background-color: white;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
