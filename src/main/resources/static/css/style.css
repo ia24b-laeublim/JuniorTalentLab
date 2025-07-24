@@ -432,6 +432,25 @@ footer {
     margin-bottom: 20px;
 }
 
+/* DOWNLOAD CARD */
+/* ÄNDERUNG: Button-Zeile für Card */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.card-download-btn img {
+    width: 23px;
+    height: 23px;
+    display: block;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+    float: right;
+}
+
 /* ============================================= */
 /*           IMPRINT PAGE STYLES                 */
 /* ============================================= */
