@@ -4,26 +4,15 @@
 
 <!-- Pagination Fragment -->
 <div th:fragment="pagination(currentPage, prevNumberPage, nextNumberPage)">
-    <div class="d-flex justify-content-center mt-4" style="padding-bottom: 30px;">
+    <div class="d-flex justify-content-center mt-4">
         <nav aria-label="Seiten-Navigation">
-            <ul class="pagination mb-0 align-items-center" style="gap: 5px;">
+            <ul class="pagination align-items-center">
 
                 <!-- Vorheriger Pfeil -->
                 <li class="page-item">
                     <a class="page-link" href="#"
                        id="prevPage"
-                       style="
-                            background-color: #e60100;
-                            color: #fff;
-                            border: 2px solid #000;
-                            font-weight: bold;
-                            min-width: 45px;
-                            height: 45px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            transition: background-color 0.3s;
-                       ">
+                       >
                         &laquo;
                     </a>
                 </li>
@@ -34,18 +23,7 @@
                        href="#"
                        id="prevNumberPage"
                        th:text="${prevNumberPage}"
-                       style="
-                            background-color: #e60100;
-                            color: #fff;
-                            border: 2px solid #000;
-                            font-weight: bold;
-                            min-width: 45px;
-                            height: 45px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            transition: background-color 0.3s;
-                       ">
+                       >
                     </a>
                 </li>
 
@@ -56,17 +34,6 @@
                             id="pageInput"
                             class="form-control text-center mx-1"
                             th:value="${currentPage}"
-                            style="
-                            width: 60px;
-                            height: 45px;
-                            background-color: #e60100;
-                            color: #fff;
-                            border: 2px solid #000;
-                            font-weight: bold;
-                            box-shadow: none;
-                            font-size: 16px;
-                            transition: background-color 0.3s;
-                       "
                             inputmode="numeric"
                             pattern="[0-9]*"
                     >
@@ -78,18 +45,7 @@
                        href="#"
                        id="nextNumberPage"
                        th:text="${nextNumberPage}"
-                       style="
-                            background-color: #e60100;
-                            color: #fff;
-                            border: 2px solid #000;
-                            font-weight: bold;
-                            min-width: 45px;
-                            height: 45px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            transition: background-color 0.3s;
-                       ">
+                       >
                     </a>
                 </li>
 
@@ -97,18 +53,7 @@
                 <li class="page-item">
                     <a class="page-link" href="#"
                        id="nextPage"
-                       style="
-                            background-color: #e60100;
-                            color: #fff;
-                            border: 2px solid #000;
-                            font-weight: bold;
-                            min-width: 45px;
-                            height: 45px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            transition: background-color 0.3s;
-                       ">
+                       >
                         &raquo;
                     </a>
                 </li>

@@ -31,7 +31,7 @@ body {
     align-items: center;
     padding: 20px 40px;
     background: #fff;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #E1E3E1;
     z-index: 1000;
     box-sizing: border-box;
 }
@@ -152,7 +152,7 @@ body {
 footer {
     width: 100%;
     background-color: #fff;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #E1E3E1;
     padding: 30px 40px;
     box-sizing: border-box;
     z-index: 1;
@@ -935,4 +935,161 @@ footer {
 
 .custom-input:focus {
     background-color: #b80000;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: 5px 0 40px 0;
+    font-family: 'Frutiger', Arial, sans-serif;
+    font-size: 1.03rem;
+    background: none;
+    border: none;
+    padding: 0;
+}
+.pagination .page-item {
+    display: flex;
+    align-items: center;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.pagination .page-link {
+    background: none !important;
+    color: #181818 !important;
+    border: none !important;
+    font-size: 1rem;
+    font-weight: 500;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    transition: color 0.16s, background 0.13s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    z-index: 1;
+}
+
+.pagination .page-link:hover {
+    background: #f5f5f5 !important;
+    color: #E60100 !important;
+}
+
+/* Aktive Seite: Rote Schrift + roter Unterstrich */
+.pagination .page-link.active,
+.pagination .page-link[aria-current="page"],
+.pagination .page-link[data-active="true"] {
+    color: #E60100 !important;
+    font-weight: 700;
+    background: none !important;
+}
+.pagination .page-link.active::after,
+.pagination .page-link[aria-current="page"]::after,
+.pagination .page-link[data-active="true"]::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 7px;
+    right: 7px;
+    bottom: 2px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: #E60100;
+}
+
+/* Input wie Zahl — klein, ohne Kasten, auf gleicher Höhe */
+.pagination input#pageInput,
+.pagination input[type="text"]#pageInput {
+    width: 32px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    font-size: 1rem !important;
+    font-family: inherit;
+    font-weight: 700;
+    color: #E60100 !important; /* Immer rot wie aktiv */
+    background: none !important;
+    border: none !important;
+    border-radius: 50% !important;
+    text-align: center;
+    padding: 0 !important;
+    margin: 0 1px !important;
+    box-shadow: none !important;
+    outline: none !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Immer roter Unterstrich unter aktuellem Input */
+.pagination input#pageInput::after,
+.pagination input[type="text"]#pageInput::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 7px;
+    right: 7px;
+    bottom: 2px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: #E60100;
+    pointer-events: none;
+}
+
+/* Fokus/active ist dann optisch gleich */
+.pagination input#pageInput:focus {
+    color: #E60100 !important;
+    background: #f9f9f9 !important;
+}
+
+/* Disabled/ausgegraut */
+.pagination .page-link:disabled,
+.pagination .page-link.disabled {
+    color: #bbbbbb !important;
+    pointer-events: none !important;
+    cursor: default !important;
+    background: none !important;
+    opacity: 0.7;
+}
+
+/* Pfeile wie Zahl — klein, rund, einheitlich */
+.pagination .page-link {
+    font-size: 1.03rem;
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50% !important;
+    line-height: 1.02;
+}
+
+/* Dots "..." */
+.pagination .dots {
+    pointer-events: none;
+    color: #bdbdbd;
+    min-width: 18px;
+    font-size: 1rem;
+    background: none !important;
+}
+
+/* Mobile kleiner */
+@media (max-width: 600px) {
+    .pagination {
+        font-size: 0.95rem;
+        gap: 3px;
+        margin-bottom: 28px !important;
+    }
+    .pagination .page-link,
+    .pagination input#pageInput {
+        min-width: 23px !important;
+        height: 23px !important;
+        font-size: 0.93rem !important;
+    }
 }

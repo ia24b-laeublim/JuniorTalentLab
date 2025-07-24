@@ -35,7 +35,7 @@ import static java.lang.System.out;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-    private final Integer paginationSize = 8;
+    private final Integer paginationSize = 5;
 
     @Autowired
     private final TaskRepository taskRepository;
