@@ -1,7 +1,64 @@
 let selectedTaskId = null;
+let pagination = 1;
+let maxPages = 1;
 
-document.addEventListener("DOMContentLoaded", () => {
-    fetch("/api/tasks/open")
+let prevBtn;
+let nextBtn;
+let prevNumBtn;
+let nextNumBtn;
+let currentBtn;
+let input;
+
+/** Disable a pagination button */
+function disableButton(btn) {
+    if (btn) {
+        btn.textContent = " ";
+        btn.style.backgroundColor = "#888";
+        btn.style.pointerEvents = "none";
+    }
+}
+
+/** Enable a pagination button with text */
+function enableButton(btn, text) {
+    if (btn) {
+        btn.textContent = text;
+        btn.style.backgroundColor = "#e60100";
+        btn.style.pointerEvents = "auto";
+    }
+}
+
+/** Update pagination UI and load data */
+function updatePagination(newPage) {
+    pagination = Math.max(1, Math.min(newPage, maxPages));
+
+    const prevNum = pagination - 1;
+    const nextNum = pagination + 1;
+
+    if (prevNum >= 1) {
+        enableButton(prevNumBtn, prevNum.toString());
+        enableButton(prevBtn, "«");
+    } else {
+        disableButton(prevNumBtn);
+        disableButton(prevBtn);
+    }
+
+    if (nextNum <= maxPages) {
+        enableButton(nextNumBtn, nextNum.toString());
+        enableButton(nextBtn, "»");
+    } else {
+        disableButton(nextNumBtn);
+        disableButton(nextBtn);
+    }
+
+    if (currentBtn) currentBtn.textContent = pagination;
+    if (input) input.value = pagination;
+
+    loadOpenTasks(pagination);
+}
+
+/** Loads Open Tasks for given page */
+function loadOpenTasks(page) {
+    fetch(`/api/tasks/open?page=${page}`)
         .then(res => {
             if (!res.ok) {
                 throw new Error(`HTTP error! status: ${res.status}`);
@@ -10,13 +67,14 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(data => {
             const container = document.getElementById("task-container");
-            if (!container) return; // Guard clause
+            if (!container) return;
+
+            container.innerHTML = "";
 
             data.forEach(task => {
                 const card = document.createElement("div");
                 card.className = "task-card";
 
-                // ✅ FIXED: Use client instead of apprentice
                 const clientName = task.client ?
                     `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
                     "Unknown";
@@ -47,8 +105,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const container = document.getElementById("task-container");
             if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
         });
-});
+}
 
+/** Opens the popup for a task */
 function openPopup(task) {
     selectedTaskId = task.id;
     console.log("openPopup called with task:", task);
@@ -64,7 +123,6 @@ function openPopup(task) {
     document.getElementById("popup-deadline").textContent = task.deadline ?? "-";
     document.getElementById("popup-channel").textContent = task.channel ?? "-";
     document.getElementById("popup-type").textContent = getTaskType(task);
-    // ✅ CHANGED: Now showing Max File Size instead of Format
     document.getElementById("popup-format").textContent = getMaxFileSize(task);
     document.getElementById("popup-target").textContent = task.targetAudience ?? "-";
     document.getElementById("popup-budget").textContent = task.budgetChf ? `CHF ${task.budgetChf}` : "-";
@@ -92,45 +150,45 @@ function showAcceptNamePopup() {
     const gpnInput = document.getElementById("gpnInput");
     const confirmBtn = document.getElementById("confirmAcceptBtn");
     const cancelBtn = document.getElementById("cancelAcceptBtn");
-    
+
     // Clear previous inputs
     firstNameInput.value = "";
     lastNameInput.value = "";
     gpnInput.value = "";
-    
+
     // Show overlay
     overlay.classList.remove("hidden");
     overlay.style.display = "flex";
-    
+
     // Focus on first input
     firstNameInput.focus();
-    
+
     // Set up event handlers
     confirmBtn.onclick = () => confirmAcceptTask();
     cancelBtn.onclick = (event) => {
         event.stopPropagation();
         closeAcceptNamePopup();
     };
-    
+
     // Allow Enter key navigation
     firstNameInput.onkeypress = (e) => {
         if (e.key === 'Enter') {
             lastNameInput.focus();
         }
     };
-    
+
     lastNameInput.onkeypress = (e) => {
         if (e.key === 'Enter') {
             gpnInput.focus();
         }
     };
-    
+
     gpnInput.onkeypress = (e) => {
         if (e.key === 'Enter') {
             confirmAcceptTask();
         }
     };
-    
+
     // GPN input validation - only numbers (handled by HTML5 type="number")
 }
 
@@ -149,21 +207,21 @@ function confirmAcceptTask() {
     const firstName = document.getElementById("firstNameInput").value.trim();
     const lastName = document.getElementById("lastNameInput").value.trim();
     const gpnValue = document.getElementById("gpnInput").value.trim();
-    
+
     if (!firstName || !lastName || !gpnValue) {
         alert("Please enter first name, last name, and GPN.");
         return;
     }
-    
+
     const gpn = parseInt(gpnValue);
     if (isNaN(gpn) || gpn <= 0) {
         alert("GPN must be a valid positive number.");
         return;
     }
-    
+
     if (!selectedTaskId) return;
-    
-    fetch(`/api/tasks/${selectedTaskId}/accept`, { 
+
+    fetch(`/api/tasks/${selectedTaskId}/accept`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -204,22 +262,21 @@ function rejectTask() {
         });
 }
 
-// ——————————————————————————————————
-// CLOSE MAIN POPUP WHEN CLICKING OUTSIDE
-// (but NOT when the “Are you sure?” confirm overlay is visible)
-// ——————————————————————————————————
+// Close popup when clicking outside
 document.addEventListener("click", (event) => {
+    const overlay2 = document.getElementById("popupOverlay2");
+    if (overlay2 && overlay2.style.display === "block") return;
+
     const popup = document.getElementById("popup");
-    if (!popup || popup.classList.contains("hidden")) return;
+    if (!popup) return;
 
-    // ⛔ Falls irgendein Overlay offen ist → NICHTS TUN
-    const anyOverlayOpen = ["popupOverlay2", "acceptOverlay", "rejectPopup"]
-        .some(id => {
-            const el = document.getElementById(id);
-            return el && !el.classList.contains("hidden");
-        });
+    if (popup.classList.contains("hidden")) {
+        return;
+    }
 
-    if (anyOverlayOpen) return;
+    if (event.target.closest(".task-card")) {
+        return;
+    }
 
     // ⛔ Wenn auf Task-Card geklickt wird → NICHTS TUN
     if (event.target.closest(".task-card")) return;
@@ -230,46 +287,6 @@ document.addEventListener("click", (event) => {
         closePopup();
     }
 });
-
-
-function showRejectConfirm() {
-    console.log("showRejectConfirm called, selectedTaskId:", selectedTaskId);
-
-    const overlay2   = document.getElementById("popupOverlay2");
-    const box2       = document.getElementById("popupContainer2");
-    const msg        = document.getElementById("popupMessage");
-    const btnOK      = document.getElementById("acceptBtn");
-    const btnCancel  = document.getElementById("rejectBtn");
-
-    if (!overlay2 || !box2 || !msg || !btnOK || !btnCancel) {
-        console.error("Required popup elements not found");
-        alert("Popup elements not found - check console");
-        return;
-    }
-    if (!selectedTaskId) {
-        console.error("No task selected");
-        alert("No task selected");
-        return;
-    }
-
-    msg.textContent = "Are you sure you want to reject the task?";
-    overlay2.classList.remove("hidden");
-    overlay2.style.display = "flex";
-
-    btnOK.onclick     = () => { rejectTask(); closePopup2(); };
-    btnCancel.onclick = (event) => {
-        event.stopPropagation();
-        closePopup2();
-    };
-}
-
-function closePopup2() {
-    const overlay2 = document.getElementById("popupOverlay2");
-    if (overlay2) {
-        overlay2.classList.add("hidden");
-        overlay2.style.display = "none";
-    }
-}
 
 // ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
@@ -282,7 +299,6 @@ function getTaskType(task) {
     return "General Task";
 }
 
-// ✅ NEW: Helper function for Max File Size (replaces Format)
 function getMaxFileSize(task) {
     if (task.maxFileSizeMb) {
         return `${task.maxFileSizeMb}MB`;
@@ -290,36 +306,36 @@ function getMaxFileSize(task) {
     return "-";
 }
 
-// ✅ UPDATED: Helper function for Specific Requirements
+// ✅ UPDATED: Helper function for Specific Requirements (removed Max File Size)
 function getSpecificRequirements(task) {
     let requirements = [];
 
-    // Flyer-specific
+    // Flyer-specific requirements
     if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
 
-    // Video-specific
+    // Video-specific requirements
     if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
     if (task.voiceover != null) requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
     if (task.disclaimer != null) requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
     if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
     if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
 
-    // Photo-specific
+    // Photo-specific requirements (shared fields reused from Video)
     if (task.format) requirements.push(`Format: ${task.format}`);
     if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
     if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
 
-    // Slideshow-specific
+    // Slideshow-specific requirements
     if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
 
-    // Poster-specific
+    // Poster-specific requirements
     if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
     if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
     if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
 
-    // Poll-specific
+    // Poll-specific requirements
     if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
     if (task.questionType) requirements.push(`Type: ${task.questionType}`);
     if (task.startDate) requirements.push(`Start: ${task.startDate}`);
@@ -327,10 +343,47 @@ function getSpecificRequirements(task) {
     if (task.anonymous != null) requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
     if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
 
-    return requirements.length > 0
-        ? requirements.join(", ")
-        : "No specific requirements";
+    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
+
+function showRejectConfirm() {
+    document.getElementById("popupMessage").textContent = "Are you sure you want to reject the task?";
+
+    document.getElementById("popupOverlay2").style.display = "block";
+    document.getElementById("popupContainer2").style.display = "block";
+
+    document.getElementById("acceptBtn").onclick = function() {
+        rejectTask();
+        closePopup2();
+
+    };
+
+    document.getElementById("rejectBtn").onclick = function() {
+        closePopup2();
+
+    };
+}
+
+function closePopup2() {
+    document.getElementById("popupOverlay2").style.display = "none";
+    document.getElementById("popupContainer2").style.display = "none";
+}
+
+
+document.addEventListener("click", (event) => {
+    const overlay2 = document.getElementById("popupOverlay2");
+    if (overlay2.style.display === "block") return;
+
+    const popup = document.getElementById("popup");
+    if (!popup || popup.classList.contains("hidden")) return;
+    if (event.target.closest(".task-card")) return;
+
+    const content = popup.querySelector(".popup-content");
+    if (content && !content.contains(event.target)) {
+        closePopup();
+    }
+});
+
 
 function showRejectConfirm() {
     // Statt sofort rejectTask() zu rufen, öffnest du jetzt das Formular:
@@ -404,3 +457,73 @@ function confirmRejectTask() {
 }
 
 
+// Block ALL Outside-Clicks while the reject popup is visible
+document.addEventListener("click", function (e) {
+    const overlay   = document.getElementById("rejectOverlay");
+    if (!overlay || overlay.classList.contains("hidden")) return; // not open
+
+    const container = document.getElementById("rejectContainer");
+    if (container && !container.contains(e.target)) {
+        // User clicked outside -> ignore completely
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}, true);
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    prevBtn = document.getElementById("prevPage");
+    nextBtn = document.getElementById("nextPage");
+    prevNumBtn = document.getElementById("prevNumberPage");
+    nextNumBtn = document.getElementById("nextNumberPage");
+    currentBtn = document.getElementById("currentPageBtn");
+    input = document.getElementById("pageInput");
+
+    if (prevBtn) prevBtn.addEventListener("click", e => {
+        e.preventDefault();
+        updatePagination(pagination - 1);
+    });
+
+    if (prevNumBtn) prevNumBtn.addEventListener("click", e => {
+        e.preventDefault();
+        updatePagination(pagination - 1);
+    });
+
+    if (nextBtn) nextBtn.addEventListener("click", e => {
+        e.preventDefault();
+        updatePagination(pagination + 1);
+    });
+
+    if (nextNumBtn) nextNumBtn.addEventListener("click", e => {
+        e.preventDefault();
+        updatePagination(pagination + 1);
+    });
+
+    if (currentBtn) currentBtn.addEventListener("click", e => {
+        e.preventDefault();
+    });
+
+    if (input) {
+        input.addEventListener("change", () => {
+            const val = parseInt(input.value);
+            if (!isNaN(val) && val >= 1) {
+                updatePagination(val);
+            } else {
+                input.value = pagination;
+            }
+        });
+    }
+
+    fetch("/api/tasks/open/pageAmount")
+        .then(res => res.json())
+        .then(pages => {
+            maxPages = Math.max(1, pages);
+            updatePagination(1);
+        })
+        .catch(err => {
+            console.error("Error fetching page count:", err);
+            maxPages = 1;
+            updatePagination(1);
+        });
+});

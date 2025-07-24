@@ -1,15 +1,29 @@
 package ch.ubs.juniorlab.service;
 
 import ch.ubs.juniorlab.entity.*;
+import ch.ubs.juniorlab.repository.CommentRepository;
 import ch.ubs.juniorlab.repository.TaskRepository;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class TaskProcessingService {
 
+
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
     private final TaskRepository taskRepository;
+
+    @Autowired
+    private HashService hashService;
+
 
 
     public TaskProcessingService(TaskRepository taskRepository) {
@@ -79,4 +93,62 @@ public class TaskProcessingService {
             }
         }
     }
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    public void deleteTasksPastDeadline(int daysAfterDeadline) {
+        LocalDate cutoff = LocalDate.now().minusDays(daysAfterDeadline);
+        commentRepository.deleteByTaskDeadlineBefore(cutoff);     // 1. Erst Comments löschen!
+        taskRepository.deleteTasksWithDeadlineOlderThan(cutoff);  // 2. Dann Tasks löschen!
+    }
+
+    // Wird ausgelöst wenn man das Programm laufen lässt, zum testen -> löschen der überfälligen Tasks
+    @PostConstruct
+    public void testDeleteTasksPastDeadline() {
+        deleteTasksPastDeadline(7);
+        System.out.println("Alte Tasks wurden testweise gelöscht!");
+    }
+
+    // Wird beim Starten des Programmes ausgelöst, zum testen -> Mail Reminder Deadline
+    @PostConstruct
+    public void testMailReminder() {
+        sendDeadlineReminderMails();
+        System.out.println("Reminder-Testlauf wurde ausgeführt!");
+    }
+
+
+    public void sendDeadlineReminderMails() {
+        LocalDate today = LocalDate.now();
+        List<Task> tasksExpiringToday = taskRepository.findByDeadline(today);
+
+        for (Task task : tasksExpiringToday) {
+            Person client = task.getClient();
+            if (client == null || client.getEmail() == null) continue;
+
+            String subject = "Reminder: Your Task \"" + task.getTitle() + "\" expires today";
+            String message = String.format(
+                    """
+                    Hello %s,
+                    
+                    This is a reminder that your task "%s" expires today (%s).
+
+                    If you wish to edit, delete, or review your task, here is the corresponding link:
+                    %s
+
+                    Thank you for using Junior Talent Lab!
+
+                    Best regards,
+                    Junior Talent Lab Team
+                    """,
+                    client.getPrename(),
+                    task.getTitle(),
+                    today,
+                    hashService.getInfoUrl(task.getId())
+            );
+            mailService.sendEmail(client.getEmail(), subject, message);
+        }
+    }
+
+
 }

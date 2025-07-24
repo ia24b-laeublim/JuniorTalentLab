@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Pagination Fragment -->
+<div th:fragment="pagination(currentPage, prevNumberPage, nextNumberPage)">
+    <div class="d-flex justify-content-center mt-4" style="padding-bottom: 30px;">
+        <nav aria-label="Seiten-Navigation">
+            <ul class="pagination mb-0 align-items-center" style="gap: 5px;">
+
+                <!-- Vorheriger Pfeil -->
+                <li class="page-item">
+                    <a class="page-link" href="#"
+                       id="prevPage"
+                       style="
+                            background-color: #e60100;
+                            color: #fff;
+                            border: 2px solid #000;
+                            font-weight: bold;
+                            min-width: 45px;
+                            height: 45px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: background-color 0.3s;
+                       ">
+                        &laquo;
+                    </a>
+                </li>
+
+                <!-- Aktuelle Seite als Button -->
+                <li class="page-item">
+                    <a class="page-link"
+                       href="#"
+                       id="prevNumberPage"
+                       th:text="${prevNumberPage}"
+                       style="
+                            background-color: #e60100;
+                            color: #fff;
+                            border: 2px solid #000;
+                            font-weight: bold;
+                            min-width: 45px;
+                            height: 45px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: background-color 0.3s;
+                       ">
+                    </a>
+                </li>
+
+                <!-- Input-Feld -->
+                <li class="page-item">
+                    <input
+                            type="text"
+                            id="pageInput"
+                            class="form-control text-center mx-1"
+                            th:value="${currentPage}"
+                            style="
+                            width: 60px;
+                            height: 45px;
+                            background-color: #e60100;
+                            color: #fff;
+                            border: 2px solid #000;
+                            font-weight: bold;
+                            box-shadow: none;
+                            font-size: 16px;
+                            transition: background-color 0.3s;
+                       "
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                    >
+                </li>
+
+                <!-- Nächste Seitenzahl -->
+                <li class="page-item">
+                    <a class="page-link"
+                       href="#"
+                       id="nextNumberPage"
+                       th:text="${nextNumberPage}"
+                       style="
+                            background-color: #e60100;
+                            color: #fff;
+                            border: 2px solid #000;
+                            font-weight: bold;
+                            min-width: 45px;
+                            height: 45px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: background-color 0.3s;
+                       ">
+                    </a>
+                </li>
+
+                <!-- Nächster Pfeil -->
+                <li class="page-item">
+                    <a class="page-link" href="#"
+                       id="nextPage"
+                       style="
+                            background-color: #e60100;
+                            color: #fff;
+                            border: 2px solid #000;
+                            font-weight: bold;
+                            min-width: 45px;
+                            height: 45px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: background-color 0.3s;
+                       ">
+                        &raquo;
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+</div>
+
+</body>
+</html>

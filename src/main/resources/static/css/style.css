@@ -9,6 +9,8 @@ html, body {
     overflow: auto;
 }
 
+
+
 body {
     font-family: 'Frutiger', sans-serif;
     margin: 0;
@@ -882,4 +884,38 @@ footer {
 
 .role-button.highlight:hover {
     background-color: #c00000 !important;
+}
+
+.custom-page-link {
+    background-color: #e60100;
+    color: #fff;
+    border: 2px solid #000;
+    font-weight: bold;
+    min-width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.custom-page-link:hover {
+    background-color: #b80000;
+}
+
+.custom-input {
+    width: 60px;
+    height: 45px;
+    background-color: #e60100;
+    color: #fff;
+    border: 2px solid #000;
+    font-weight: bold;
+    box-shadow: none;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.custom-input:focus {
+    background-color: #b80000;
 }

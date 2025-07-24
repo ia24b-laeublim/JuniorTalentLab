@@ -35,6 +35,8 @@ import static java.lang.System.out;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
+    private final Integer paginationSize = 10;
+
     @Autowired
     private final TaskRepository taskRepository;
     private final PersonRepository personRepository;
@@ -56,11 +58,67 @@ public class TaskController {
         this.hashService = hashService;
     }
 
-    @GetMapping("/open")
-    public List<TaskWithAttachmentDto> getOpenTasks() {
+    private <T> List<T> paginate(List<T> list, int page, int pageSize) {
+        int fromIndex = (page - 1) * pageSize;
+        if (fromIndex >= list.size()) {
+            return List.of();
+        }
+        int toIndex = Math.min(fromIndex + pageSize, list.size());
+        return list.subList(fromIndex, toIndex);
+    }
+
+    @GetMapping("/open/pageAmount")
+    public int getOpenPageAmount() {
         List<Task> allTasks = taskRepository.findAllWithClients();
 
-        return allTasks.stream()
+        long openCount = allTasks.stream()
+                .filter(task -> {
+                    String status = task.getStatus();
+                    return status == null
+                            || "open".equalsIgnoreCase(status)
+                            || "REJECTED".equalsIgnoreCase(status);
+                })
+                .count();
+
+        return (int) Math.ceil((double) openCount / paginationSize);
+    }
+
+    @GetMapping("/accepted/pageAmount")
+    public int getAcceptedPageAmount() {
+        List<Task> allTasks = taskRepository.findAllWithClients();
+
+        long acceptedCount = allTasks.stream()
+                .filter(task -> {
+                    String status = task.getStatus();
+                    String progress = task.getProgress();
+                    return "ACCEPTED".equalsIgnoreCase(status)
+                            && !"Finished".equalsIgnoreCase(progress);
+                })
+                .count();
+
+        return (int) Math.ceil((double) acceptedCount / paginationSize);
+    }
+
+
+    @GetMapping("/finished/pageAmount")
+    public int getFinishedPageAmount() {
+        List<Task> allTasks = taskRepository.findAllWithClients();
+
+        long finishedCount = allTasks.stream()
+                .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
+                .count();
+
+        return (int) Math.ceil((double) finishedCount / paginationSize);
+    }
+
+
+
+
+    @GetMapping("/open")
+    public List<TaskWithAttachmentDto> getOpenTasks(@RequestParam(defaultValue = "1") int page) {
+        List<Task> allTasks = taskRepository.findAllWithClients();
+
+        List<TaskWithAttachmentDto> allDtos = allTasks.stream()
                 .filter(task -> {
                     String status = task.getStatus();
                     boolean isOpen = status == null ||
@@ -74,11 +132,13 @@ public class TaskController {
                 ))
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
+
+        return paginate(allDtos, page, paginationSize);
     }
 
     @GetMapping("/accepted")
-    public List<TaskWithAttachmentDto> getAcceptedTasks() {
-        return taskRepository.findAllWithClients().stream()
+    public List<TaskWithAttachmentDto> getAcceptedTasks(@RequestParam(defaultValue = "1") int page) {
+        List<TaskWithAttachmentDto> allDtos = taskRepository.findAllWithClients().stream()
                 .filter(task -> {
                     String status = task.getStatus();
                     String progress = task.getProgress();
@@ -91,11 +151,13 @@ public class TaskController {
                 ))
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
+
+        return paginate(allDtos, page, paginationSize);
     }
 
     @GetMapping("/finished")
-    public List<TaskWithAttachmentDto> getFinishedTasks() {
-        return taskRepository.findAllWithClients().stream()
+    public List<TaskWithAttachmentDto> getFinishedTasks(@RequestParam(defaultValue = "1") int page) {
+        List<TaskWithAttachmentDto> allDtos = taskRepository.findAllWithClients().stream()
                 .filter(task -> "Finished".equalsIgnoreCase(task.getProgress()))
                 .sorted(Comparator.comparing(
                         Task::getDeadline,
@@ -103,12 +165,15 @@ public class TaskController {
                 ))
                 .map(TaskWithAttachmentDto::new)
                 .collect(Collectors.toList());
+
+        return paginate(allDtos, page, paginationSize);
     }
+
 
     @PostMapping("/{id}/accept")
     public ResponseEntity<Void> acceptTask(@PathVariable Long id, @RequestBody AcceptTaskRequest request) {
         Task task = taskRepository.findById(id).orElseThrow();
-        
+
         // Find or create a person based on first name, last name, and GPN
         String gpnString = String.valueOf(request.getGpn());
         Person apprentice = personRepository.findByGpn(gpnString)
@@ -120,7 +185,7 @@ public class TaskController {
                     newPerson.setEmail(request.getFirstName().toLowerCase() + "." + request.getLastName().toLowerCase() + "@example.com");
                     return personRepository.save(newPerson);
                 });
-        
+
         task.setStatus("ACCEPTED");
         task.setApprentice(apprentice);
         if (task.getProgress() == null) {
@@ -137,20 +202,20 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/reject")
-    public ResponseEntity<Void> rejectTask(@PathVariable Long id) {
+    public ResponseEntity<Void> rejectTask(@PathVariable Long id, @RequestBody RejectTaskDto request) {
         Task task = taskRepository.findById(id).orElseThrow();
         task.setStatus("REJECTED");
         taskRepository.save(task);
 
         Person client = task.getClient();
         if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
-            sendRejectedReasonMail(task, client);
+            sendRejectedReasonMail(task, client, request);
         }
 
         return ResponseEntity.ok().build();
     }
 
-    private void sendRejectedReasonMail(Task task, Person client) {
+    private void sendRejectedReasonMail(Task task, Person client, RejectTaskDto rtd) {
         String taskUrl = hashService.getInfoUrl(task.getId());
 
         String subject = "Your Task \"" + task.getTitle() + "\" has been rejected";
@@ -158,7 +223,7 @@ public class TaskController {
                 """
                 Hello %s,
         
-                Your Task "%s" has been rejected by %s %s because %s.
+                Your Task "%s" has been rejected by %s %s because: "%s".
                 
                 If you wish to edit, delete, or review your task, here is the corresponding link:
                 %s
@@ -170,11 +235,9 @@ public class TaskController {
                 """,
                 client.getPrename(),
                 task.getTitle(),
-                task.getTitle(),
-                task.getTitle(),
-                task.getTitle(),
-
-
+                rtd.getFirstName(),
+                rtd.getLastName(),
+                rtd.getReason(),
                 taskUrl
         );
 
