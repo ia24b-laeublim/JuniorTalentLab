@@ -197,11 +197,11 @@
 }
 
 .popup-buttons button:first-of-type { /* Accept */
-    background-color: #008000;
+    background-color: #E60100;
     color: white;
 }
 .popup-buttons button:first-of-type:hover {
-    background-color: #006400;
+    background-color: #b50015;
     transform: translateY(-2px);
     box-shadow: var(--ubs-shadow-md);
 }
@@ -398,12 +398,12 @@
 }
 
 .popup-confirm #confirmAcceptBtn {
-    background-color: #008000;
+    background-color: #E60100;
     color: white;
 }
 
 .popup-confirm #confirmAcceptBtn:hover {
-    background-color: #006400;
+    background-color: #b50015;
     transform: translateY(-2px);
     box-shadow: var(--ubs-shadow-md);
 }
