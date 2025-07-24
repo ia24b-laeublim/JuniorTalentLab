@@ -79,14 +79,14 @@
 </main>
 
 <!-- Reject Confirmation Overlay -->
-<div id="popupOverlay2" class="popup-overlay hidden">
-    <!-- Confirm Popup -->
-    <div id="popupContainer2" class="popup-confirm">
-        <p id="popupMessage"></p>
-        <button id="acceptBtn">Continue</button>
-        <button id="rejectBtn">Return</button>
-    </div>
-</div>
+<!--<div id="popupOverlay2" class="popup-overlay hidden">-->
+<!--    &lt;!&ndash; Confirm Popup &ndash;&gt;-->
+<!--    <div id="popupContainer2" class="popup-confirm">-->
+<!--        <p id="popupMessage"></p>-->
+<!--        <button id="acceptBtn">Continue</button>-->
+<!--        <button id="rejectBtn">Return</button>-->
+<!--    </div>-->
+<!--</div>-->
 
 <!-- Accept Name Input Overlay -->
 <div id="acceptOverlay" class="popup-overlay hidden">
@@ -104,6 +104,7 @@
 </div>
 
 
+
 <!--<div id="rejectPopup" class="popup-overlay hidden">-->
 <!--    <div class="popup-confirm reject-popup">-->
 <!--        <p>Please enter your information to reject this task:</p>-->
@@ -116,11 +117,6 @@
 <!--        </div>-->
 <!--    </div>-->
 <!--</div>-->
-
-
-
-    <!-- Footer einbinden -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
 
 <!-- Reject Reason Input Overlay -->
 <div id="rejectOverlay" class="popup-overlay hidden">
@@ -140,6 +136,11 @@
         </div>
     </div>
 </div>
+
+
+    <!-- Footer einbinden -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
 
 
 
