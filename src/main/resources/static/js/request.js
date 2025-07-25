@@ -527,3 +527,37 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePagination(1);
         });
 });
+
+
+function preventOutsideClicksClosingPopups() {
+    document.addEventListener('click', function(e) {
+        const mainPopup     = document.getElementById('popup');
+        const acceptOverlay = document.getElementById('acceptOverlay');
+        const rejectOverlay = document.getElementById('rejectOverlay');
+
+        // Prüfen, ob irgendein Popup / Overlay gerade offen ist
+        const isMainOpen   = mainPopup   && !mainPopup.classList.contains('hidden');
+        const isAcceptOpen = acceptOverlay && acceptOverlay.style.display === 'flex';
+        const isRejectOpen = rejectOverlay && rejectOverlay.style.display === 'flex';
+
+        if (isMainOpen || isAcceptOpen || isRejectOpen) {
+            // Wenn der Klick NICHT in einen der Popup‐Container geht, dann abfangen
+            const insideMain   = !!e.target.closest('.popup-content');
+            const insideAccept = !!e.target.closest('#acceptContainer');
+            const insideReject = !!e.target.closest('#rejectContainer');
+
+            if (!insideMain && !insideAccept && !insideReject) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }
+    }, true);
+}
+
+
+// Accept‐Overlay
+const acceptOverlay   = document.getElementById('acceptOverlay');
+const acceptContainer = document.getElementById('acceptContainer');
+if (acceptOverlay)   acceptOverlay.addEventListener('click', e => e.stopPropagation());
+if (acceptContainer) acceptContainer.addEventListener('click', e => e.stopPropagation());
+
