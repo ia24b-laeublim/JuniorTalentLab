@@ -106,6 +106,12 @@ public class HomeController {
 
     @PostMapping("/api/send-contact-mail")
     public String sendContactEmail(@ModelAttribute ContactFormDto form, Model model) {
+        // Validate email domain
+        if (form.getEmail() == null || !form.getEmail().endsWith("@ubs.com")) {
+            model.addAttribute("formFeedback", "Please use a valid @ubs.com email address.");
+            return "contact";
+        }
+
         String subject = "Kontaktanfrage von " + form.getFirstName() + " " + form.getLastName();
         String message = "GPN: " + form.getGpn() + "\nEmail: " + form.getEmail() + "\n\nMessage:\n" + form.getMessage();
 

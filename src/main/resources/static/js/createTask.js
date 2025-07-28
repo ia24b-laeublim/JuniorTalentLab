@@ -147,6 +147,11 @@ function getOtherRequirements(task) {
     return requirements.length > 0 ? requirements.join(", ") : "No additional requirements";
 }
 
+// Helper function to validate email domain
+function isValidUBSEmail(email) {
+    return email && email.trim().endsWith('@ubs.com');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('create-flyer-form');
     const popup = document.getElementById('popupContainerCreate');
@@ -155,6 +160,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     form.addEventListener('submit', e => {
         e.preventDefault();
+        
+        // Validate email domain first
+        const emailField = document.getElementById('task-email');
+        if (emailField && !isValidUBSEmail(emailField.value)) {
+            popupMessage.textContent = 'Your email doesn\'t end with @ubs.com';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
         
         // Validate required fields
         const requiredFields = [
@@ -204,6 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', e => {
         e.preventDefault();
         
+        // Validate email domain first
+        const emailField = document.getElementById('task-email');
+        if (emailField && !isValidUBSEmail(emailField.value)) {
+            popupMessage.textContent = 'Your email doesn\'t end with @ubs.com';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
         // Validate required fields
         const requiredFields = [
             { id: 'task-gpn', name: 'GPN' },
@@ -251,6 +274,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     form.addEventListener('submit', e => {
         e.preventDefault();
+        
+        // Validate email domain first
+        const emailField = document.getElementById('task-email');
+        if (emailField && !isValidUBSEmail(emailField.value)) {
+            popupMessage.textContent = 'Your email doesn\'t end with @ubs.com';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
         
         // Validate required fields
         const requiredFields = [
@@ -300,6 +332,15 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', e => {
         e.preventDefault();
         
+        // Validate email domain first
+        const emailField = document.getElementById('task-email');
+        if (emailField && !isValidUBSEmail(emailField.value)) {
+            popupMessage.textContent = 'Your email doesn\'t end with @ubs.com';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
         // Validate required fields
         const requiredFields = [
             { id: 'task-gpn', name: 'GPN' },
@@ -347,6 +388,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     form.addEventListener('submit', e => {
         e.preventDefault();
+        
+        // Validate email domain first
+        const emailField = document.getElementById('task-email');
+        if (emailField && !isValidUBSEmail(emailField.value)) {
+            popupMessage.textContent = 'Your email doesn\'t end with @ubs.com';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
         
         // Validate required fields
         const requiredFields = [
@@ -396,6 +446,15 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', e => {
         e.preventDefault();
         
+        // Validate email domain first
+        const emailField = document.getElementById('task-email');
+        if (emailField && !isValidUBSEmail(emailField.value)) {
+            popupMessage.textContent = 'Your email doesn\'t end with @ubs.com';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+        
         // Validate required fields
         const requiredFields = [
             { id: 'task-gpn', name: 'GPN' },
@@ -443,6 +502,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     form.addEventListener('submit', e => {
         e.preventDefault();
+        
+        // Validate email domain first
+        const emailField = document.getElementById('task-email');
+        if (emailField && !isValidUBSEmail(emailField.value)) {
+            popupMessage.textContent = 'Your email doesn\'t end with @ubs.com';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
         
         // Validate required fields
         const requiredFields = [

@@ -92,7 +92,7 @@ function initializeCarousel() {
     setInterval(nextSlide, 5000);
 }
 
-// Email
+// Email and Contact Form Validation
 document.addEventListener("DOMContentLoaded", function () {
     const contactForm = document.getElementById("contact-form");
 
@@ -101,6 +101,56 @@ document.addEventListener("DOMContentLoaded", function () {
         if (feedback) {
             alert(feedback);
         }
+        
+        // Add popup validation for contact form
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const popup = document.getElementById('popupContainerContact');
+            const popupMessage = document.getElementById('popupMessageContact');
+            const continueBtn = document.getElementById('continueContactBtn');
+            
+            // Check email domain first
+            const emailField = document.getElementById('input-email');
+            if (emailField && !emailField.value.trim().endsWith('@ubs.com')) {
+                popupMessage.textContent = "Your email doesn't end with @ubs.com";
+                popup.style.display = 'block';
+                continueBtn.onclick = () => popup.style.display = 'none';
+                return;
+            }
+            
+            // Check required fields
+            const requiredFields = [
+                { id: 'input-firstName', name: 'First name' },
+                { id: 'input-lastName', name: 'Last name' },
+                { id: 'input-gpn', name: 'GPN' },
+                { id: 'input-email', name: 'Email' },
+                { id: 'task-description', name: 'Message' }
+            ];
+            
+            const emptyFields = [];
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (!element || !element.value.trim()) {
+                    emptyFields.push(field.name);
+                }
+            });
+            
+            if (emptyFields.length > 0) {
+                popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+                popup.style.display = 'block';
+                continueBtn.onclick = () => popup.style.display = 'none';
+                return;
+            }
+            
+            // If all validation passes, submit the form
+            popupMessage.textContent = 'Message sent successfully!';
+            popup.style.display = 'block';
+            continueBtn.onclick = () => {
+                popup.style.display = 'none';
+                contactForm.submit();
+            };
+        });
     }
 });
 
@@ -227,7 +277,7 @@ function validateField(field) {
     }
 
     if (field.type === 'email' && value && !isValidEmail(value)) {
-        showFieldError(field, 'Please enter a valid email address');
+        showFieldError(field, 'Please enter a valid @ubs.com email address');
         return false;
     }
 
@@ -272,7 +322,7 @@ function showSuccess(message) {
 }
 
 function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@ubs\.com$/;
     return emailRegex.test(email);
 }
 

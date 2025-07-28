@@ -84,6 +84,13 @@ public class CreateTaskController {
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
+            // Validate email domain
+            if (email == null || !email.endsWith("@ubs.com")) {
+                ModelAndView errorView = new ModelAndView("task/createFlyerTask");
+                errorView.addObject("error", "Please use a valid @ubs.com email address.");
+                return errorView;
+            }
+            
             Person client = findOrCreatePerson(gpn, name, prename, email);
             FlyerTask flyerTask = new FlyerTask();
             populateBaseTaskFields(flyerTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
@@ -139,6 +146,13 @@ public class CreateTaskController {
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
+            // Validate email domain
+            if (email == null || !email.endsWith("@ubs.com")) {
+                ModelAndView errorView = new ModelAndView("task/createVideoTask");
+                errorView.addObject("error", "Please use a valid @ubs.com email address.");
+                return errorView;
+            }
+            
             Person client = findOrCreatePerson(gpn, name, prename, email);
 
             VideoTask videoTask = new VideoTask();
@@ -200,6 +214,13 @@ public class CreateTaskController {
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
+            // Validate email domain
+            if (email == null || !email.endsWith("@ubs.com")) {
+                ModelAndView errorView = new ModelAndView("task/createPhotoTask");
+                errorView.addObject("error", "Please use a valid @ubs.com email address.");
+                return errorView;
+            }
+            
             Person client = findOrCreatePerson(gpn, name, prename, email);
             PhotoTask photoTask = new PhotoTask();
             populateBaseTaskFields(photoTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
@@ -252,6 +273,13 @@ public class CreateTaskController {
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
+            // Validate email domain
+            if (email == null || !email.endsWith("@ubs.com")) {
+                ModelAndView errorView = new ModelAndView("task/createSlideshowTask");
+                errorView.addObject("error", "Please use a valid @ubs.com email address.");
+                return errorView;
+            }
+            
             // Find or create the person
             Person client = findOrCreatePerson(gpn, name, prename, email);
 
@@ -321,6 +349,13 @@ public class CreateTaskController {
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
+            // Validate email domain
+            if (email == null || !email.endsWith("@ubs.com")) {
+                ModelAndView errorView = new ModelAndView("task/createPosterTask");
+                errorView.addObject("error", "Please use a valid @ubs.com email address.");
+                return errorView;
+            }
+            
             Person client = findOrCreatePerson(gpn, name, prename, email);
             PosterTask posterTask = new PosterTask();
             populateBaseTaskFields(posterTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
@@ -374,6 +409,13 @@ public class CreateTaskController {
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
+            // Validate email domain
+            if (email == null || !email.endsWith("@ubs.com")) {
+                ModelAndView errorView = new ModelAndView("task/createPollTask");
+                errorView.addObject("error", "Please use a valid @ubs.com email address.");
+                return errorView;
+            }
+            
             Person client = findOrCreatePerson(gpn, name, prename, email);
             PollTask pollTask = new PollTask();
             populateBaseTaskFields(pollTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
@@ -422,6 +464,13 @@ public class CreateTaskController {
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
         try {
+            // Validate email domain
+            if (email == null || !email.endsWith("@ubs.com")) {
+                ModelAndView errorView = new ModelAndView("task/createOtherTask");
+                errorView.addObject("error", "Please use a valid @ubs.com email address.");
+                return errorView;
+            }
+            
             Person client = findOrCreatePerson(gpn, name, prename, email);
             Task task = new Task();
             populateBaseTaskFields(task, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
