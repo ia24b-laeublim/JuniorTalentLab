@@ -1220,3 +1220,53 @@ footer {
         font-size: 0.93rem !important;
     }
 }
+
+
+/* ============================================= */
+/*                 ERROR PAGE                    */
+/* ============================================= */
+/* Error Page Custom Styles */
+.error-page {
+    background-color: #f8f9fa;
+    padding: 50px 15px;
+}
+
+.error-page .error-title {
+    color: #e3342f;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.error-page .error-icon {
+    color: #e3342f;
+    font-size: 5rem;
+}
+
+.error-page .error-message {
+    color: #6c757d;
+    font-size: 1.25rem;
+}
+
+.error-page .btn-home .error-btn {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+}
+
+.btn-custom-red {
+    background-color: #e60000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-custom-red:hover {
+    background-color: #e60000;
+    transform: scale(1.05);
+    text-decoration: none;
+    color: white;
+}
