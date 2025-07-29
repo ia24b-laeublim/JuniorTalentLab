@@ -472,6 +472,125 @@ document.addEventListener("click", function (e) {
 
 
 
+// Search functionality
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+async function handleLiveSearch() {
+    const query = document.getElementById('search-input').value.trim();
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    
+    if (!query || query.length < 2) {
+        suggestionsContainer.innerHTML = '';
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
+    
+    try {
+        suggestionsContainer.innerHTML = '<div class="search-loading">Suche...</div>';
+        suggestionsContainer.style.display = 'block';
+        
+        const response = await fetch(`/api/tasks/search?q=${encodeURIComponent(query)}&status=open`);
+        const tasks = response.ok ? await response.json() : [];
+        
+        let resultsHTML = '';
+        
+        if (tasks.length > 0) {
+            resultsHTML += `
+                <div class="search-section">
+                    <h4>Offene Tasks</h4>
+                    <ul>
+                        ${tasks.slice(0, 5).map(task => `
+                            <li><a href="#" onclick="openTaskFromSearch(${task.id}); return false;">
+                                <i class="fas fa-search"></i> ${task.title}
+                            </a></li>
+                        `).join('')}
+                    </ul>
+                </div>`;
+        }
+        
+        if (tasks.length === 0) {
+            resultsHTML = '<div class="search-no-results">Keine Ergebnisse gefunden</div>';
+        }
+        
+        suggestionsContainer.innerHTML = resultsHTML;
+        suggestionsContainer.style.display = 'block';
+    } catch (err) {
+        console.error('Live-Suche Fehler:', err);
+        suggestionsContainer.innerHTML = '<div class="search-error">Fehler bei der Suche</div>';
+    }
+}
+
+function handleSearch(e) {
+    e.preventDefault();
+    const query = document.getElementById('search-input').value.trim();
+    if (query) {
+        searchAndDisplayTasks(query);
+    }
+}
+
+async function searchAndDisplayTasks(query) {
+    try {
+        const response = await fetch(`/api/tasks/search?q=${encodeURIComponent(query)}&status=open`);
+        const tasks = response.ok ? await response.json() : [];
+        
+        const container = document.getElementById("task-container");
+        if (!container) return;
+        
+        container.innerHTML = "";
+        
+        tasks.forEach(task => {
+            const card = document.createElement("div");
+            card.className = "task-card";
+            
+            const clientName = task.client ?
+                `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
+                "Unknown";
+            const clientGpn = task.client?.gpn || "-";
+            const deadlineText = task.deadline || "-";
+            
+            card.innerHTML = `
+              <h2 style="font-size: 1.5rem; font-weight: bold; color: #000000;">${task.title}</h2>
+              <div style="display: flex; gap: 1rem;">
+                <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
+                  <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Client Name</span><span>${clientName}</span></div>
+                  <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>GPN</span><span>${clientGpn}</span></div>
+                  <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Deadline</span><span>${deadlineText}</span></div>
+                </div>
+                <div style="flex: 1; background-color: #f5f5f5; padding: 0.5rem;">
+                  <div><strong>Description</strong></div>
+                  <div>${(task.description?.substring(0, 300) ?? "No description provided") + (task.description?.length > 300 ? '...' : '')}</div>
+                </div>
+              </div>
+            `;
+            
+            card.addEventListener("click", () => openPopup(task));
+            container.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Could not search tasks:", error);
+        const container = document.getElementById("task-container");
+        if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not search tasks. Please try again later.</p>";
+    }
+}
+
+function openTaskFromSearch(taskId) {
+    fetch(`/api/tasks/${taskId}`)
+        .then(res => res.json())
+        .then(task => {
+            openPopup(task);
+            const suggestionsContainer = document.getElementById('search-suggestions-container');
+            suggestionsContainer.innerHTML = '';
+            suggestionsContainer.style.display = 'none';
+        })
+        .catch(err => console.error('Error loading task:', err));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     prevBtn = document.getElementById("prevPage");
     nextBtn = document.getElementById("nextPage");
@@ -526,6 +645,23 @@ document.addEventListener("DOMContentLoaded", () => {
             maxPages = 1;
             updatePagination(1);
         });
+    
+    // Search event listeners
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    if (searchForm) searchForm.addEventListener('submit', handleSearch);
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(handleLiveSearch, 300));
+    }
+    
+    // Close search suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        const container = document.getElementById('search-suggestions-container');
+        if (container && !container.contains(e.target) && e.target !== searchInput) {
+            container.innerHTML = '';
+            container.style.display = 'none';
+        }
+    });
 });
 
 

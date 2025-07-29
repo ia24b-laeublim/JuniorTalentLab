@@ -2,6 +2,133 @@
 /*         GENERAL STYLES                        */
 /* ============================================= */
 
+/* Search Bar Styles */
+.search-container {
+    position: relative;
+    max-width: 890px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+#search-form {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    background: transparent;
+}
+
+.search-button {
+    background: transparent;
+    color: #666;
+    border: none;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+    font-size: 16px;
+}
+
+.search-button:hover {
+    color: #e60000;
+}
+
+#search-suggestions-container {
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 999;
+    display: none;
+    margin-top: 5px;
+}
+
+.search-section {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.search-section:last-child {
+    border-bottom: none;
+}
+
+.search-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#search-suggestions-container ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#search-suggestions-container li {
+    margin: 0;
+}
+
+#search-suggestions-container li a {
+    display: block;
+    padding: 10px 0;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f5f5f5;
+    transition: all 0.2s ease;
+}
+
+#search-suggestions-container li a:hover {
+    background: #f8f8f8;
+    color: #e60000;
+    padding-left: 10px;
+}
+
+#search-suggestions-container li:last-child a {
+    border-bottom: none;
+}
+
+.search-loading, .search-no-results, .search-error {
+    padding: 20px;
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}
+
+.search-loading {
+    color: #e60000;
+}
+
+.search-error {
+    color: #d9534f;
+}
+
+.search-no-results {
+    color: #777;
+}
+
 html, body {
     height: 100%;
     padding: 0;
