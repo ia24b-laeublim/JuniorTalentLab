@@ -499,8 +499,10 @@ public class CreateTaskController {
 
     // === Shared Logic ===
     private Person findOrCreatePerson(String gpn, String name, String prename, String email) {
-        return personRepository.findByGpn(gpn)
+        // First try to find by email (most unique identifier)
+        return personRepository.findByEmail(email)
                 .orElseGet(() -> {
+                    // If not found by email, create new person
                     Person newPerson = new Person();
                     newPerson.setGpn(gpn);
                     newPerson.setName(name);
