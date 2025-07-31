@@ -235,9 +235,11 @@ function confirmAcceptTask() {
     .then(res => {
         if (res.ok) {
             closeAcceptNamePopup();
-            location.reload();
+            window.location.href = "/overviewPage";
+        } else if (res.status === 404) {
+            alert("Task not found. It may have been deleted or does not exist.");
         } else {
-            alert("Failed to accept the task.");
+            alert("Failed to accept the task. Please try again.");
         }
     })
     .catch(error => {
@@ -246,21 +248,6 @@ function confirmAcceptTask() {
     });
 }
 
-function rejectTask() {
-    if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/reject`, { method: "POST" })
-        .then(res => {
-            if (res.ok) {
-                location.reload();
-            } else {
-                alert("Failed to reject the task.");
-            }
-        })
-        .catch(error => {
-            console.error('Error rejecting task:', error);
-            alert('An error occurred while rejecting the task.');
-        });
-}
 
 // Close popup when clicking outside
 document.addEventListener("click", (event) => {
@@ -347,45 +334,6 @@ function getSpecificRequirements(task) {
 }
 
 function showRejectConfirm() {
-    document.getElementById("popupMessage").textContent = "Are you sure you want to reject the task?";
-
-    document.getElementById("popupOverlay2").style.display = "block";
-    document.getElementById("popupContainer2").style.display = "block";
-
-    document.getElementById("acceptBtn").onclick = function() {
-        rejectTask();
-        closePopup2();
-
-    };
-
-    document.getElementById("rejectBtn").onclick = function() {
-        closePopup2();
-
-    };
-}
-
-function closePopup2() {
-    document.getElementById("popupOverlay2").style.display = "none";
-    document.getElementById("popupContainer2").style.display = "none";
-}
-
-
-document.addEventListener("click", (event) => {
-    const overlay2 = document.getElementById("popupOverlay2");
-    if (overlay2.style.display === "block") return;
-
-    const popup = document.getElementById("popup");
-    if (!popup || popup.classList.contains("hidden")) return;
-    if (event.target.closest(".task-card")) return;
-
-    const content = popup.querySelector(".popup-content");
-    if (content && !content.contains(event.target)) {
-        closePopup();
-    }
-});
-
-
-function showRejectConfirm() {
     // Statt sofort rejectTask() zu rufen, öffnest du jetzt das Formular:
     if (!selectedTaskId) {
         alert("No task selected");
@@ -446,8 +394,10 @@ function confirmRejectTask() {
             if (res.ok) {
                 closeRejectForm();
                 location.reload();
+            } else if (res.status === 404) {
+                alert("Task not found. It may have been deleted or does not exist.");
             } else {
-                alert("Failed to reject the task.");
+                alert("Failed to reject the task. Please try again.");
             }
         })
         .catch(err => {

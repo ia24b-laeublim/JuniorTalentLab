@@ -2,6 +2,12 @@ let selectedTaskId = null;
 let statusChanged = false;
 let pagination = 1;
 let maxPages = 1;
+let allTasks = [];
+let isSearchMode = false;
+let currentSearchResults = [];
+let searchPagination = 1;
+let searchMaxPages = 1;
+const RESULTS_PER_PAGE = 10;
 
 // Search functionality
 function debounce(func, wait) {
@@ -16,6 +22,7 @@ async function handleLiveSearch() {
     const query = document.getElementById('search-input').value.trim();
     const suggestionsContainer = document.getElementById('search-suggestions-container');
     
+    // Clear suggestions if query is empty
     if (!query || query.length < 2) {
         suggestionsContainer.innerHTML = '';
         suggestionsContainer.style.display = 'none';
@@ -23,37 +30,72 @@ async function handleLiveSearch() {
     }
     
     try {
-        suggestionsContainer.innerHTML = '<div class="search-loading">Suche...</div>';
+        // Show loading indicator
+        suggestionsContainer.innerHTML = '<div class="search-loading">Searching...</div>';
         suggestionsContainer.style.display = 'block';
         
-        const response = await fetch(`/api/tasks/search?q=${encodeURIComponent(query)}&status=accepted`);
-        const tasks = response.ok ? await response.json() : [];
+        // Check if tasks are loaded
+        if (allTasks.length === 0) {
+            suggestionsContainer.innerHTML = '<div class="search-error">Tasks are loading, please wait...</div>';
+            return;
+        }
         
+        // Filter tasks by title and description (case insensitive)
+        const filteredTasks = allTasks.filter(task => {
+            const titleMatch = task.title && task.title.toLowerCase().includes(query.toLowerCase());
+            const descMatch = task.description && task.description.toLowerCase().includes(query.toLowerCase());
+            const clientMatch = task.client && (
+                (task.client.prename && task.client.prename.toLowerCase().includes(query.toLowerCase())) ||
+                (task.client.name && task.client.name.toLowerCase().includes(query.toLowerCase()))
+            );
+            return titleMatch || descMatch || clientMatch;
+        });
+        
+        // Format the results
         let resultsHTML = '';
         
-        if (tasks.length > 0) {
+        // Add tasks results
+        if (filteredTasks.length > 0) {
             resultsHTML += `
                 <div class="search-section">
-                    <h4>Angenommene Tasks</h4>
+                    <h4>Tasks</h4>
                     <ul>
-                        ${tasks.slice(0, 5).map(task => `
-                            <li><a href="#" onclick="openTaskFromSearch(${task.id}); return false;">
-                                <i class="fas fa-search"></i> ${task.title}
-                            </a></li>
+                        ${filteredTasks.slice(0, 5).map(task => `
+                            <li>
+                                <a href="#" onclick="openTaskFromSearch(${task.id}); return false;">
+                                    <i class="fas fa-tasks"></i> ${task.title}
+                                    ${task.client ? `<br><small style="margin-left: 25px; color: #666;">${task.client.prename || ''} ${task.client.name || ''}</small>` : ''}
+                                </a>
+                            </li>
                         `).join('')}
                     </ul>
-                </div>`;
+                </div>
+            `;
         }
         
-        if (tasks.length === 0) {
-            resultsHTML = '<div class="search-no-results">Keine Ergebnisse gefunden</div>';
+        // Show "no results" if nothing found
+        if (filteredTasks.length === 0) {
+            resultsHTML = '<div class="search-no-results">No results found</div>';
         }
         
+        // Add "view all results" link at the bottom
+        if (filteredTasks.length > 0) {
+            resultsHTML += `
+                <div class="search-view-all">
+                    <a href="#" onclick="searchAndDisplayTasks('${query}'); return false;">
+                        View all results (${filteredTasks.length})
+                    </a>
+                </div>
+            `;
+        }
+        
+        // Update the suggestions container
         suggestionsContainer.innerHTML = resultsHTML;
         suggestionsContainer.style.display = 'block';
-    } catch (err) {
-        console.error('Live-Suche Fehler:', err);
-        suggestionsContainer.innerHTML = '<div class="search-error">Fehler bei der Suche</div>';
+        
+    } catch (error) {
+        console.error('Error during live search:', error);
+        suggestionsContainer.innerHTML = '<div class="search-error">Search error occurred</div>';
     }
 }
 
@@ -65,17 +107,58 @@ function handleSearch(e) {
     }
 }
 
-async function searchAndDisplayTasks(query) {
-    try {
-        const response = await fetch(`/api/tasks/search?q=${encodeURIComponent(query)}&status=accepted`);
-        const tasks = response.ok ? await response.json() : [];
+function searchAndDisplayTasks(query) {
+    const container = document.getElementById("task-container");
+    if (!container) return;
+    
+    // Check if tasks are loaded
+    if (allTasks.length === 0) {
+        container.innerHTML = "<p style='text-align: center; color: #E60100;'>Tasks are loading, please wait...</p>";
+        return;
+    }
+    
+    // Filter tasks only by title when pressing Enter
+    const filteredTasks = allTasks.filter(task => {
+        return task.title && task.title.toLowerCase().includes(query.toLowerCase());
+    });
+    
+    // Set search mode and store results
+    isSearchMode = true;
+    currentSearchResults = filteredTasks;
+    searchPagination = 1;
+    searchMaxPages = Math.ceil(filteredTasks.length / RESULTS_PER_PAGE);
+    
+    displaySearchResults(query);
+    updateSearchPagination();
+    
+    // Hide search suggestions when showing full results
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    if (suggestionsContainer) {
+        suggestionsContainer.innerHTML = '';
+        suggestionsContainer.style.display = 'none';
+    }
+}
+
+function displaySearchResults(query) {
+    const container = document.getElementById("task-container");
+    if (!container) return;
+    
+    container.innerHTML = "";
+    
+    if (currentSearchResults.length > 0) {
+        // Add search results header
+        const header = document.createElement("div");
+        header.style.cssText = "text-align: center; margin-bottom: 20px; color: #666; font-size: 16px;";
+        header.textContent = `Search results for "${query}" (${currentSearchResults.length} found)`;
+        container.appendChild(header);
         
-        const container = document.getElementById("task-container");
-        if (!container) return;
+        // Calculate pagination
+        const startIndex = (searchPagination - 1) * RESULTS_PER_PAGE;
+        const endIndex = startIndex + RESULTS_PER_PAGE;
+        const tasksToShow = currentSearchResults.slice(startIndex, endIndex);
         
-        container.innerHTML = "";
-        
-        tasks.forEach(task => {
+        // Display filtered tasks for current page
+        tasksToShow.forEach(task => {
             const card = document.createElement("div");
             card.className = "task-card";
             card.innerHTML = `
@@ -95,23 +178,108 @@ async function searchAndDisplayTasks(query) {
             card.addEventListener("click", () => openPopup(task));
             container.appendChild(card);
         });
-    } catch (error) {
-        console.error("Could not search tasks:", error);
-        const container = document.getElementById("task-container");
-        if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not search tasks. Please try again later.</p>";
+    } else {
+        const noResults = document.createElement("div");
+        noResults.style.cssText = "text-align: center; margin-top: 50px; color: #666; font-size: 16px;";
+        noResults.textContent = `No results found for "${query}"`;
+        container.appendChild(noResults);
     }
 }
 
+function updateSearchPagination() {
+    const paginationContainer = document.querySelector('.pagination');
+    if (!paginationContainer) return;
+    
+    // Hide pagination if 10 or fewer results
+    if (currentSearchResults.length <= 10) {
+        paginationContainer.style.display = 'none';
+        return;
+    }
+    
+    // Show pagination for more than 10 results
+    paginationContainer.style.display = 'flex';
+    
+    // Update pagination buttons
+    const prevBtn = document.getElementById("prevPage");
+    const nextBtn = document.getElementById("nextPage");
+    const prevNumBtn = document.getElementById("prevNumberPage");
+    const nextNumBtn = document.getElementById("nextNumberPage");
+    const currentBtn = document.getElementById("currentPageBtn");
+    const input = document.getElementById("pageInput");
+    
+    function disableButton(btn) {
+        if (btn) {
+            btn.textContent = " ";
+            btn.style.backgroundColor = "#888";
+            btn.style.pointerEvents = "none";
+        }
+    }
+    
+    function enableButton(btn, text) {
+        if (btn) {
+            btn.textContent = text;
+            btn.style.backgroundColor = "#e60100";
+            btn.style.pointerEvents = "auto";
+        }
+    }
+    
+    const prevNum = searchPagination - 1;
+    const nextNum = searchPagination + 1;
+    
+    if (prevNum >= 1) {
+        enableButton(prevNumBtn, prevNum.toString());
+        enableButton(prevBtn, "«");
+    } else {
+        disableButton(prevNumBtn);
+        disableButton(prevBtn);
+    }
+    
+    if (nextNum <= searchMaxPages) {
+        enableButton(nextNumBtn, nextNum.toString());
+        enableButton(nextBtn, "»");
+    } else {
+        disableButton(nextNumBtn);
+        disableButton(nextBtn);
+    }
+    
+    if (currentBtn) currentBtn.textContent = searchPagination;
+    if (input) input.value = searchPagination;
+}
+
+function updateSearchPaginationPage(newPage) {
+    searchPagination = Math.max(1, Math.min(newPage, searchMaxPages));
+    const query = document.getElementById('search-input').value.trim();
+    displaySearchResults(query);
+    updateSearchPagination();
+}
+
 function openTaskFromSearch(taskId) {
-    fetch(`/api/tasks/${taskId}`)
-        .then(res => res.json())
-        .then(task => {
-            openPopup(task);
-            const suggestionsContainer = document.getElementById('search-suggestions-container');
+    console.log('Opening task from search with ID:', taskId);
+    // Find task in locally stored tasks
+    const task = allTasks.find(t => t.id === taskId);
+    if (task) {
+        console.log('Found task, opening popup:', task.title);
+        openPopup(task);
+        // Clear and hide search suggestions
+        const suggestionsContainer = document.getElementById('search-suggestions-container');
+        if (suggestionsContainer) {
             suggestionsContainer.innerHTML = '';
             suggestionsContainer.style.display = 'none';
-        })
-        .catch(err => console.error('Error loading task:', err));
+        }
+        // Clear search input
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+    } else {
+        console.error('Task not found in local tasks:', taskId);
+        console.log('Available task IDs:', allTasks.map(t => t.id));
+        // Try to reload tasks if not found
+        if (allTasks.length === 0) {
+            console.log('No tasks loaded, trying to reload...');
+            loadAllTasks();
+        }
+    }
 }
 
 /** Updates the task status via API */
@@ -326,6 +494,42 @@ function getSpecificRequirements(task) {
     return req.length > 0 ? req.join(", ") : "No specific requirements";
 }
 
+/** Loads all tasks for search functionality using Promise.all */
+async function loadAllTasks() {
+    try {
+        // Create array of promises for all pages
+        const pagePromises = [];
+        for (let page = 1; page <= maxPages; page++) {
+            pagePromises.push(
+                fetch(`/api/tasks/accepted?page=${page}`)
+                    .then(response => response.ok ? response.json() : [])
+                    .catch(() => [])
+            );
+        }
+        
+        // Wait for all pages to load
+        const allPages = await Promise.all(pagePromises);
+        
+        // Flatten and filter valid data
+        allTasks = allPages
+            .filter(data => Array.isArray(data))
+            .flat();
+            
+        console.log(`Loaded ${allTasks.length} tasks for search from ${maxPages} pages`);
+    } catch (err) {
+        console.error("Error loading all tasks for search:", err);
+        // Fallback: try to load current page only
+        try {
+            const response = await fetch(`/api/tasks/accepted?page=${pagination}`);
+            const data = await response.json();
+            allTasks = Array.isArray(data) ? data : [];
+        } catch (fallbackErr) {
+            console.error("Fallback also failed:", fallbackErr);
+            allTasks = [];
+        }
+    }
+}
+
 /** Loads tasks for a given page */
 function loadTasks(page) {
     fetch(`/api/tasks/accepted?page=${page}`)
@@ -394,6 +598,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updatePagination(newPage) {
+        if (isSearchMode) {
+            updateSearchPaginationPage(newPage);
+            return;
+        }
+        
         pagination = Math.max(1, Math.min(newPage, maxPages));
 
         const prevNum = pagination - 1;
@@ -461,11 +670,13 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(pages => {
             maxPages = Math.max(1, pages);
             updatePagination(1);
+            loadAllTasks(); // Load all tasks for search functionality
         })
         .catch(err => {
             console.error("Error fetching page count:", err);
             maxPages = 1;
             updatePagination(1);
+            loadAllTasks(); // Load all tasks for search functionality
         });
     
     // Search event listeners
@@ -484,6 +695,22 @@ document.addEventListener("DOMContentLoaded", () => {
             container.style.display = 'none';
         }
     });
+    
+    // Clear search when input is empty
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value.trim() === '' && isSearchMode) {
+                // Exit search mode and return to normal pagination
+                isSearchMode = false;
+                currentSearchResults = [];
+                const paginationContainer = document.querySelector('.pagination');
+                if (paginationContainer) {
+                    paginationContainer.style.display = 'flex';
+                }
+                updatePagination(pagination);
+            }
+        });
+    }
 });
 
 // Outside click closes popup
@@ -496,6 +723,7 @@ document.addEventListener("click", (event) => {
         closePopup();
     }
 });
+
 
 // Download PDF click
 document.addEventListener("DOMContentLoaded", () => {

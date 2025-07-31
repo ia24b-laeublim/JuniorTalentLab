@@ -49,13 +49,15 @@ public class Task {
     private UploadedFile attachment;
 
     // ✅ FIXED: Force eager loading to ensure client data is always fetched
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "Client", nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Client"))
+    // Use LAZY loading to avoid foreign key constraint issues during startup
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "Client", nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Client", value = ConstraintMode.NO_CONSTRAINT))
     private Person client;
 
     // ✅ FIXED: Force eager loading for apprentice too
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "Apprentice", nullable = true, foreignKey = @ForeignKey(name = "fk_Task_Apprentice"))
+    // Use LAZY loading and disable foreign key constraint to avoid startup issues
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "Apprentice", nullable = true, foreignKey = @ForeignKey(name = "fk_Task_Apprentice", value = ConstraintMode.NO_CONSTRAINT))
     private Person apprentice;
 
     @Column(name = "Progress", nullable = true, length = 100)

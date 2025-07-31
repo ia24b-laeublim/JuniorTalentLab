@@ -176,47 +176,78 @@ public class TaskController {
 
     @PostMapping("/{id}/accept")
     public ResponseEntity<Void> acceptTask(@PathVariable Long id, @RequestBody AcceptTaskRequest request) {
-        Task task = taskRepository.findById(id).orElseThrow();
+        try {
+            Task task = taskRepository.findById(id).orElse(null);
+            
+            if (task == null) {
+                return ResponseEntity.notFound().build();
+            }
 
-        // Find or create a person based on first name, last name, and GPN
-        String gpnString = String.valueOf(request.getGpn());
-        Person apprentice = personRepository.findByGpn(gpnString)
-                .orElseGet(() -> {
-                    Person newPerson = new Person();
-                    newPerson.setPrename(request.getFirstName());
-                    newPerson.setName(request.getLastName());
-                    newPerson.setGpn(gpnString);
-                    newPerson.setEmail(request.getFirstName().toLowerCase() + "." + request.getLastName().toLowerCase() + "@example.com");
-                    return personRepository.save(newPerson);
-                });
+            // Find or create a person based on first name, last name, and GPN
+            String gpnString = String.valueOf(request.getGpn());
+            Person apprentice = personRepository.findByGpn(gpnString)
+                    .orElseGet(() -> {
+                        Person newPerson = new Person();
+                        newPerson.setPrename(request.getFirstName());
+                        newPerson.setName(request.getLastName());
+                        newPerson.setGpn(gpnString);
+                        newPerson.setEmail(request.getFirstName().toLowerCase() + "." + request.getLastName().toLowerCase() + "@example.com");
+                        return personRepository.save(newPerson);
+                    });
 
-        task.setStatus("ACCEPTED");
-        task.setApprentice(apprentice);
-        if (task.getProgress() == null) {
-            task.setProgress("Started");
+            task.setStatus("ACCEPTED");
+            task.setApprentice(apprentice);
+            if (task.getProgress() == null) {
+                task.setProgress("Started");
+            }
+            taskRepository.save(task);
+
+            // Try to send email, but don't fail if it doesn't work
+            try {
+                Person client = task.getClient();
+                if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
+                    sendTaskAcceptedMail(task, client, apprentice);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to send acceptance email: " + e.getMessage());
+            }
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.err.println("Error accepting task: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
-        taskRepository.save(task);
-
-        Person client = task.getClient();
-        if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
-            sendTaskAcceptedMail(task, client, apprentice);
-        }
-
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/reject")
     public ResponseEntity<Void> rejectTask(@PathVariable Long id, @RequestBody RejectTaskDto request) {
-        Task task = taskRepository.findById(id).orElseThrow();
-        task.setStatus("REJECTED");
-        taskRepository.save(task);
+        try {
+            Task task = taskRepository.findById(id).orElse(null);
+            
+            if (task == null) {
+                return ResponseEntity.notFound().build();
+            }
 
-        Person client = task.getClient();
-        if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
-            sendRejectedReasonMail(task, client, request);
+            task.setStatus("REJECTED");
+            taskRepository.save(task);
+
+            // Try to send email, but don't fail if it doesn't work
+            try {
+                Person client = task.getClient();
+                if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
+                    sendRejectedReasonMail(task, client, request);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to send rejection email: " + e.getMessage());
+            }
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.err.println("Error rejecting task: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
-
-        return ResponseEntity.ok().build();
     }
 
     private void sendRejectedReasonMail(Task task, Person client, RejectTaskDto rtd) {
@@ -260,10 +291,15 @@ public class TaskController {
 
         Person client = task.getClient();
         if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
-            if ("Finished".equalsIgnoreCase(task.getProgress())) {
-                sendTaskFinishedEmail(task, client);
-            } else {
-                sendTaskStatusChangedMail(task, client);
+            try {
+                if ("Finished".equalsIgnoreCase(task.getProgress())) {
+                    sendTaskFinishedEmail(task, client);
+                } else {
+                    sendTaskStatusChangedMail(task, client);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to send status update email to " + client.getEmail() + ": " + e.getMessage());
+                // Continue without failing the entire operation
             }
         }
 
@@ -341,7 +377,12 @@ public class TaskController {
 
         Person client = task.getClient();
         if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
-            sendCommentEmail(task, client, commentRequest);
+            try {
+                sendCommentEmail(task, client, commentRequest);
+            } catch (Exception e) {
+                System.err.println("Failed to send comment email to " + client.getEmail() + ": " + e.getMessage());
+                // Continue without failing the entire operation
+            }
         }
 
         return ResponseEntity.ok().build();
