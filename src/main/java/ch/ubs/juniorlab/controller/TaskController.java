@@ -27,9 +27,13 @@ import ch.ubs.juniorlab.service.PDFService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.System.out;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -432,6 +436,19 @@ public class TaskController {
 
         out.println("Task created with URL: " + taskUrl);
         System.out.println("Acceptance‑Mail sent to: " + client.getEmail());
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        try {
+            commentRepository.deleteByTaskId(id);  // benötigt aktive Transaktion
+            taskRepository.deleteById(id);         // Task selbst löschen
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

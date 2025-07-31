@@ -25,7 +25,7 @@ public class JuniorTalentLabApplication {
 
         HashService hs = context.getBean(HashService.class);
 
-        System.out.println(hs.getInfoUrl(1));
+        System.out.println(hs.getInfoUrl(7));
 
 
     }
