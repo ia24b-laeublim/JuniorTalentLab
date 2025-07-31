@@ -121,30 +121,94 @@ document.addEventListener("click", (event) => {
 });
 
 function getTaskType(task) {
-    if (task.paperSize || task.paperType) return "Flyer";
-    if (task.posterSize) return "Poster";
-    if (task.photoCount) return "Slideshow";
-    if (task.lengthSec) return "Video";
-    if (task.questionCount) return "Poll";
-    if (task.format) return "Photo";
+    console.log("getTaskType called with task:", task);
+    
+    // Check Poll first (most specific)
+    if (task.questionCount != null || task.questionType != null) {
+        console.log("Detected as Poll");
+        return "Poll";
+    }
+    
+    // Check Video (has lengthSec)
+    if (task.lengthSec != null) {
+        console.log("Detected as Video");
+        return "Video";
+    }
+    
+    // Check Flyer (has paperSize AND paperType)
+    if (task.paperSize != null && task.paperType != null) {
+        console.log("Detected as Flyer");
+        return "Flyer";
+    }
+    
+    // Check Poster (has posterSize)
+    if (task.posterSize != null) {
+        console.log("Detected as Poster");
+        return "Poster";
+    }
+    
+    // Check Slideshow (has photoCount)
+    if (task.photoCount != null) {
+        console.log("Detected as Slideshow");
+        return "Slideshow";
+    }
+    
+    // Check Photo (more restrictive - should be ONLY Photo tasks)
+    if (task.format != null && task.resolution != null && 
+        task.lengthSec == null && task.photoCount == null && task.posterSize == null &&
+        task.paperSize == null && task.paperType == null && task.questionCount == null && task.questionType == null) {
+        console.log("Detected as Photo");
+        return "Photo";
+    }
+    
+    console.log("Detected as General Task");
     return "General Task";
 }
 
 function getTaskFormat(task) {
-    if (task.paperSize) return task.paperSize;
-    if (task.format) return task.format;
-    if (task.resolution) return task.resolution;
+    if (task.maxFileSizeMb) {
+        return `${task.maxFileSizeMb}MB`;
+    }
     return "-";
 }
 
 function getOtherRequirements(task) {
     let requirements = [];
 
+    // Flyer-specific requirements
+    if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
     if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
-    if (task.maxFileSizeMb) requirements.push(`Max file size: ${task.maxFileSizeMb}MB`);
+
+    // Video-specific requirements
+    if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
+    if (task.voiceover != null) requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
+    if (task.disclaimer != null) requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
+    if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
+    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
+
+    // Photo-specific requirements (shared fields reused from Video)
+    if (task.format) requirements.push(`Format: ${task.format}`);
+    if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
+    if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
     if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
 
-    return requirements.length > 0 ? requirements.join(", ") : "No additional requirements";
+    // Slideshow-specific requirements
+    if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
+
+    // Poster-specific requirements
+    if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
+    if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
+    if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
+
+    // Poll-specific requirements
+    if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
+    if (task.questionType) requirements.push(`Type: ${task.questionType}`);
+    if (task.startDate) requirements.push(`Start: ${task.startDate}`);
+    if (task.endDate) requirements.push(`End: ${task.endDate}`);
+    if (task.anonymous != null) requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
+    if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
+
+    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
 
 // Helper function to validate email domain
