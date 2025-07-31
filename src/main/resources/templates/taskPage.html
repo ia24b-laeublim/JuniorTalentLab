@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title th:text="${task.title}">Task Details</title>
+    <script th:src="@{/js/ownTask.js}"></script>
     <style>
         html, body {
             margin: 0;
@@ -201,6 +202,7 @@
             <div class="popup-layout">
                 <!-- Linke Spalte -->
                 <div class="popup-left">
+                    <div id="task-container" th:attr="data-task-id=${task.id}"></div>
                     <div class="popup-row"><span>Name</span><span th:text="${task.client != null ? task.client.prename + ' ' + task.client.name : '-'}"></span></div>
                     <div class="popup-row"><span>GPN</span><span th:text="${task.client != null ? task.client.gpn : '-'}"></span></div>
                     <div class="popup-row"><span>Deadline</span><span th:text="${task.deadline != null ? task.deadline : '-'}"></span></div>
@@ -228,8 +230,9 @@
 
                     <div class="popup-buttons">
                         <a th:href="@{'/api/tasks/' + ${task.id} + '/pdf'}" class="button-default" download th:attr="download='Task_' + ${task.id} + '.pdf'">Download PDF</a>
-                        <a th:href="@{'/api/tasks/' + ${task.id} + '/delete'}" class="button-red" onclick="return confirm('Are you sure you want to delete this task?')">Delete</a>
-                        <a th:href="@{'/overview/' + ${task.id} + '/edit'}" class="button-default">Change</a>
+                        <a href="#" id="delete-button" class="button-red">Delete</a>
+                        <input type="hidden" id="taskId" th:value="${task.id}" />
+                        <a th:href="@{'/tasks/edit/' + ${task.id}}" class="button-default">Change</a>
                     </div>
                 </div>
             </div>

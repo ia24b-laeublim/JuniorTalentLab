@@ -10,6 +10,8 @@ import java.time.LocalDate;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Task {
 
+    private String specificRequirements;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -249,4 +251,9 @@ public class Task {
             sb.append(label).append(": ").append(value);
         }
     }
+
+    public void setSpecificRequirements(String specificRequirements) {
+        this.specificRequirements = specificRequirements;
+    }
+
 }

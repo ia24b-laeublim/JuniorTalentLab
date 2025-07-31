@@ -18,13 +18,14 @@ public class JuniorTalentLabApplication {
 
         ApplicationContext context = SpringApplication.run(JuniorTalentLabApplication.class, args);
 
-        // Temporarily disabled to avoid foreign key constraint issues
-        // TaskProcessingService taskService = context.getBean(TaskProcessingService.class);
-        // taskService.printAllTasks();
+        TaskProcessingService taskService = context.getBean(TaskProcessingService.class);
+
+        // Methode aufrufen
+        taskService.printAllTasks();
 
         HashService hs = context.getBean(HashService.class);
 
-        System.out.println(hs.getInfoUrl(3));
+        System.out.println(hs.getInfoUrl(1));
 
 
     }

@@ -19,4 +19,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Transactional
     @Query("DELETE FROM Comment c WHERE c.task.id IN (SELECT t.id FROM Task t WHERE t.deadline IS NOT NULL AND t.deadline <= :cutoff)")
     void deleteByTaskDeadlineBefore(LocalDate cutoff);
+
+    void deleteByTaskId(Long id);
 }
+
