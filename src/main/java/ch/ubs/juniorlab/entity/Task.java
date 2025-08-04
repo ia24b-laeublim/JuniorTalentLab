@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "Task")
@@ -255,5 +256,20 @@ public class Task {
     public void setSpecificRequirements(String specificRequirements) {
         this.specificRequirements = specificRequirements;
     }
+
+    @Column(unique = true)
+    private String uuid;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    @PrePersist
+    public void generateUuid() {
+        if (this.uuid == null || this.uuid.isBlank()) {
+            this.uuid = UUID.randomUUID().toString();
+        }
+    }
+
 
 }

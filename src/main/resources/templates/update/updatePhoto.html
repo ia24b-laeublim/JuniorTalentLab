@@ -2,86 +2,68 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Update Photo Task - Junior Talent Lab</title>
+  <title>Update Poster Task - Junior Talent Lab</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-  <script th:src="@{/js/script.js}"></script>
 </head>
 
 <body>
-
-<!-- Main Content -->
 <main class="create-task-wrapper">
   <div class="page-title-container">
-    <h1>Update photo task</h1>
+    <h1>Update Poster Task</h1>
     <div class="red-underline"></div>
   </div>
 
   <div class="create-task-container">
-    <form id="create-photo-form" action="/create-task/photo" method="post" novalidate>
-      <input type="hidden" name="taskType" value="photo">
+    <form id="update-poster-form"
+          th:object="${task}"
+          th:action="@{/tasks/update/{id}(id=${task.id})}"
+          method="post"
+          novalidate>
 
-      <!-- Basic Task Details -->
-      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+      <input type="hidden" name="taskType" th:value="*{taskType}">
 
-      <!-- Photo Specific Details -->
+      <div th:replace="fragments/updateTaskDetails :: updateTaskDetails"></div>
+
+      <!-- In diesem Abschnitt werden die spezifischen Poster-Daten geladen -->
       <div class="form-section">
-        <h2>Photo specifications</h2>
-
+        <h2>Poster specifications</h2>
         <div class="form-row">
           <div class="form-field">
-            <label for="format" class="form-label">Format</label>
-            <select id="format" name="format" class="form-select">
-              <option value="">Select format</option>
-              <option value="Landscape">Landscape</option>
-              <option value="Portrait">Portrait</option>
-              <option value="Square">Square</option>
-              <option value="Panoramic">Panoramic</option>
-            </select>
+            <label for="poster-format" class="form-label">Format</label>
+            <!-- th:value sorgt dafür, dass der gespeicherte Wert angezeigt wird -->
+            <input type="text" id="poster-format" name="format" th:value="${specificTask.format}" class="form-input" placeholder="e.g., A0, A1" />
           </div>
-
           <div class="form-field">
-            <label for="file-format" class="form-label">File format</label>
-            <select id="file-format" name="fileFormat" class="form-select">
-              <option value="">Select file format</option>
-              <option value="JPEG">JPEG</option>
-              <option value="PNG">PNG</option>
-              <option value="TIFF">TIFF</option>
-              <option value="RAW">RAW</option>
-            </select>
+            <label for="poster-size" class="form-label">Size</label>
+            <input type="text" id="poster-size" name="posterSize" th:value="${specificTask.posterSize}" class="form-input" placeholder="e.g., 841 x 1189 mm" />
           </div>
         </div>
-
         <div class="form-row">
           <div class="form-field">
-            <label for="resolution" class="form-label">Resolution</label>
-            <input type="text" id="resolution" name="resolution" class="form-input"
-                   list="photo-resolution-options" placeholder="Select or enter resolution" />
-            <datalist id="photo-resolution-options">
-              <option value="300 DPI">
-              <option value="150 DPI">
-              <option value="72 DPI">
-              <option value="4000x3000">
-              <option value="3000x2000">
-            </datalist>
-          </div>
-
-          <div class="form-field">
-            <label for="social-media-platforms" class="form-label">Social media platforms</label>
-            <select id="social-media-platforms" name="socialMediaPlatforms" class="form-select">
-              <option value="">Select platform</option>
-              <option value="Instagram">Instagram</option>
-              <option value="LinkedIn">LinkedIn</option>
-              <option value="Facebook">Facebook</option>
-              <option value="Twitter">Twitter</option>
-              <option value="Multiple">Multiple platforms</option>
-              <option value="Print">Print only</option>
+            <label for="poster-paper-type" class="form-label">Paper type</label>
+            <select id="poster-paper-type" name="paperType" class="form-select">
+              <!-- Die erste Option ist leer, falls noch nichts ausgewählt wurde -->
+              <option value="">Select paper type</option>
+              <!-- th:selected prüft, ob der gespeicherte Wert 'Glossy' ist und wählt diese Option aus -->
+              <option value="Glossy" th:selected="${specificTask.paperType == 'Glossy'}">Glossy</option>
+              <!-- th:selected prüft, ob der gespeicherte Wert 'Matte' ist und wählt diese Option aus -->
+              <option value="Matte" th:selected="${specificTask.paperType == 'Matte'}">Matte</option>
             </select>
+          </div>
+          <div class="form-field">
+            <label for="poster-print-quality" class="form-label">Print Quality (DPI)</label>
+            <input type="number" id="poster-print-quality" name="printQualityDpi" th:value="${specificTask.printQualityDpi}" class="form-input" placeholder="e.g., 300" min="1" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field form-field-full">
+            <label for="poster-mounting-type" class="form-label">Mounting Type</label>
+            <input type="text" id="poster-mounting-type" name="mountingType" th:value="${specificTask.mountingType}" class="form-input" placeholder="e.g., Framed, Roll-up" />
           </div>
         </div>
       </div>
 
-      <!-- Submit Section -->
       <div class="form-section">
         <div class="form-actions">
           <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
@@ -91,7 +73,5 @@
     </form>
   </div>
 </main>
-
-
 </body>
 </html>

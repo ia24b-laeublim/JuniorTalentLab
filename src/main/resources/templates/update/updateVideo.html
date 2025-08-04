@@ -5,135 +5,92 @@
   <title>Update Video Task - Junior Talent Lab</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-  <script th:src="@{/js/script.js}"></script>
 </head>
 
 <body>
-
-
-<!-- Main Content -->
 <main class="create-task-wrapper">
   <div class="page-title-container">
-    <h1>Update video task</h1>
+    <h1>Update Video Task</h1>
     <div class="red-underline"></div>
   </div>
 
   <div class="create-task-container">
-    <form id="create-video-form" action="/create-task/video" method="post" novalidate>
-      <input type="hidden" name="taskType" value="video">
+    <form id="update-video-form" th:object="${task}" th:action="@{/tasks/update/{id}(id=${task.id})}" method="post" novalidate>
+      <input type="hidden" name="taskType" th:value="*{taskType}" />
 
-      <!-- Basic Task Details -->
-      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+      <div th:replace="fragments/updateTaskDetails :: updateTaskDetails"></div>
 
-      <!-- Video Specific Details -->
-      <div class="form-section">
+      <div class="form-section" th:object="${specificTask}">
         <h2>Video specifications</h2>
 
         <div class="form-row">
           <div class="form-field">
-            <label for="length-sec" class="form-label">Length (Seconds)</label>
-            <input type="number" id="length-sec" name="lengthSec" class="form-input"
-                   min="1" max="3600" placeholder="e.g., 60" />
+            <label for="video-length">Length (seconds)</label>
+            <input id="video-length" name="lengthSec" th:value="${specificTask.lengthSec}" type="number" min="1" class="form-input" />
           </div>
-
           <div class="form-field">
-            <label for="format" class="form-label">Format</label>
-            <select id="format" name="format" class="form-select">
-              <option value="">Select format</option>
-              <option value="Landscape">Landscape (16:9)</option>
-              <option value="Portrait">Portrait (9:16)</option>
-              <option value="Square">Square (1:1)</option>
-              <option value="Cinematic">Cinematic (21:9)</option>
+            <label for="video-voiceover">Voiceover</label>
+            <select id="video-voiceover" name="voiceover" class="form-select">
+              <!-- KORRIGIERT -->
+              <option value="true" th:selected="${specificTask.voiceover}">Yes</option>
+              <option value="false" th:selected="${!specificTask.voiceover}">No</option>
             </select>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-field">
-            <label for="file-format" class="form-label">File format</label>
-            <select id="file-format" name="fileFormat" class="form-select">
-              <option value="">Select file format</option>
-              <option value="MP4">MP4</option>
-              <option value="MOV">MOV</option>
-              <option value="AVI">AVI</option>
-              <option value="MKV">MKV</option>
+            <label for="video-disclaimer">Disclaimer</label>
+            <select id="video-disclaimer" name="disclaimer" class="form-select">
+              <!-- KORRIGIERT -->
+              <option value="true" th:selected="${specificTask.disclaimer}">Yes</option>
+              <option value="false" th:selected="${!specificTask.disclaimer}">No</option>
             </select>
           </div>
-
           <div class="form-field">
-            <label for="resolution" class="form-label">Resolution</label>
-            <input type="text" id="resolution" name="resolution" class="form-input"
-                   list="resolution-options" placeholder="Select or enter resolution" />
-            <datalist id="resolution-options">
-              <option value="1920x1080">
-              <option value="1280x720">
-              <option value="3840x2160">
-              <option value="1080x1920">
-              <option value="720x1280">
-            </datalist>
+            <label for="video-branding">Branding requirements</label>
+            <input id="video-branding" name="brandingRequirements" th:value="${specificTask.brandingRequirements}" class="form-input" placeholder="e.g., logo at the end" />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-field">
-            <label for="voiceover" class="form-label">Voiceover required</label>
-            <select id="voiceover" name="voiceover" class="form-select">
-              <option value="">Select option</option>
-              <option value="true">Yes, include voiceover</option>
-              <option value="false">No voiceover needed</option>
-            </select>
+            <label for="video-format">Format</label>
+            <input id="video-format" name="format" th:value="${specificTask.format}" class="form-input" placeholder="e.g., 16:9, 9:16" />
           </div>
-
           <div class="form-field">
-            <label for="disclaimer" class="form-label">Disclaimer required</label>
-            <select id="disclaimer" name="disclaimer" class="form-select">
-              <option value="">Select option</option>
-              <option value="true">Yes, include disclaimer</option>
-              <option value="false">No disclaimer needed</option>
-            </select>
+            <label for="video-file-format">File format</label>
+            <input id="video-file-format" name="fileFormat" th:value="${specificTask.fileFormat}" class="form-input" placeholder="e.g., .mp4, .mov" />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-field">
-            <label for="music-style" class="form-label">Music style</label>
-            <select id="music-style" name="musicStyle" class="form-select">
-              <option value="">Select music style</option>
-              <option value="Corporate">Corporate</option>
-              <option value="Upbeat">Upbeat</option>
-              <option value="Calm">Calm/Relaxing</option>
-              <option value="Dramatic">Dramatic</option>
-              <option value="Modern">Modern</option>
-              <option value="Classical">Classical</option>
-              <option value="None">No music</option>
-            </select>
+            <label for="video-resolution">Resolution</label>
+            <input id="video-resolution" name="resolution" th:value="${specificTask.resolution}" class="form-input" placeholder="e.g., 1920x1080" />
           </div>
-
           <div class="form-field">
-            <label for="social-media-platforms" class="form-label">Social media platforms</label>
-            <input type="text" id="social-media-platforms" name="socialMediaPlatforms" class="form-input"
-                   placeholder="e.g., YouTube, LinkedIn, Instagram" />
+            <label for="video-social-media">Social Media Platforms</label>
+            <input id="video-social-media" name="socialMediaPlatforms" th:value="${specificTask.socialMediaPlatforms}" class="form-input" placeholder="e.g., YouTube, Instagram" />
           </div>
         </div>
 
-        <div class="form-field">
-          <label for="branding-requirements" class="form-label">Branding requirements</label>
-          <textarea id="branding-requirements" name="brandingRequirements" class="form-textarea" rows="3"
-                    placeholder="Specific branding guidelines, colors, logos, etc."></textarea>
+        <div class="form-row">
+          <div class="form-field form-field-full">
+            <label for="video-music-style">Music style</label>
+            <input id="video-music-style" name="musicStyle" th:value="${specificTask.musicStyle}" class="form-input" placeholder="e.g., upbeat, calm, classical" />
+          </div>
         </div>
       </div>
 
-        <!-- Submit Section -->
-        <div class="form-section">
-          <div class="form-actions">
-            <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
-            <button type="submit" class="btn-primary">Confirm</button>
-          </div>
+      <div class="form-section">
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm</button>
         </div>
+      </div>
     </form>
   </div>
 </main>
-
-
 </body>
 </html>

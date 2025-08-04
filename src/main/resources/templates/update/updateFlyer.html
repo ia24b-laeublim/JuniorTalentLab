@@ -9,7 +9,6 @@
 </head>
 
 <body>
-<!-- Main Content -->
 <main class="create-task-wrapper">
     <div class="page-title-container">
         <h1>Update flyer task</h1>
@@ -17,20 +16,23 @@
     </div>
 
     <div class="create-task-container">
-        <form id="create-flyer-form" action="/api/create-task/flyer" method="post" novalidate>
-            <input type="hidden" name="taskType" value="flyer">
+        <form id="update-flyer-form"
+              th:object="${task}"
+              th:action="@{/tasks/update/{id}(id=${task.id})}"
+              method="post"
+              novalidate>
+            <input type="hidden" name="taskType" th:value="*{taskType}">
 
-            <!-- Basic Task Details -->
-            <div th:replace="fragments/basicTaskDetails :: basicTaskDetails"></div>
+            <div th:replace="fragments/updateTaskDetails :: updateTaskDetails"></div>
 
-            <!-- Flyer Specific Details -->
-            <div class="form-section">
+            <div class="form-section" th:object="${specificTask}">
                 <h2>Flyer specifications</h2>
 
                 <div class="form-row">
                     <div class="form-field">
                         <label for="paper-size" class="form-label">Size</label>
-                        <input type="text" id="paper-size" name="paperSize" class="form-input"
+                        <input type="text" id="paper-size" name="paperSize"
+                               th:value="*{paperSize}" class="form-input"
                                list="size-options" placeholder="Select or enter custom size" />
                         <datalist id="size-options">
                             <option value="A4">
@@ -49,55 +51,27 @@
                         <label for="paper-type" class="form-label">Paper type</label>
                         <select id="paper-type" name="paperType" class="form-select">
                             <option value="">Select paper type</option>
-                            <option value="Standard">Standard (80gsm)</option>
-                            <option value="Premium">Premium (120gsm)</option>
-                            <option value="Glossy">Glossy</option>
-                            <option value="Matte">Matte</option>
-                            <option value="Recycled">Recycled</option>
+                            <option value="Standard" th:selected="*{paperType == 'Standard'}">Standard (80gsm)</option>
+                            <option value="Premium" th:selected="*{paperType == 'Premium'}">Premium (120gsm)</option>
+                            <option value="Glossy" th:selected="*{paperType == 'Glossy'}">Glossy</option>
+                            <option value="Matte" th:selected="*{paperType == 'Matte'}">Matte</option>
+                            <option value="Recycled" th:selected="*{paperType == 'Recycled'}">Recycled</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="target-audience" class="form-label">Target audience</label>
-                        <input type="text" id="target-audience" name="targetAudience" class="form-input"
-                               placeholder="e.g., UBS clients, employees, general public" />
-                    </div>
-
-                    <div class="form-field">
-                        <label for="channel" class="form-label">Channel</label>
-                        <select id="channel" name="channel" class="form-select">
-                            <option value="">Select channel</option>
-                            <option value="Internal">Internal distribution</option>
-                            <option value="External">External distribution</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-field">
-                    <label for="handover-method" class="form-label">Handover</label>
-                    <select id="handover-method" name="handover" class="form-select">
-                        <option value="">Select handover method</option>
-                        <option value="email">Email</option>
-                        <option value="teams">Microsoft teams</option>
-                        <option value="sharepoint">SharePoint</option>
-                        <option value="direct">Direct meeting</option>
-                        <option value="download">Download portal</option>
-                    </select>
                 </div>
             </div>
 
-            <!-- Submit Section -->
             <div class="form-section">
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
+                    <button type="button" class="btn-secondary"
+                            th:onclick="'location.href=\'/overview/' + ${taskHash} + '\''">
+                        Cancel
+                    </button>
                     <button type="submit" class="btn-primary">Confirm</button>
                 </div>
             </div>
         </form>
     </div>
 </main>
-
 </body>
 </html>

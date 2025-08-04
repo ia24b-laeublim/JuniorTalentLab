@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="updateTaskDetails" class="updateTaskDetails">
+
+    <div class="form-section">
+        <h2>Task information</h2>
+
+        <div class="form-row">
+            <div class="form-field form-field-full">
+                <label for="task-title" class="form-label">Task title <span class="required">*</span></label>
+                <input type="text" id="task-title" name="title" th:value="*{title}" class="form-input"
+                       placeholder="Enter a descriptive title for your task" required/>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-field">
+                <label for="task-deadline" class="form-label">Deadline</label>
+                <input type="date" id="task-deadline" name="deadline" th:value="*{deadline}" class="form-input" required/>
+            </div>
+
+            <div class="form-field">
+                <label for="task-budget" class="form-label">Budget (CHF)</label>
+                <input type="number" id="task-budget" name="budgetChf" th:value="*{budgetChf}" class="form-input"
+                       min="0" step="0.01" placeholder="e.g., 500.00" required/>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-field">
+                <label for="task-channel" class="form-label">Channel</label>
+                <select id="task-channel" name="channel" th:value="*{channel}" class="form-select" required>
+                    <option value="" disabled selected>Select channel</option>
+                    <option value="Internal" th:selected="*{channel == 'Internal'}">Internal distribution</option>
+                    <option value="External" th:selected="*{channel == 'External'}">External distribution</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label for="task-handover-method" class="form-label">Handover method</label>
+                <select id="task-handover-method" name="handoverMethod" th:value="*{handoverMethod}" class="form-select" required>
+                    <option value="">Select handover method</option>
+                    <option value="email" th:selected="*{handoverMethod == 'email'}">Email</option>
+                    <option value="teams" th:selected="*{handoverMethod == 'teams'}">Microsoft teams</option>
+                    <option value="sharepoint" th:selected="*{handoverMethod == 'sharepoint'}">SharePoint</option>
+                    <option value="direct" th:selected="*{handoverMethod == 'direct'}">Direct meeting</option>
+                    <option value="download" th:selected="*{handoverMethod == 'download'}">Download portal</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-field form-field-full">
+                <label for="task-description" class="form-label">Description</label>
+                <textarea id="task-description" name="description" th:text="*{description}" class="form-textarea" rows="4"
+                          placeholder="Describe the task requirements, objectives, and any specific details..." required></textarea>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field form-field-full">
+                <label for="task-target-audience" class="form-label">Target audience</label>
+                <input type="text" id="task-target-audience" name="targetAudience" th:value="*{targetAudience}" class="form-input"
+                       placeholder="e.g., UBS clients, employees, general public" />
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
