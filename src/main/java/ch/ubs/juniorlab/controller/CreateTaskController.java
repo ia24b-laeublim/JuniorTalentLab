@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static java.lang.System.out;
 
@@ -166,7 +167,22 @@ public class CreateTaskController {
             videoTask.setBrandingRequirements(brandingRequirements);
             videoTask.setFormat(format);
             videoTask.setFileFormat(fileFormat);
-            videoTask.setSocialMediaPlatforms(socialMediaPlatforms);
+            
+            // Validate and set socialMediaPlatforms - only allow specific values or set to null
+            if (socialMediaPlatforms != null && !socialMediaPlatforms.trim().isEmpty()) {
+                String[] allowedPlatforms = {"Instagram", "LinkedIn", "Facebook", "Twitter", "Multiple", "Print"};
+                boolean isValid = false;
+                for (String allowed : allowedPlatforms) {
+                    if (allowed.equals(socialMediaPlatforms.trim())) {
+                        isValid = true;
+                        break;
+                    }
+                }
+                videoTask.setSocialMediaPlatforms(isValid ? socialMediaPlatforms.trim() : null);
+            } else {
+                videoTask.setSocialMediaPlatforms(null);
+            }
+            
             videoTask.setResolution(resolution);
             videoTask.setMusicStyle(musicStyle);
 
@@ -226,7 +242,22 @@ public class CreateTaskController {
             populateBaseTaskFields(photoTask, title, description, targetAudience, budgetChf, deadline, maxFileSizeMb, channel, handoverMethod, client);
             photoTask.setFormat(format);
             photoTask.setFileFormat(fileFormat);
-            photoTask.setSocialMediaPlatforms(socialMediaPlatforms);
+            
+            // Validate and set socialMediaPlatforms - only allow specific values or set to null
+            if (socialMediaPlatforms != null && !socialMediaPlatforms.trim().isEmpty()) {
+                String[] allowedPlatforms = {"Instagram", "LinkedIn", "Facebook", "Twitter", "Multiple", "Print"};
+                boolean isValid = false;
+                for (String allowed : allowedPlatforms) {
+                    if (allowed.equals(socialMediaPlatforms.trim())) {
+                        isValid = true;
+                        break;
+                    }
+                }
+                photoTask.setSocialMediaPlatforms(isValid ? socialMediaPlatforms.trim() : null);
+            } else {
+                photoTask.setSocialMediaPlatforms(null);
+            }
+            
             photoTask.setResolution(resolution);
             photoTask = photoTaskRepository.save(photoTask);
 
@@ -294,7 +325,22 @@ public class CreateTaskController {
             SlideshowTask slideshowTask = (SlideshowTask) task;
             slideshowTask.setFormat(format);
             slideshowTask.setFileFormat(fileFormat);
-            slideshowTask.setSocialMediaPlatforms(socialMediaPlatforms);
+            
+            // Validate and set socialMediaPlatforms - only allow specific values or set to null
+            if (socialMediaPlatforms != null && !socialMediaPlatforms.trim().isEmpty()) {
+                String[] allowedPlatforms = {"Instagram", "LinkedIn", "Facebook", "Twitter", "Multiple", "Print"};
+                boolean isValid = false;
+                for (String allowed : allowedPlatforms) {
+                    if (allowed.equals(socialMediaPlatforms.trim())) {
+                        isValid = true;
+                        break;
+                    }
+                }
+                slideshowTask.setSocialMediaPlatforms(isValid ? socialMediaPlatforms.trim() : null);
+            } else {
+                slideshowTask.setSocialMediaPlatforms(null);
+            }
+            
             slideshowTask.setPhotoCount(photoCount);
             slideshowTask.setResolution(resolution);
 
@@ -499,17 +545,37 @@ public class CreateTaskController {
 
     // === Shared Logic ===
     private Person findOrCreatePerson(String gpn, String name, String prename, String email) {
-        // First try to find by email (most unique identifier)
-        return personRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    // If not found by email, create new person
-                    Person newPerson = new Person();
-                    newPerson.setGpn(gpn);
-                    newPerson.setName(name);
-                    newPerson.setPrename(prename);
-                    newPerson.setEmail(email);
-                    return personRepository.save(newPerson);
-                });
+        // Always create a new person with the form data provided
+        // This ensures each task has its own person record with the correct name
+        Person newPerson = new Person();
+        newPerson.setGpn(gpn);
+        newPerson.setName(name);
+        newPerson.setPrename(prename);
+        newPerson.setEmail(email);
+        
+        try {
+            return personRepository.save(newPerson);
+        } catch (Exception e) {
+            // If GPN constraint fails, we still want to use the new form data
+            // So we create a person with a much shorter unique identifier to avoid constraint
+            // Generate a very short unique identifier - GPN column is max 15 chars
+            int random = (int) (Math.random() * 999) + 1; // 1-999 random number
+            String randomSuffix = "_" + random; // e.g., "_123"
+            int maxGpnBaseLength = 15 - randomSuffix.length(); // Ensure total length ≤ 15
+            
+            String baseGpn = gpn.length() > maxGpnBaseLength ? 
+                gpn.substring(0, maxGpnBaseLength) : gpn;
+            String finalGpn = baseGpn + randomSuffix;
+            
+            // Final safety check - should never exceed 15 characters now
+            if (finalGpn.length() > 15) {
+                // Ultimate fallback: truncate to exactly 15 chars
+                finalGpn = finalGpn.substring(0, 15);
+            }
+            
+            newPerson.setGpn(finalGpn);
+            return personRepository.save(newPerson);
+        }
     }
 
     private void populateBaseTaskFields(

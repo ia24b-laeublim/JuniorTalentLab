@@ -1,7 +1,318 @@
 let selectedTaskId = null;
-let statusChanged = false;
 let pagination = 1;
 let maxPages = 1;
+
+let prevBtn;
+let nextBtn;
+let prevNumBtn;
+let nextNumBtn;
+let currentBtn;
+let input;
+
+/** Disable a pagination button */
+function disableButton(btn) {
+    if (btn) {
+        btn.textContent = " ";
+        btn.style.backgroundColor = "#888";
+        btn.style.pointerEvents = "none";
+    }
+}
+
+/** Enable a pagination button with text */
+function enableButton(btn, text) {
+    if (btn) {
+        btn.textContent = text;
+        btn.style.backgroundColor = "#e60100";
+        btn.style.pointerEvents = "auto";
+    }
+}
+
+/** Update pagination UI and load data */
+function updatePagination(newPage) {
+    pagination = Math.max(1, Math.min(newPage, maxPages));
+
+    const prevNum = pagination - 1;
+    const nextNum = pagination + 1;
+
+    if (prevNum >= 1) {
+        enableButton(prevNumBtn, prevNum.toString());
+        enableButton(prevBtn, "«");
+    } else {
+        disableButton(prevNumBtn);
+        disableButton(prevBtn);
+    }
+
+    if (nextNum <= maxPages) {
+        enableButton(nextNumBtn, nextNum.toString());
+        enableButton(nextBtn, "»");
+    } else {
+        disableButton(nextNumBtn);
+        disableButton(nextBtn);
+    }
+
+    if (currentBtn) currentBtn.textContent = pagination;
+    if (input) input.value = pagination;
+
+    loadFinishedTasks(pagination);
+}
+
+/** Loads Finished Tasks for given page */
+function loadFinishedTasks(page) {
+    fetch(`/api/tasks/finished?page=${page}`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            const container = document.getElementById("task-container");
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
+                        <h3 style="color: #333; margin-bottom: 10px;">No tasks available</h3>
+                        <p style="font-size: 16px;">Check back later for completed tasks!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach(task => {
+                const card = document.createElement("div");
+                card.className = "task-card";
+
+                const clientName = task.client ?
+                    `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
+                    "Unknown";
+                const clientGpn = task.client?.gpn || "-";
+                const deadlineText = task.deadline || "-";
+                const progress = task.progress || "Finished";
+
+                card.innerHTML = `
+                  <h2 style="font-size: 1.5rem; font-weight: bold; color: #000000;">${task.title}</h2>
+                  <div style="display: flex; gap: 1rem;">
+                    <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
+                      <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Client Name</span><span>${clientName}</span></div>
+                      <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>GPN</span><span>${clientGpn}</span></div>
+                      <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Deadline</span><span>${deadlineText}</span></div>
+                      <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Status</span><span style="color: #28a745; font-weight: bold;">${progress}</span></div>
+                    </div>
+                    <div style="flex: 1; background-color: #f5f5f5; padding: 0.5rem;">
+                      <div><strong>Description</strong></div>
+                      <div>${(task.description?.substring(0, 300) ?? "No description provided") + (task.description?.length > 300 ? '...' : '')}</div>
+                    </div>
+                  </div>
+                `;
+
+                card.addEventListener("click", () => openPopup(task));
+                container.appendChild(card);
+            });
+        })
+        .catch(error => {
+            console.error("Could not fetch finished tasks:", error);
+            const container = document.getElementById("task-container");
+            if (container) container.innerHTML = "<p style='text-align: center; color: #E60100;'>Could not load tasks. Please try again later.</p>";
+        });
+}
+
+/** Opens the popup for a task */
+function openPopup(task) {
+    selectedTaskId = task.id;
+
+    const clientName = task.client ?
+        `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
+        "Unknown";
+
+    document.getElementById("popup-title").textContent = task.title ?? "-";
+    document.getElementById("popup-name").textContent = clientName;
+    document.getElementById("popup-gpn").textContent = task.client?.gpn ?? "-";
+    document.getElementById("popup-deadline").textContent = task.deadline ?? "-";
+    document.getElementById("popup-channel").textContent = task.channel ?? "-";
+    document.getElementById("popup-type").textContent = getTaskType(task);
+    document.getElementById("popup-format").textContent = getMaxFileSize(task);
+    document.getElementById("popup-target").textContent = task.targetAudience ?? "-";
+    document.getElementById("popup-budget").textContent = task.budgetChf ? `CHF ${task.budgetChf}` : "-";
+    document.getElementById("popup-handover").textContent = task.handoverMethod ?? "-";
+    document.getElementById("popup-description").textContent = task.description ?? "No description provided";
+    document.getElementById("popup-other").textContent = getSpecificRequirements(task);
+
+    // Set the current status in the dropdown
+    const statusSelect = document.getElementById("popup-status");
+    if (statusSelect && task.progress) {
+        statusSelect.value = task.progress;
+    }
+
+    // Load comments
+    loadComments(task.id);
+
+    document.getElementById("popup").classList.remove("hidden");
+}
+
+function closePopup() {
+    document.getElementById("popup").classList.add("hidden");
+    selectedTaskId = null;
+}
+
+function updateTaskStatus() {
+    if (!selectedTaskId) return;
+
+    const newStatus = document.getElementById("popup-status").value;
+
+    fetch(`/api/tasks/${selectedTaskId}/status`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            status: newStatus
+        })
+    })
+    .then(res => {
+        if (res.ok) {
+            console.log("Status updated successfully");
+            // Reload the current page of tasks
+            loadFinishedTasks(pagination);
+        } else {
+            alert("Failed to update status. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error('Error updating status:', error);
+        alert('An error occurred while updating the status.');
+    });
+}
+
+function submitComment() {
+    if (!selectedTaskId) return;
+
+    const commentText = document.getElementById("popup-comment").value.trim();
+    if (!commentText) {
+        alert("Please enter a comment before submitting.");
+        return;
+    }
+
+    fetch(`/api/tasks/${selectedTaskId}/comments`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            text: commentText
+        })
+    })
+    .then(res => {
+        if (res.ok) {
+            document.getElementById("popup-comment").value = "";
+            loadComments(selectedTaskId);
+        } else {
+            alert("Failed to submit comment. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting comment:', error);
+        alert('An error occurred while submitting the comment.');
+    });
+}
+
+function loadComments(taskId) {
+    fetch(`/api/tasks/${taskId}/comments`)
+        .then(res => res.json())
+        .then(comments => {
+            const commentList = document.getElementById("comment-list");
+            if (!commentList) return;
+
+            commentList.innerHTML = "";
+            comments.forEach(comment => {
+                const commentDiv = document.createElement("div");
+                commentDiv.className = "comment";
+                commentDiv.innerHTML = `
+                    <div class="comment-author">${comment.author}</div>
+                    <div class="comment-text">${comment.text}</div>
+                `;
+                commentList.appendChild(commentDiv);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading comments:', error);
+        });
+}
+
+// Helper functions
+function getTaskType(task) {
+    // Check Poll first (most specific)
+    if (task.questionCount != null || task.questionType != null) return "Poll";
+    
+    // Check Video (has lengthSec)
+    if (task.lengthSec != null) return "Video";
+    
+    // Check Flyer (has paperSize AND paperType)
+    if (task.paperSize != null && task.paperType != null) return "Flyer";
+    
+    // Check Poster (has posterSize)
+    if (task.posterSize != null) return "Poster";
+    
+    // Check Slideshow (has photoCount)
+    if (task.photoCount != null) return "Slideshow";
+    
+    // Check Photo (has format and resolution, but no other specific fields)
+    if (task.format != null && task.resolution != null && 
+        task.lengthSec == null && task.photoCount == null && task.posterSize == null) {
+        return "Photo";
+    }
+    
+    return "General Task";
+}
+
+function getMaxFileSize(task) {
+    if (task.maxFileSizeMb) {
+        return `${task.maxFileSizeMb}MB`;
+    }
+    return "-";
+}
+
+function getSpecificRequirements(task) {
+    let requirements = [];
+
+    // Flyer-specific requirements
+    if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
+    if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
+
+    // Video-specific requirements
+    if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
+    if (task.voiceover != null) requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
+    if (task.disclaimer != null) requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
+    if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
+    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
+
+    // Photo-specific requirements
+    if (task.format) requirements.push(`Format: ${task.format}`);
+    if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
+    if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
+    if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
+
+    // Slideshow-specific requirements
+    if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
+
+    // Poster-specific requirements
+    if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
+    if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
+    if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
+
+    // Poll-specific requirements
+    if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
+    if (task.questionType) requirements.push(`Type: ${task.questionType}`);
+    if (task.startDate) requirements.push(`Start: ${task.startDate}`);
+    if (task.endDate) requirements.push(`End: ${task.endDate}`);
+    if (task.anonymous != null) requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
+    if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
+
+    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
+}
 
 // Search functionality
 function debounce(func, wait) {
@@ -34,7 +345,7 @@ async function handleLiveSearch() {
         if (tasks.length > 0) {
             resultsHTML += `
                 <div class="search-section">
-                    <h4>Fertige Tasks</h4>
+                    <h4>Finished Tasks</h4>
                     <ul>
                         ${tasks.slice(0, 5).map(task => `
                             <li><a href="#" onclick="openTaskFromSearch(${task.id}); return false;">
@@ -75,23 +386,44 @@ async function searchAndDisplayTasks(query) {
         
         container.innerHTML = "";
         
+        if (tasks.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #666;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+                    <h3 style="color: #333; margin-bottom: 10px;">No results found</h3>
+                    <p style="font-size: 16px;">Try a different search term</p>
+                </div>
+            `;
+            return;
+        }
+        
         tasks.forEach(task => {
             const card = document.createElement("div");
             card.className = "task-card";
+            
+            const clientName = task.client ?
+                `${task.client.prename || ''} ${task.client.name || ''}`.trim() :
+                "Unknown";
+            const clientGpn = task.client?.gpn || "-";
+            const deadlineText = task.deadline || "-";
+            const progress = task.progress || "Finished";
+            
             card.innerHTML = `
-                <h2 style="font-size: 1.5rem; font-weight: bold; color: #000;">${task.title}</h2>
-                <div style="display: flex; gap: 1rem;">
-                    <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <div class="popup-row"><span>Name</span><span>${task.client?.prename || '-'} ${task.client?.name || '-'}</span></div>
-                        <div class="popup-row"><span>GPN</span><span>${task.client?.gpn || '-'}</span></div>
-                        <div class="popup-row"><span>Deadline</span><span>${task.deadline || '-'}</span></div>
-                    </div>
-                    <div style="flex: 1; background-color: #f5f5f5; padding: 1rem; border-radius: 4px;">
-                        <div><strong>Description</strong></div>
-                        <p style="margin-top: 0.5rem;">${(task.description?.substring(0, 150) ?? "-") + (task.description?.length > 150 ? '...' : '')}</p>
-                    </div>
+              <h2 style="font-size: 1.5rem; font-weight: bold; color: #000000;">${task.title}</h2>
+              <div style="display: flex; gap: 1rem;">
+                <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
+                  <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Client Name</span><span>${clientName}</span></div>
+                  <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>GPN</span><span>${clientGpn}</span></div>
+                  <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Deadline</span><span>${deadlineText}</span></div>
+                  <div class="popup-row" style="background-color: #f5f5f5; padding: 0.5rem;"><span>Status</span><span style="color: #28a745; font-weight: bold;">${progress}</span></div>
                 </div>
+                <div style="flex: 1; background-color: #f5f5f5; padding: 0.5rem;">
+                  <div><strong>Description</strong></div>
+                  <div>${(task.description?.substring(0, 300) ?? "No description provided") + (task.description?.length > 300 ? '...' : '')}</div>
+                </div>
+              </div>
             `;
+            
             card.addEventListener("click", () => openPopup(task));
             container.appendChild(card);
         });
@@ -114,235 +446,25 @@ function openTaskFromSearch(taskId) {
         .catch(err => console.error('Error loading task:', err));
 }
 
-let prevBtn;
-let nextBtn;
-let prevNumBtn;
-let nextNumBtn;
-let currentBtn;
-let input;
+// Close popup when clicking outside
+document.addEventListener("click", (event) => {
+    const popup = document.getElementById("popup");
+    if (!popup) return;
 
-/** Updates the task status via API */
-function updateTaskStatus() {
-    const statusDropdown = document.getElementById("popup-status");
-    const newStatus = statusDropdown.value;
-
-    if (!selectedTaskId) {
-        console.error("No task selected to update status.");
+    if (popup.classList.contains("hidden")) {
         return;
     }
 
-    fetch(`/api/tasks/${selectedTaskId}/status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-    })
-        .then(response => {
-            if (!response.ok) {
-                alert('Failed to update status. Please try again.');
-            } else {
-                console.log("Status updated successfully!");
-                statusChanged = true;
-            }
-        });
-}
-
-function openPopup(task) {
-    selectedTaskId = task.id;
-    statusChanged = false;
-
-    const clientName = task.client ? `${task.client.prename || ''} ${task.client.name || ''}`.trim() : "-";
-
-    document.getElementById("popup-title").textContent = task.title ?? "-";
-    document.getElementById("popup-name").textContent = clientName;
-    document.getElementById("popup-gpn").textContent = task.client?.gpn ?? "-";
-    document.getElementById("popup-deadline").textContent = task.deadline ?? "-";
-    document.getElementById("popup-channel").textContent = task.channel ?? "-";
-    document.getElementById("popup-type").textContent = getTaskType(task);
-    document.getElementById("popup-format").textContent = getMaxFileSize(task);
-    document.getElementById("popup-target").textContent = task.targetAudience ?? "-";
-    document.getElementById("popup-budget").textContent = task.budgetChf ?? "-";
-    document.getElementById("popup-handover").textContent = task.handoverMethod ?? "-";
-    document.getElementById("popup-description").textContent = task.description ?? "-";
-    document.getElementById("popup-other").textContent = getSpecificRequirements(task);
-
-    const statusDropdown = document.getElementById("popup-status");
-    if (statusDropdown) {
-        statusDropdown.value = task.progress ?? "Finished";
+    if (event.target.closest(".task-card")) {
+        return;
     }
 
-    const attachmentSection = document.getElementById('attachment-section');
-    const attachBtn = document.getElementById('popup-attachment-btn');
-    const attachFilename = document.getElementById('attachment-filename');
-
-    if (task.attachment && task.attachment.id) {
-        attachBtn.href = `/api/files/download/${task.attachment.id}`;
-        attachFilename.textContent = task.attachment.filename || 'Unknown file';
-        attachmentSection.style.display = 'flex';
-    } else {
-        attachmentSection.style.display = 'none';
+    const content = popup.querySelector(".popup-content");
+    if (content && !content.contains(event.target)) {
+        closePopup();
     }
+});
 
-    loadComments(task.id);
-    document.getElementById("popup").classList.remove("hidden");
-}
-
-function closePopup() {
-    document.getElementById("popup").classList.add("hidden");
-    selectedTaskId = null;
-
-    if (statusChanged) {
-        loadTasks(pagination);
-    }
-}
-
-function submitComment() {
-    const text = document.getElementById("popup-comment").value.trim();
-    if (!text || !selectedTaskId) return;
-
-    fetch(`/api/tasks/${selectedTaskId}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text })
-    })
-        .then(res => {
-            if (res.ok) {
-                loadComments(selectedTaskId);
-                document.getElementById("popup-comment").value = "";
-            } else {
-                alert("Failed to submit comment");
-            }
-        });
-}
-
-function loadComments(taskId) {
-    fetch(`/api/tasks/${taskId}/comments`)
-        .then(res => res.ok ? res.json() : [])
-        .then(comments => {
-            const list = document.getElementById("comment-list");
-            list.innerHTML = "";
-
-            list.style.background = "transparent";
-            list.style.border = "none";
-            list.style.padding = "0";
-
-            comments.forEach(c => {
-                const div = document.createElement("div");
-                div.innerHTML = `<strong>${c.authorName}:</strong> ${c.content}`;
-                div.style.padding = "8px 0";
-                div.style.borderBottom = "1px solid #e0e0e0";
-                list.appendChild(div);
-            });
-
-            if (comments.length <= 2) {
-                list.style.height = "auto";
-                list.style.overflowY = "visible";
-            } else {
-                setTimeout(() => {
-                    const firstTwo = list.querySelectorAll("div:nth-child(-n+2)");
-                    let totalHeight = 0;
-                    firstTwo.forEach(el => totalHeight += el.offsetHeight);
-                    list.style.height = Math.max(totalHeight, 100) + "px";
-                    list.style.overflowY = "auto";
-                }, 10);
-            }
-        })
-        .catch(err => {
-            console.error("Error loading comments:", err);
-        });
-}
-
-function getTaskType(task) {
-    if (task.paperSize && task.paperType) return "Flyer";
-    if (task.posterSize) return "Poster";
-    if (task.photoCount) return "Slideshow";
-    if (task.lengthSec) return "Video";
-    if (task.questionCount) return "Poll";
-    if (task.format && task.resolution) return "Photo";
-    return "General Task";
-}
-
-function getMaxFileSize(task) {
-    if (task.maxFileSizeMb) {
-        return `${task.maxFileSizeMb}MB`;
-    }
-    return "-";
-}
-
-function getSpecificRequirements(task) {
-    let requirements = [];
-
-    if (task.paperSize) requirements.push(`Size: ${task.paperSize}`);
-    if (task.paperType) requirements.push(`Paper: ${task.paperType}`);
-    if (task.lengthSec) requirements.push(`Length: ${task.lengthSec}s`);
-    if (task.voiceover !== null && task.voiceover !== undefined)
-        requirements.push(`Voiceover: ${task.voiceover ? 'Yes' : 'No'}`);
-    if (task.disclaimer !== null && task.disclaimer !== undefined)
-        requirements.push(`Disclaimer: ${task.disclaimer ? 'Yes' : 'No'}`);
-    if (task.brandingRequirements) requirements.push(`Branding: ${task.brandingRequirements}`);
-    if (task.musicStyle) requirements.push(`Music Style: ${task.musicStyle}`);
-    if (task.format) requirements.push(`Format: ${task.format}`);
-    if (task.fileFormat) requirements.push(`File Format: ${task.fileFormat}`);
-    if (task.resolution) requirements.push(`Resolution: ${task.resolution}`);
-    if (task.socialMediaPlatforms) requirements.push(`Platforms: ${task.socialMediaPlatforms}`);
-    if (task.photoCount) requirements.push(`Photo Count: ${task.photoCount}`);
-    if (task.posterSize) requirements.push(`Poster Size: ${task.posterSize}`);
-    if (task.printQualityDpi) requirements.push(`DPI: ${task.printQualityDpi}`);
-    if (task.mountingType) requirements.push(`Mounting: ${task.mountingType}`);
-    if (task.questionCount) requirements.push(`Questions: ${task.questionCount}`);
-    if (task.questionType) requirements.push(`Type: ${task.questionType}`);
-    if (task.startDate) requirements.push(`Start: ${task.startDate}`);
-    if (task.endDate) requirements.push(`End: ${task.endDate}`);
-    if (task.anonymous !== null && task.anonymous !== undefined)
-        requirements.push(`Anonymous: ${task.anonymous ? 'Yes' : 'No'}`);
-    if (task.distributionMethod) requirements.push(`Distribution: ${task.distributionMethod}`);
-
-    return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
-}
-
-/** Loads tasks for a given page */
-function loadTasks(page) {
-    fetch(`/api/tasks/finished?page=${page}`)
-        .then(res => res.json())
-        .then(data => {
-            if (!Array.isArray(data)) {
-                console.warn("Invalid tasks response:", data);
-                return;
-            }
-
-            const container = document.getElementById("task-container");
-            if (!container) {
-                console.warn("task-container not found!");
-                return;
-            }
-
-            container.innerHTML = "";
-            data.forEach(task => {
-                const card = document.createElement("div");
-                card.className = "task-card";
-                card.innerHTML = `
-                    <h2 style="font-size: 1.5rem; font-weight: bold; color: #000;">${task.title}</h2>
-                    <div style="display: flex; gap: 1rem;">
-                        <div style="flex: 0 0 250px; display: flex; flex-direction: column; gap: 0.5rem;">
-                            <div class="popup-row"><span>Name</span><span>${task.client?.prename || '-'} ${task.client?.name || '-'}</span></div>
-                            <div class="popup-row"><span>GPN</span><span>${task.client?.gpn || '-'}</span></div>
-                            <div class="popup-row"><span>Deadline</span><span>${task.deadline || '-'}</span></div>
-                        </div>
-                        <div style="flex: 1; background-color: #f5f5f5; padding: 1rem; border-radius: 4px;">
-                            <div><strong>Description</strong></div>
-                            <p style="margin-top: 0.5rem;">${(task.description?.substring(0, 150) ?? "-") + (task.description?.length > 150 ? '...' : '')}</p>
-                        </div>
-                    </div>
-                `;
-                card.addEventListener("click", () => openPopup(task));
-                container.appendChild(card);
-            });
-        })
-        .catch(err => {
-            console.error("Error loading tasks:", err);
-        });
-}
-
-/** Pagination logic **/
 document.addEventListener("DOMContentLoaded", () => {
     prevBtn = document.getElementById("prevPage");
     nextBtn = document.getElementById("nextPage");
@@ -414,74 +536,4 @@ document.addEventListener("DOMContentLoaded", () => {
             container.style.display = 'none';
         }
     });
-});
-
-function disableButton(btn) {
-    if (btn) {
-        btn.textContent = " ";
-        btn.style.backgroundColor = "#888";
-        btn.style.pointerEvents = "none";
-    }
-}
-
-function enableButton(btn, text) {
-    if (btn) {
-        btn.textContent = text;
-        btn.style.backgroundColor = "#e60100";
-        btn.style.pointerEvents = "auto";
-    }
-}
-
-function updatePagination(newPage) {
-    pagination = Math.max(1, Math.min(newPage, maxPages));
-
-    const prevNum = pagination - 1;
-    const nextNum = pagination + 1;
-
-    if (prevNum >= 1) {
-        enableButton(prevNumBtn, prevNum.toString());
-        enableButton(prevBtn, "«");
-    } else {
-        disableButton(prevNumBtn);
-        disableButton(prevBtn);
-    }
-
-    if (nextNum <= maxPages) {
-        enableButton(nextNumBtn, nextNum.toString());
-        enableButton(nextBtn, "»");
-    } else {
-        disableButton(nextNumBtn);
-        disableButton(nextBtn);
-    }
-
-    if (currentBtn) currentBtn.textContent = pagination;
-    if (input) input.value = pagination;
-
-    loadTasks(pagination);
-}
-
-document.addEventListener("click", (event) => {
-    const popup = document.getElementById("popup");
-    if (!popup || popup.classList.contains("hidden")) return;
-    if (event.target.closest(".task-card")) return;
-    const content = popup.querySelector(".popup-content");
-    if (content && !content.contains(event.target)) {
-        closePopup();
-    }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const popup = document.getElementById("popup");
-    const downloadBtn = popup.querySelector('[title="Download as PDF"]');
-    if (downloadBtn) {
-        downloadBtn.addEventListener("click", () => {
-            if (!selectedTaskId) return;
-            const link = document.createElement('a');
-            link.href = `/api/tasks/${selectedTaskId}/pdf`;
-            link.download = `Task_${selectedTaskId}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-    }
 });

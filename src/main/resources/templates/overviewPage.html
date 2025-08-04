@@ -22,7 +22,7 @@
 <!-- Search Bar -->
 <div class="search-container">
     <form id="search-form">
-        <input type="text" id="search-input" placeholder="Tasks durchsuchen..." class="search-input" />
+        <input type="text" id="search-input" placeholder="Search tasks..." class="search-input" />
         <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
     </form>
     <div id="search-suggestions-container"></div>
@@ -90,11 +90,14 @@
                         <button onclick="submitComment()">Submit</button>
                     </div>
 
-                    <div class="popup-section" style="display: flex; justify-content: flex-end; gap: 16px; background: none; padding: 0; margin-top: 16px;">
-                        <button title="Show attachments" style="background: none; border: none; cursor: pointer;">
-                            <img src="/img/büroklammer.png" alt="attachments" style="height: 24px;" />
-                        </button>
-                        <button title="Download as PDF" style="background: none; border: none; cursor: pointer;">
+                    <div class="popup-section popup-bottom-buttons">
+                        <div id="attachment-section" style="display: none; align-items: center; gap: 8px;">
+                            <span id="attachment-filename" style="font-size: 14px; color: #333;"></span>
+                            <a id="popup-attachment-btn" href="#" download style="cursor: pointer; text-decoration: none;">
+                                <img src="/img/büroklammer.png" alt="📎" style="height: 20px; width: 20px;">
+                            </a>
+                        </div>
+                        <button title="Download as PDF">
                             <img src="/img/download-file-icon2.svg" alt="Download" style="height: 24px;" />
                         </button>
                     </div>

@@ -71,6 +71,17 @@ function loadOpenTasks(page) {
 
             container.innerHTML = "";
 
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📝</div>
+                        <h3 style="color: #333; margin-bottom: 10px;">No tasks available</h3>
+                        <p style="font-size: 16px;">Check back later for new requests!</p>
+                    </div>
+                `;
+                return;
+            }
+
             data.forEach(task => {
                 const card = document.createElement("div");
                 card.className = "task-card";
@@ -235,9 +246,11 @@ function confirmAcceptTask() {
     .then(res => {
         if (res.ok) {
             closeAcceptNamePopup();
-            location.reload();
+            window.location.href = "/overviewPage";
+        } else if (res.status === 404) {
+            alert("Task not found. It may have been deleted or does not exist.");
         } else {
-            alert("Failed to accept the task.");
+            alert("Failed to accept the task. Please try again.");
         }
     })
     .catch(error => {
@@ -246,21 +259,6 @@ function confirmAcceptTask() {
     });
 }
 
-function rejectTask() {
-    if (!selectedTaskId) return;
-    fetch(`/api/tasks/${selectedTaskId}/reject`, { method: "POST" })
-        .then(res => {
-            if (res.ok) {
-                location.reload();
-            } else {
-                alert("Failed to reject the task.");
-            }
-        })
-        .catch(error => {
-            console.error('Error rejecting task:', error);
-            alert('An error occurred while rejecting the task.');
-        });
-}
 
 // Close popup when clicking outside
 document.addEventListener("click", (event) => {
@@ -290,12 +288,47 @@ document.addEventListener("click", (event) => {
 
 // ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
-    if (task.paperSize && task.paperType) return "Flyer";
-    if (task.posterSize) return "Poster";
-    if (task.photoCount) return "Slideshow";
-    if (task.lengthSec) return "Video";
-    if (task.questionCount) return "Poll";
-    if (task.format && task.resolution) return "Photo";
+    console.log("getTaskType called with task:", task); // Debug log
+    
+    // Check Poll first (most specific)
+    if (task.questionCount != null || task.questionType != null) {
+        console.log("Detected as Poll");
+        return "Poll";
+    }
+    
+    // Check Video (has lengthSec)
+    if (task.lengthSec != null) {
+        console.log("Detected as Video");
+        return "Video";
+    }
+    
+    // Check Flyer (has paperSize AND paperType)
+    if (task.paperSize != null && task.paperType != null) {
+        console.log("Detected as Flyer");
+        return "Flyer";
+    }
+    
+    // Check Poster (has posterSize)
+    if (task.posterSize != null) {
+        console.log("Detected as Poster");
+        return "Poster";
+    }
+    
+    // Check Slideshow (has photoCount)
+    if (task.photoCount != null) {
+        console.log("Detected as Slideshow");
+        return "Slideshow";
+    }
+    
+    // Check Photo (more restrictive - should be ONLY Photo tasks)
+    if (task.format != null && task.resolution != null && 
+        task.lengthSec == null && task.photoCount == null && task.posterSize == null &&
+        task.paperSize == null && task.paperType == null && task.questionCount == null && task.questionType == null) {
+        console.log("Detected as Photo");
+        return "Photo";
+    }
+    
+    console.log("Detected as General Task");
     return "General Task";
 }
 
@@ -345,45 +378,6 @@ function getSpecificRequirements(task) {
 
     return requirements.length > 0 ? requirements.join(", ") : "No specific requirements";
 }
-
-function showRejectConfirm() {
-    document.getElementById("popupMessage").textContent = "Are you sure you want to reject the task?";
-
-    document.getElementById("popupOverlay2").style.display = "block";
-    document.getElementById("popupContainer2").style.display = "block";
-
-    document.getElementById("acceptBtn").onclick = function() {
-        rejectTask();
-        closePopup2();
-
-    };
-
-    document.getElementById("rejectBtn").onclick = function() {
-        closePopup2();
-
-    };
-}
-
-function closePopup2() {
-    document.getElementById("popupOverlay2").style.display = "none";
-    document.getElementById("popupContainer2").style.display = "none";
-}
-
-
-document.addEventListener("click", (event) => {
-    const overlay2 = document.getElementById("popupOverlay2");
-    if (overlay2.style.display === "block") return;
-
-    const popup = document.getElementById("popup");
-    if (!popup || popup.classList.contains("hidden")) return;
-    if (event.target.closest(".task-card")) return;
-
-    const content = popup.querySelector(".popup-content");
-    if (content && !content.contains(event.target)) {
-        closePopup();
-    }
-});
-
 
 function showRejectConfirm() {
     // Statt sofort rejectTask() zu rufen, öffnest du jetzt das Formular:
@@ -446,8 +440,10 @@ function confirmRejectTask() {
             if (res.ok) {
                 closeRejectForm();
                 location.reload();
+            } else if (res.status === 404) {
+                alert("Task not found. It may have been deleted or does not exist.");
             } else {
-                alert("Failed to reject the task.");
+                alert("Failed to reject the task. Please try again.");
             }
         })
         .catch(err => {

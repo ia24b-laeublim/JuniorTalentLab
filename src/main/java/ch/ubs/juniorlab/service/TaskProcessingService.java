@@ -6,6 +6,7 @@ import ch.ubs.juniorlab.repository.TaskRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -111,13 +112,15 @@ public class TaskProcessingService {
     }
 
     // Wird beim Starten des Programmes ausgelöst, zum testen -> Mail Reminder Deadline
-    @PostConstruct
+    // @PostConstruct - Entfernt da LazyInitializationException bei @PostConstruct auftritt
+    @Transactional
     public void testMailReminder() {
         sendDeadlineReminderMails();
         System.out.println("Reminder-Testlauf wurde ausgeführt!");
     }
 
 
+    @Transactional
     public void sendDeadlineReminderMails() {
         LocalDate today = LocalDate.now();
         List<Task> tasksExpiringToday = taskRepository.findByDeadline(today);

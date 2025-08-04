@@ -21,6 +21,7 @@ public class TaskWithAttachmentDto {
     private String progress;
     private Person client;
     private Person apprentice;
+    private String taskType;
 
     // Type-specific fields
     private String paperSize;
@@ -62,6 +63,7 @@ public class TaskWithAttachmentDto {
         this.progress         = task.getProgress();
         this.client           = task.getClient();
         this.apprentice       = task.getApprentice();
+        this.taskType         = task.getTaskType();
 
         // Copy type-specific fields
         if (task instanceof FlyerTask) {
@@ -137,6 +139,7 @@ public class TaskWithAttachmentDto {
     public String getProgress() { return progress; }
     public Person getClient() { return client; }
     public Person getApprentice() { return apprentice; }
+    public String getTaskType() { return taskType; }
     public String getPaperSize() { return paperSize; }
     public String getPaperType() { return paperType; }
     public Integer getLengthSec() { return lengthSec; }
