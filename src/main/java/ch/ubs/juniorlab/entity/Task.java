@@ -49,16 +49,14 @@ public class Task {
     @JsonIgnore
     private UploadedFile attachment;
 
-    // ✅ FIXED: Force eager loading to ensure client data is always fetched
-    // Use LAZY loading to avoid foreign key constraint issues during startup
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "Client", nullable = false, foreignKey = @ForeignKey(name = "fk_Task_Client", value = ConstraintMode.NO_CONSTRAINT))
+    // KORRIGIERT: Erzwingt das sofortige Laden der Client-Daten, um LazyInitializationException zu vermeiden.
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Client", nullable = false)
     private Person client;
 
-    // ✅ FIXED: Force eager loading for apprentice too
-    // Use LAZY loading and disable foreign key constraint to avoid startup issues
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "Apprentice", nullable = true, foreignKey = @ForeignKey(name = "fk_Task_Apprentice", value = ConstraintMode.NO_CONSTRAINT))
+    // KORRIGIERT: Erzwingt das sofortige Laden der Apprentice-Daten.
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Apprentice")
     private Person apprentice;
 
     @Column(name = "Progress", nullable = true, length = 100)
@@ -272,6 +270,4 @@ public class Task {
             this.uuid = UUID.randomUUID().toString();
         }
     }
-
-
 }
