@@ -23,7 +23,7 @@
 
       <input type="hidden" name="taskType" th:value="*{taskType}">
 
-      <div th:replace="fragments/updateTaskDetails :: updateTaskDetails"></div>
+      <div th:replace="~{fragments/updateTaskDetails :: updateTaskDetails}"></div>
 
       <!-- KORRIGIERT: th:object wurde hier entfernt, um verschachtelte Kontexte zu vermeiden -->
       <div class="form-section">

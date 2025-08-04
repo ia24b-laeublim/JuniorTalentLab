@@ -99,6 +99,7 @@ public class TaskViewController {
         originalTask.setHandoverMethod(updatedTask.getHandoverMethod());
         originalTask.setSpecificRequirements(updatedTask.getSpecificRequirements());
         originalTask.setChannel(updatedTask.getChannel());
+        originalTask.setMaxFileSizeMb(updatedTask.getMaxFileSizeMb());
         taskRepository.save(originalTask); // Speichern der allgemeinen Task-Updates
 
         // Spezifische Task-Felder aktualisieren

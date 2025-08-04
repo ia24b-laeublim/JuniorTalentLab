@@ -23,7 +23,7 @@
               novalidate>
             <input type="hidden" name="taskType" th:value="*{taskType}">
 
-            <div th:replace="fragments/updateTaskDetails :: updateTaskDetails"></div>
+            <div th:replace="~{fragments/updateTaskDetails :: updateTaskDetails}"></div>
 
             <div class="form-section" th:object="${specificTask}">
                 <h2>Flyer specifications</h2>
