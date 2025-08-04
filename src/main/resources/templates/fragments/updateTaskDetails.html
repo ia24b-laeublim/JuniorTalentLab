@@ -29,7 +29,21 @@
 
         <div class="form-row">
             <div class="form-field">
-                <label for="task-channel" class="form-label">Channel</label>
+                <label for="task-target-audience" class="form-label">Target audience</label>
+                <input type="text" id="task-target-audience" name="targetAudience" th:value="*{targetAudience}" class="form-input"
+                       placeholder="e.g., UBS clients, employees, general public" />
+            </div>
+
+            <div class="form-field">
+                <label for="task-max-file-size-mb" class="form-label">Max file size (MB)</label>
+                <input type="number" id="task-max-file-size-mb" name="maxFileSizeMb" th:value="*{maxFileSizeMb}" class="form-input"
+                       placeholder="e.g., 100" min="1"/>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-field">
+                <label for="task-channel" class="form-label">Distribution channel</label>
                 <select id="task-channel" name="channel" th:value="*{channel}" class="form-select" required>
                     <option value="" disabled selected>Select channel</option>
                     <option value="Internal" th:selected="*{channel == 'Internal'}">Internal distribution</option>
@@ -55,13 +69,6 @@
                 <label for="task-description" class="form-label">Description</label>
                 <textarea id="task-description" name="description" th:text="*{description}" class="form-textarea" rows="4"
                           placeholder="Describe the task requirements, objectives, and any specific details..." required></textarea>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-field form-field-full">
-                <label for="task-target-audience" class="form-label">Target audience</label>
-                <input type="text" id="task-target-audience" name="targetAudience" th:value="*{targetAudience}" class="form-input"
-                       placeholder="e.g., UBS clients, employees, general public" />
             </div>
         </div>
     </div>
