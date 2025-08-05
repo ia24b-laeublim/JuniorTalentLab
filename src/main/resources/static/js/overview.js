@@ -8,7 +8,7 @@ let currentSearchResults = [];
 let searchPagination = 1;
 let searchMaxPages = 1;
 const RESULTS_PER_PAGE = 10;
-5
+
 // Search functionality
 function debounce(func, wait) {
     let timeout;
