@@ -8,7 +8,7 @@ let currentSearchResults = [];
 let searchPagination = 1;
 let searchMaxPages = 1;
 const RESULTS_PER_PAGE = 10;
-
+5
 // Search functionality
 function debounce(func, wait) {
     let timeout;
@@ -251,54 +251,6 @@ function updateSearchPaginationPage(newPage) {
     const query = document.getElementById('search-input').value.trim();
     displaySearchResults(query);
     updateSearchPagination();
-}
-
-function openTaskFromSearch(taskId) {
-    console.log('Opening task from search with ID:', taskId);
-
-    const suggestionsContainer = document.getElementById('search-suggestions-container');
-    if (suggestionsContainer) {
-        suggestionsContainer.innerHTML = '<div class="search-loading">Loading task...</div>';
-        suggestionsContainer.style.display = 'block';
-    }
-
-    // First try to find task in locally stored tasks
-    const task = allTasks.find(t => t.id === taskId);
-    if (task) {
-        console.log('Found task locally, opening popup:', task.title);
-        openPopup(task);
-
-        // --- KORREKTUR START ---
-        // Verzögere das Leeren des Inputs, damit der "click outside" Listener
-        // den Klick korrekt zuordnen kann, bevor das Element verschwindet.
-        setTimeout(() => {
-            clearSearchInput();
-        }, 10); // Eine kleine Verzögerung von 10ms genügt.
-        // --- KORREKTUR ENDE ---
-
-    } else {
-        console.log('Task not found locally, fetching from API...');
-        // Fallback: Fetch task from API
-        fetch(`/api/tasks/${taskId}`)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            })
-            .then(task => {
-                console.log('Task fetched from API, opening popup:', task.title);
-                openPopup(task);
-                // --- KORREKTUR AUCH HIER ---
-                setTimeout(() => {
-                    clearSearchInput();
-                }, 10);
-            })
-            .catch(err => {
-                console.error('Error fetching task from API:', err);
-                if (suggestionsContainer) {
-                    suggestionsContainer.innerHTML = '<div class="search-error">Failed to load task</div>';
-                }
-            });
-    }
 }
 
 function clearSearchInput() {
@@ -719,13 +671,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // Close search suggestions when clicking outside
-    document.addEventListener('click', (e) => {
-        const container = document.getElementById('search-suggestions-container');
-        if (container && !container.contains(e.target) && e.target !== searchInput) {
-            container.innerHTML = '';
-            container.style.display = 'none';
-        }
-    });
+
     
     // Clear search when input is empty
     if (searchInput) {
@@ -745,25 +691,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Outside click closes popup
-document.addEventListener("click", (event) => {
-    const popup = document.getElementById("popup");
-    if (!popup || popup.classList.contains("hidden")) return;
-
-    // Ignoriere Klicks auf die Task-Karten in der Hauptansicht
-    if (event.target.closest(".task-card")) return;
-
-    // NEU: Ignoriere Klicks, die aus dem Suchvorschlag-Container kommen
-    const suggestionsContainer = document.getElementById('search-suggestions-container');
-    if (suggestionsContainer && suggestionsContainer.contains(event.target)) {
-        return; // Nichts tun, das Öffnen des Tasks wird bereits gehandhabt
-    }
-
-    // Wenn der Klick ausserhalb des Popup-Inhalts war, schliesse es
-    const content = popup.querySelector(".popup-content");
-    if (content && !content.contains(event.target)) {
-        closePopup();
-    }
-});
 
 
 // Download PDF click
@@ -781,6 +708,97 @@ document.addEventListener("DOMContentLoaded", () => {
                 link.click();
                 document.body.removeChild(link);
             });
+        }
+    }
+});
+
+function openTaskFromSearch(taskId) {
+    // 1. FLAGGE SETZEN: Verhindert, dass der "Click-Outside"-Listener das Popup sofort wieder schliesst.
+    isOpeningPopupFromSearch = true;
+
+    console.log('Opening task from search with ID:', taskId);
+
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    if (suggestionsContainer) {
+        suggestionsContainer.innerHTML = '<div class="search-loading">Loading task...</div>';
+        suggestionsContainer.style.display = 'block';
+    }
+
+    // Zuerst versuchen, den Task aus den bereits geladenen Daten zu finden
+    const task = allTasks.find(t => t.id === taskId);
+
+    if (task) {
+        // Task wurde lokal gefunden
+        console.log('Found task locally, opening popup:', task.title);
+        openPopup(task);
+        setTimeout(() => {
+            clearSearchInput();
+        }, 100);
+    } else {
+        // Task nicht lokal gefunden, also von der API laden (Fallback)
+        console.log('Task not found locally, fetching from API...');
+        fetch(`/api/tasks/${taskId}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(apiTask => {
+                console.log('Task fetched from API, opening popup:', apiTask.title);
+                openPopup(apiTask);
+                setTimeout(() => {
+                    clearSearchInput();
+                }, 100);
+            })
+            .catch(err => {
+                console.error('Error fetching task from API:', err);
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '<div class="search-error">Failed to load task</div>';
+                }
+            });
+    }
+
+    // 2. FLAGGE ZURÜCKSETZEN: Nach einer minimalen Verzögerung wird der "Click-Outside"-Listener wieder normal funktionieren.
+    setTimeout(() => {
+        isOpeningPopupFromSearch = false;
+    }, 0);
+}
+
+document.addEventListener("click", (event) => {
+    const target = event.target;
+
+    // Definiere die relevanten Container
+    const popup = document.getElementById("popup");
+    const popupContent = popup ? popup.querySelector(".popup-content") : null;
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    const searchInput = document.getElementById('search-input');
+
+    // --- Logik für das Popup ---
+    const isPopupVisible = popup && !popup.classList.contains("hidden");
+
+    if (isPopupVisible) {
+        // Wenn das Popup gerade durch die Suche geöffnet wird, ignoriere diesen Klick komplett.
+        if (isOpeningPopupFromSearch) {
+            return;
+        }
+        // Wenn der Klick innerhalb des Popup-Inhalts oder auf einer Task-Karte war, tue nichts.
+        if ((popupContent && popupContent.contains(target)) || target.closest(".task-card")) {
+            // Klick ist innerhalb des Popups oder auf einer Karte, also in Ordnung.
+        } else {
+            // Andernfalls schliesse das Popup, da der Klick ausserhalb war.
+            closePopup();
+        }
+    }
+
+    // --- Logik für die Suchvorschläge (läuft unabhängig vom Popup) ---
+    const areSuggestionsVisible = suggestionsContainer && suggestionsContainer.style.display === 'block';
+
+    if (areSuggestionsVisible) {
+        // Schliesse die Vorschläge, wenn der Klick ausserhalb des Vorschlags-Containers UND ausserhalb des Suchfeldes war.
+        if (!suggestionsContainer.contains(target) && target !== searchInput) {
+            suggestionsContainer.innerHTML = '';
+            suggestionsContainer.style.display = 'none';
         }
     }
 });
