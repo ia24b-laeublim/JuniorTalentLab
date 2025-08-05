@@ -8,6 +8,7 @@ let currentSearchResults = [];
 let searchPagination = 1;
 let searchMaxPages = 1;
 const RESULTS_PER_PAGE = 10;
+let isOpeningPopupFromSearch = false;
 
 // Search functionality
 function debounce(func, wait) {
@@ -21,25 +22,25 @@ function debounce(func, wait) {
 async function handleLiveSearch() {
     const query = document.getElementById('search-input').value.trim();
     const suggestionsContainer = document.getElementById('search-suggestions-container');
-    
+
     // Clear suggestions if query is empty
     if (!query || query.length < 2) {
         suggestionsContainer.innerHTML = '';
         suggestionsContainer.style.display = 'none';
         return;
     }
-    
+
     try {
         // Show loading indicator
         suggestionsContainer.innerHTML = '<div class="search-loading">Searching...</div>';
         suggestionsContainer.style.display = 'block';
-        
+
         // Check if tasks are loaded
         if (allTasks.length === 0) {
             suggestionsContainer.innerHTML = '<div class="search-error">Tasks are loading, please wait...</div>';
             return;
         }
-        
+
         // Filter tasks by title and description (case insensitive)
         const filteredTasks = allTasks.filter(task => {
             const titleMatch = task.title && task.title.toLowerCase().includes(query.toLowerCase());
@@ -50,10 +51,10 @@ async function handleLiveSearch() {
             );
             return titleMatch || descMatch || clientMatch;
         });
-        
+
         // Format the results
         let resultsHTML = '';
-        
+
         // Add tasks results
         if (filteredTasks.length > 0) {
             resultsHTML += `
@@ -72,12 +73,12 @@ async function handleLiveSearch() {
                 </div>
             `;
         }
-        
+
         // Show "no results" if nothing found
         if (filteredTasks.length === 0) {
             resultsHTML = '<div class="search-no-results">No results found</div>';
         }
-        
+
         // Add "view all results" link at the bottom
         if (filteredTasks.length > 0) {
             resultsHTML += `
@@ -88,11 +89,11 @@ async function handleLiveSearch() {
                 </div>
             `;
         }
-        
+
         // Update the suggestions container
         suggestionsContainer.innerHTML = resultsHTML;
         suggestionsContainer.style.display = 'block';
-        
+
     } catch (error) {
         console.error('Error during live search:', error);
         suggestionsContainer.innerHTML = '<div class="search-error">Search error occurred</div>';
@@ -110,27 +111,27 @@ function handleSearch(e) {
 function searchAndDisplayTasks(query) {
     const container = document.getElementById("task-container");
     if (!container) return;
-    
+
     // Check if tasks are loaded
     if (allTasks.length === 0) {
         container.innerHTML = "<p style='text-align: center; color: #E60100;'>Tasks are loading, please wait...</p>";
         return;
     }
-    
+
     // Filter tasks only by title when pressing Enter
     const filteredTasks = allTasks.filter(task => {
         return task.title && task.title.toLowerCase().includes(query.toLowerCase());
     });
-    
+
     // Set search mode and store results
     isSearchMode = true;
     currentSearchResults = filteredTasks;
     searchPagination = 1;
     searchMaxPages = Math.ceil(filteredTasks.length / RESULTS_PER_PAGE);
-    
+
     displaySearchResults(query);
     updateSearchPagination();
-    
+
     // Hide search suggestions when showing full results
     const suggestionsContainer = document.getElementById('search-suggestions-container');
     if (suggestionsContainer) {
@@ -142,21 +143,21 @@ function searchAndDisplayTasks(query) {
 function displaySearchResults(query) {
     const container = document.getElementById("task-container");
     if (!container) return;
-    
+
     container.innerHTML = "";
-    
+
     if (currentSearchResults.length > 0) {
         // Add search results header
         const header = document.createElement("div");
         header.style.cssText = "text-align: center; margin-bottom: 20px; color: #666; font-size: 16px;";
         header.textContent = `Search results for "${query}" (${currentSearchResults.length} found)`;
         container.appendChild(header);
-        
+
         // Calculate pagination
         const startIndex = (searchPagination - 1) * RESULTS_PER_PAGE;
         const endIndex = startIndex + RESULTS_PER_PAGE;
         const tasksToShow = currentSearchResults.slice(startIndex, endIndex);
-        
+
         // Display filtered tasks for current page
         tasksToShow.forEach(task => {
             const card = document.createElement("div");
@@ -189,16 +190,16 @@ function displaySearchResults(query) {
 function updateSearchPagination() {
     const paginationContainer = document.querySelector('.pagination');
     if (!paginationContainer) return;
-    
+
     // Hide pagination if 10 or fewer results
     if (currentSearchResults.length <= 10) {
         paginationContainer.style.display = 'none';
         return;
     }
-    
+
     // Show pagination for more than 10 results
     paginationContainer.style.display = 'flex';
-    
+
     // Update pagination buttons
     const prevBtn = document.getElementById("prevPage");
     const nextBtn = document.getElementById("nextPage");
@@ -206,7 +207,7 @@ function updateSearchPagination() {
     const nextNumBtn = document.getElementById("nextNumberPage");
     const currentBtn = document.getElementById("currentPageBtn");
     const input = document.getElementById("pageInput");
-    
+
     function disableButton(btn) {
         if (btn) {
             btn.textContent = " ";
@@ -214,7 +215,7 @@ function updateSearchPagination() {
             btn.style.pointerEvents = "none";
         }
     }
-    
+
     function enableButton(btn, text) {
         if (btn) {
             btn.textContent = text;
@@ -222,10 +223,10 @@ function updateSearchPagination() {
             btn.style.pointerEvents = "auto";
         }
     }
-    
+
     const prevNum = searchPagination - 1;
     const nextNum = searchPagination + 1;
-    
+
     if (prevNum >= 1) {
         enableButton(prevNumBtn, prevNum.toString());
         enableButton(prevBtn, "«");
@@ -233,7 +234,7 @@ function updateSearchPagination() {
         disableButton(prevNumBtn);
         disableButton(prevBtn);
     }
-    
+
     if (nextNum <= searchMaxPages) {
         enableButton(nextNumBtn, nextNum.toString());
         enableButton(nextBtn, "»");
@@ -241,7 +242,7 @@ function updateSearchPagination() {
         disableButton(nextNumBtn);
         disableButton(nextBtn);
     }
-    
+
     if (currentBtn) currentBtn.textContent = searchPagination;
     if (input) input.value = searchPagination;
 }
@@ -489,15 +490,15 @@ async function loadAllTasks() {
                     .catch(() => [])
             );
         }
-        
+
         // Wait for all pages to load
         const allPages = await Promise.all(pagePromises);
-        
+
         // Flatten and filter valid data
         allTasks = allPages
             .filter(data => Array.isArray(data))
             .flat();
-            
+
         console.log(`Loaded ${allTasks.length} tasks for search from ${maxPages} pages`);
     } catch (err) {
         console.error("Error loading all tasks for search:", err);
@@ -585,7 +586,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSearchPaginationPage(newPage);
             return;
         }
-        
+
         pagination = Math.max(1, Math.min(newPage, maxPages));
 
         const prevNum = pagination - 1;
@@ -661,7 +662,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePagination(1);
             loadAllTasks(); // Load all tasks for search functionality
         });
-    
+
     // Search event listeners
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
@@ -669,10 +670,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (searchInput) {
         searchInput.addEventListener('input', debounce(handleLiveSearch, 300));
     }
-    
+
     // Close search suggestions when clicking outside
 
-    
+
     // Clear search when input is empty
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
