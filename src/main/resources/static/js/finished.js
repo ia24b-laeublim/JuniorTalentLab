@@ -255,23 +255,19 @@ function updateSearchPaginationPage(newPage) {
 
 function openTaskFromSearch(taskId) {
     console.log('Opening task from search with ID:', taskId);
-    
+
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    if (suggestionsContainer) {
+        suggestionsContainer.innerHTML = '<div class="search-loading">Loading task...</div>';
+        suggestionsContainer.style.display = 'block';
+    }
+
     // First try to find task in locally stored tasks
     const task = allTasks.find(t => t.id === taskId);
     if (task) {
         console.log('Found task locally, opening popup:', task.title);
         openPopup(task);
-        // Clear and hide search suggestions
-        const suggestionsContainer = document.getElementById('search-suggestions-container');
-        if (suggestionsContainer) {
-            suggestionsContainer.innerHTML = '';
-            suggestionsContainer.style.display = 'none';
-        }
-        // Clear search input
-        const searchInput = document.getElementById('search-input');
-        if (searchInput) {
-            searchInput.value = '';
-        }
+        clearSearchInput();
     } else {
         console.log('Task not found locally, fetching from API...');
         // Fallback: Fetch task from API
@@ -285,22 +281,26 @@ function openTaskFromSearch(taskId) {
             .then(task => {
                 console.log('Task fetched from API, opening popup:', task.title);
                 openPopup(task);
-                // Clear and hide search suggestions
-                const suggestionsContainer = document.getElementById('search-suggestions-container');
-                if (suggestionsContainer) {
-                    suggestionsContainer.innerHTML = '';
-                    suggestionsContainer.style.display = 'none';
-                }
-                // Clear search input
-                const searchInput = document.getElementById('search-input');
-                if (searchInput) {
-                    searchInput.value = '';
-                }
+                clearSearchInput();
             })
             .catch(err => {
                 console.error('Error fetching task from API:', err);
-                alert('Could not load task details. Please try again.');
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '<div class="search-error">Failed to load task</div>';
+                }
             });
+    }
+}
+
+function clearSearchInput() {
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    if (suggestionsContainer) {
+        suggestionsContainer.innerHTML = '';
+        suggestionsContainer.style.display = 'none';
+    }
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.value = '';
     }
 }
 
@@ -374,6 +374,7 @@ function openPopup(task) {
 
     loadComments(task.id);
     document.getElementById("popup").classList.remove("hidden");
+    loadPopupContent(task);
 }
 
 function closePopup() {

@@ -1,68 +1,63 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Initialize dropdown functionality
-    initializeDropdown();
+// --- START OF CORRECTED script.js ---
 
-    // Initialize carousel functionality
+document.addEventListener("DOMContentLoaded", function () {
+    // Einmalige Initialisierung aller Komponenten
+    initializeDropdown();
     initializeCarousel();
+    initializeContactForm();
+    initializeTaskTypeSelection();
+    initializeFormValidation();
+    initializeImprintHover();
+    initializeDragAndDrop();
+
+    // Der "Read More" Button benötigt keine spezielle Initialisierung,
+    // da er über onclick im HTML aufgerufen wird.
 });
 
+/**
+ * Initialisiert das Dropdown-Menü in der Navigation.
+ */
 function initializeDropdown() {
     const roleButton = document.querySelector(".role-button");
     const dropdown = document.querySelector(".dropdown");
 
     if (roleButton && dropdown) {
         console.log("Dropdown elements found, initializing...");
-
         roleButton.addEventListener("click", function (e) {
             e.stopPropagation();
             dropdown.classList.toggle("show");
-            console.log("Dropdown toggled");
         });
-
-        // Close dropdown when clicking outside
         document.addEventListener("click", function (e) {
             if (!dropdown.contains(e.target) && !roleButton.contains(e.target)) {
                 dropdown.classList.remove("show");
             }
         });
-
-        // Close dropdown when pressing an Escape key
         document.addEventListener("keydown", function(e) {
             if (e.key === "Escape") {
                 dropdown.classList.remove("show");
             }
         });
     } else {
-        console.log("Dropdown elements not found on this page");
+        // console.log("Dropdown elements not found on this page");
     }
 }
 
+/**
+ * Initialisiert das Bilder-Karussell.
+ */
 function initializeCarousel() {
     const images = document.querySelectorAll('.carousel-image');
+    if (images.length === 0) return;
+
     const dots = document.querySelectorAll('.dot');
-
-    if (images.length === 0) {
-        console.log('No carousel images found');
-        return;
-    }
-
-    console.log(`Carousel initialized with ${images.length} images`);
-
     let currentSlideIndex = 0;
     const totalSlides = images.length;
 
     function showSlide(index) {
-        // Hide all images
         images.forEach(img => img.classList.remove('active'));
         dots.forEach(dot => dot.classList.remove('active'));
-
-        // Show current image and highlight corresponding dot
-        if (images[index]) {
-            images[index].classList.add('active');
-        }
-        if (dots[index]) {
-            dots[index].classList.add('active');
-        }
+        if (images[index]) images[index].classList.add('active');
+        if (dots[index]) dots[index].classList.add('active');
     }
 
     function nextSlide() {
@@ -70,329 +65,177 @@ function initializeCarousel() {
         showSlide(currentSlideIndex);
     }
 
-    function previousSlide() {
+    window.nextSlide = nextSlide;
+    window.previousSlide = () => {
         currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
         showSlide(currentSlideIndex);
-    }
-
-    function goToSlide(index) {
+    };
+    window.currentSlide = (index) => {
         currentSlideIndex = index - 1;
         showSlide(currentSlideIndex);
-    }
+    };
 
-    // Make functions globally accessible for onclick handlers
-    window.nextSlide = nextSlide;
-    window.previousSlide = previousSlide;
-    window.currentSlide = goToSlide;
-
-    // Initialize first slide
     showSlide(currentSlideIndex);
-
-    // Auto-advance slides every 5 seconds
     setInterval(nextSlide, 5000);
 }
 
-// Email and Contact Form Validation
-document.addEventListener("DOMContentLoaded", function () {
+/**
+ * Initialisiert die Validierung für das Kontaktformular.
+ */
+function initializeContactForm() {
     const contactForm = document.getElementById("contact-form");
+    if (!contactForm) return;
 
-    if (contactForm) {
-        const feedback = contactForm.getAttribute("data-feedback");
-        if (feedback) {
-            alert(feedback);
-        }
-        
-        // Add popup validation for contact form
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const popup = document.getElementById('popupContainerContact');
-            const popupMessage = document.getElementById('popupMessageContact');
-            const continueBtn = document.getElementById('continueContactBtn');
-            
-            // Check email domain first
-            const emailField = document.getElementById('input-email');
-            if (emailField && !emailField.value.trim().endsWith('@ubs.com')) {
-                popupMessage.textContent = "Your email doesn't end with @ubs.com";
-                popup.style.display = 'block';
-                continueBtn.onclick = () => popup.style.display = 'none';
-                return;
-            }
-            
-            // Check required fields
-            const requiredFields = [
-                { id: 'input-firstName', name: 'First name' },
-                { id: 'input-lastName', name: 'Last name' },
-                { id: 'input-gpn', name: 'GPN' },
-                { id: 'input-email', name: 'Email' },
-                { id: 'task-description', name: 'Message' }
-            ];
-            
-            const emptyFields = [];
-            requiredFields.forEach(field => {
-                const element = document.getElementById(field.id);
-                if (!element || !element.value.trim()) {
-                    emptyFields.push(field.name);
-                }
-            });
-            
-            if (emptyFields.length > 0) {
-                popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
-                popup.style.display = 'block';
-                continueBtn.onclick = () => popup.style.display = 'none';
-                return;
-            }
-            
-            // If all validation passes, submit the form
-            popupMessage.textContent = 'Message sent successfully!';
+    const feedback = contactForm.getAttribute("data-feedback");
+    if (feedback) alert(feedback);
+
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const popup = document.getElementById('popupContainerContact');
+        const popupMessage = document.getElementById('popupMessageContact');
+        const continueBtn = document.getElementById('continueContactBtn');
+        const emailField = document.getElementById('input-email');
+
+        if (emailField && !emailField.value.trim().endsWith('@ubs.com')) {
+            popupMessage.textContent = "Your email doesn't end with @ubs.com";
             popup.style.display = 'block';
-            continueBtn.onclick = () => {
-                popup.style.display = 'none';
-                contactForm.submit();
-            };
-        });
-    }
-});
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeTaskTypeSelection();
-    initializeFormValidation();
-});
+        const requiredFields = [
+            { id: 'input-firstName', name: 'First name' },
+            { id: 'input-lastName', name: 'Last name' },
+            { id: 'input-gpn', name: 'GPN' },
+            { id: 'input-email', name: 'Email' },
+            { id: 'task-description', name: 'Message' }
+        ];
+        const emptyFields = requiredFields.filter(field => {
+            const element = document.getElementById(field.id);
+            return !element || !element.value.trim();
+        }).map(field => field.name);
 
+        if (emptyFields.length > 0) {
+            popupMessage.textContent = `Please fill in all required fields: ${emptyFields.join(', ')}`;
+            popup.style.display = 'block';
+            continueBtn.onclick = () => popup.style.display = 'none';
+            return;
+        }
+
+        popupMessage.textContent = 'Message sent successfully!';
+        popup.style.display = 'block';
+        continueBtn.onclick = () => {
+            popup.style.display = 'none';
+            contactForm.submit();
+        };
+    });
+}
+
+/**
+ * Macht die "Task Type"-Karten klickbar.
+ */
 function initializeTaskTypeSelection() {
     const taskTypeCards = document.querySelectorAll('.task-type-card');
-    const radioButtons = document.querySelectorAll('input[name="taskType"]');
+    if (taskTypeCards.length === 0) return;
 
     taskTypeCards.forEach(card => {
         card.addEventListener('click', function() {
-            // Remove selected class from all cards
             taskTypeCards.forEach(c => c.classList.remove('selected'));
-
-            // Add selected class to clicked card
             this.classList.add('selected');
-
-            // Check the corresponding radio button
             const radioButton = this.querySelector('input[type="radio"]');
-            if (radioButton) {
-                radioButton.checked = true;
-            }
-        });
-    });
-
-    // Handle radio button changes (for keyboard navigation)
-    radioButtons.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.checked) {
-                taskTypeCards.forEach(card => {
-                    card.classList.remove('selected');
-                    if (card.dataset.type === this.value) {
-                        card.classList.add('selected');
-                    }
-                });
-            }
+            if (radioButton) radioButton.checked = true;
         });
     });
 }
 
+/**
+ * Initialisiert die Client-seitige Validierung für das "Create Task"-Formular.
+ * KORRIGIERT: Fügt eine Prüfung hinzu, ob das Formular existiert.
+ */
 function initializeFormValidation() {
     const form = document.getElementById('create-task-form');
-    const requiredFields = form.querySelectorAll('[required]');
+    // --- KORREKTUR START ---
+    if (!form) return; // Beendet die Funktion, wenn das Formular nicht auf der Seite ist.
+    // --- KORREKTUR ENDE ---
 
+    const requiredFields = form.querySelectorAll('[required]');
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-
         if (validateForm()) {
-            // If validation passes, submit the form
             this.submit();
         }
     });
 
-    // Add real-time validation feedback
     requiredFields.forEach(field => {
-        field.addEventListener('blur', function() {
-            validateField(this);
-        });
-
+        field.addEventListener('blur', () => validateField(field));
         field.addEventListener('input', function() {
-            // Remove error styling when user starts typing
             this.classList.remove('error');
             const errorMsg = this.parentNode.querySelector('.error-message');
-            if (errorMsg) {
-                errorMsg.remove();
-            }
+            if (errorMsg) errorMsg.remove();
         });
     });
 }
 
-function validateForm() {
-    const form = document.getElementById('create-task-form');
-    const requiredFields = form.querySelectorAll('[required]');
-    const taskTypeSelected = form.querySelector('input[name="taskType"]:checked');
-
-    let isValid = true;
-
-    // Clear previous error messages
-    document.querySelectorAll('.error-message').forEach(msg => msg.remove());
-    document.querySelectorAll('.error').forEach(field => field.classList.remove('error'));
-
-    // Check if task type is selected
-    if (!taskTypeSelected) {
-        showError('Please select a task type');
-        isValid = false;
-    }
-
-    // Validate required fields
-    requiredFields.forEach(field => {
-        if (!validateField(field)) {
-            isValid = false;
-        }
-    });
-
-    // Validate deadline is in the future
-    const deadlineField = document.getElementById('task-deadline');
-    if (deadlineField.value) {
-        const selectedDate = new Date(deadlineField.value);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        if (selectedDate <= today) {
-            showFieldError(deadlineField, 'Deadline must be in the future');
-            isValid = false;
-        }
-    }
-
-    if (isValid) {
-        showSuccess('Task created successfully!');
-    }
-
-    return isValid;
-}
-
-function validateField(field) {
-    const value = field.value.trim();
-
-    if (field.hasAttribute('required') && !value) {
-        showFieldError(field, 'This field is required');
-        return false;
-    }
-
-    if (field.type === 'email' && value && !isValidEmail(value)) {
-        showFieldError(field, 'Please enter a valid @ubs.com email address');
-        return false;
-    }
-
-    return true;
-}
-
-function showFieldError(field, message) {
-    field.classList.add('error');
-
-    const errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    errorElement.textContent = message;
-    errorElement.style.color = '#E60100';
-    errorElement.style.fontSize = '0.9rem';
-    errorElement.style.marginTop = '5px';
-
-    field.parentNode.appendChild(errorElement);
-}
-
-function showError(message) {
-    const errorElement = document.createElement('div');
-    errorElement.className = 'form-message error';
-    errorElement.textContent = message;
-
-    const container = document.querySelector('.create-task-container');
-    container.insertBefore(errorElement, container.firstChild);
-
-    // Scroll to top to show error
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showSuccess(message) {
-    const successElement = document.createElement('div');
-    successElement.className = 'form-message success';
-    successElement.textContent = message;
-
-    const container = document.querySelector('.create-task-container');
-    container.insertBefore(successElement, container.firstChild);
-
-    // Scroll to top to show success message
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function isValidEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@ubs\.com$/;
-    return emailRegex.test(email);
-}
-
-// Read More button Landing Page
-function toggleText(button) {
-    const moreText = button.previousElementSibling;
-    if (moreText.style.display === "inline") {
-        moreText.style.display = "none";
-        button.textContent = "Read more";
-    } else {
-        moreText.style.display = "inline";
-        button.textContent = "Read less";
-    }
-}
-
-/* Imprint JS */
-document.addEventListener('DOMContentLoaded', function() {
+/**
+ * Initialisiert die Hover-Effekte für die Visitenkarten auf der Impressum-Seite.
+ * KORRIGIERT: Prüft, ob die benötigten Elemente existieren.
+ */
+function initializeImprintHover() {
     const teamMembers = document.querySelectorAll('.team-member');
     const businessCard = document.getElementById('businessCard');
 
+    // --- KORREKTUR START ---
+    if (teamMembers.length === 0 || !businessCard) return;
+    // --- KORREKTUR ENDE ---
+
     teamMembers.forEach(member => {
-        member.addEventListener('mouseenter', function(e) {
-            const name = this.textContent;
-            const email = this.getAttribute('data-email');
-            const role = this.getAttribute('data-role');
-
-            businessCard.querySelector('.card-name').textContent = name;
-            businessCard.querySelector('.card-role').textContent = role;
-            businessCard.querySelector('.card-email').textContent = email;
-
+        member.addEventListener('mouseenter', function() {
+            businessCard.querySelector('.card-name').textContent = this.textContent;
+            businessCard.querySelector('.card-role').textContent = this.getAttribute('data-role');
+            businessCard.querySelector('.card-email').textContent = this.getAttribute('data-email');
             businessCard.style.display = 'block';
         });
-
-        member.addEventListener('mousemove', function(e) {
+        member.addEventListener('mousemove', e => {
             businessCard.style.left = e.pageX + 10 + 'px';
             businessCard.style.top = e.pageY + 10 + 'px';
         });
-
-        member.addEventListener('mouseleave', function() {
+        member.addEventListener('mouseleave', () => {
             businessCard.style.display = 'none';
         });
-
-        // Add click event to open email client
         member.addEventListener('click', function() {
-            const email = this.getAttribute('data-email');
-            window.location.href = 'mailto:' + email;
+            window.location.href = 'mailto:' + this.getAttribute('data-email');
         });
     });
-});
+}
 
-// Drag & Drop für alle Create Seiten
-document.addEventListener('DOMContentLoaded', function() {
+/**
+ * Initialisiert die Drag & Drop Funktionalität für den Dateiupload.
+ * KORRIGIERT: Prüft, ob die Drop-Zone existiert.
+ */
+function initializeDragAndDrop() {
     const dropZone = document.getElementById('drop-zone');
+    // --- KORREKTUR START ---
+    if (!dropZone) return;
+    // --- KORREKTUR ENDE ---
+
     const fileInput = document.getElementById('file-input');
     const fileNameSpan = document.getElementById('file-name');
 
     dropZone.addEventListener('click', () => fileInput.click());
-
-    ['dragenter', 'dragover'].forEach(ev =>
-        dropZone.addEventListener(ev, e => {
-            e.preventDefault(); e.stopPropagation();
+    ['dragenter', 'dragover'].forEach(evName => {
+        dropZone.addEventListener(evName, e => {
+            e.preventDefault();
+            e.stopPropagation();
             dropZone.classList.add('dragover');
-        })
-    );
-    ['dragleave', 'drop'].forEach(ev =>
-        dropZone.addEventListener(ev, e => {
-            e.preventDefault(); e.stopPropagation();
+        });
+    });
+    ['dragleave', 'drop'].forEach(evName => {
+        dropZone.addEventListener(evName, e => {
+            e.preventDefault();
+            e.stopPropagation();
             dropZone.classList.remove('dragover');
-        })
-    );
+        });
+    });
     dropZone.addEventListener('drop', e => {
         const files = e.dataTransfer.files;
         if (!files.length) return;
@@ -404,4 +247,93 @@ document.addEventListener('DOMContentLoaded', function() {
             fileNameSpan.textContent = fileInput.files[0].name;
         }
     });
-});
+}
+
+
+// Hilfsfunktionen (unverändert, können hier bleiben)
+function toggleText(button) {
+    const moreText = button.previousElementSibling;
+    if (moreText.style.display === "inline") {
+        moreText.style.display = "none";
+        button.textContent = "Read more";
+    } else {
+        moreText.style.display = "inline";
+        button.textContent = "Read less";
+    }
+}
+
+function validateForm() {
+    const form = document.getElementById('create-task-form');
+    if (!form) return false;
+    // ... (Rest der Funktion bleibt gleich, da sie nur aufgerufen wird, wenn das Formular existiert)
+    const requiredFields = form.querySelectorAll('[required]');
+    const taskTypeSelected = form.querySelector('input[name="taskType"]:checked');
+    let isValid = true;
+    document.querySelectorAll('.error-message').forEach(msg => msg.remove());
+    document.querySelectorAll('.error').forEach(field => field.classList.remove('error'));
+    if (!taskTypeSelected) {
+        showError('Please select a task type');
+        isValid = false;
+    }
+    requiredFields.forEach(field => {
+        if (!validateField(field)) isValid = false;
+    });
+    const deadlineField = document.getElementById('task-deadline');
+    if (deadlineField && deadlineField.value) {
+        const selectedDate = new Date(deadlineField.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (selectedDate <= today) {
+            showFieldError(deadlineField, 'Deadline must be in the future');
+            isValid = false;
+        }
+    }
+    if (isValid) showSuccess('Task created successfully!');
+    return isValid;
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+    if (field.hasAttribute('required') && !value) {
+        showFieldError(field, 'This field is required');
+        return false;
+    }
+    if (field.type === 'email' && value && !isValidEmail(value)) {
+        showFieldError(field, 'Please enter a valid @ubs.com email address');
+        return false;
+    }
+    return true;
+}
+
+function showFieldError(field, message) {
+    field.classList.add('error');
+    const errorElement = document.createElement('div');
+    errorElement.className = 'error-message';
+    errorElement.textContent = message;
+    errorElement.style.cssText = 'color: #E60100; font-size: 0.9rem; margin-top: 5px;';
+    field.parentNode.appendChild(errorElement);
+}
+
+function showError(message) {
+    const container = document.querySelector('.create-task-container');
+    if (!container) return;
+    const errorElement = document.createElement('div');
+    errorElement.className = 'form-message error';
+    errorElement.textContent = message;
+    container.insertBefore(errorElement, container.firstChild);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showSuccess(message) {
+    const container = document.querySelector('.create-task-container');
+    if (!container) return;
+    const successElement = document.createElement('div');
+    successElement.className = 'form-message success';
+    successElement.textContent = message;
+    container.insertBefore(successElement, container.firstChild);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function isValidEmail(email) {
+    return /^[a-zA-Z0-9._%+-]+@ubs\.com$/.test(email);
+}

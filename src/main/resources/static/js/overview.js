@@ -255,30 +255,61 @@ function updateSearchPaginationPage(newPage) {
 
 function openTaskFromSearch(taskId) {
     console.log('Opening task from search with ID:', taskId);
-    // Find task in locally stored tasks
+
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    if (suggestionsContainer) {
+        suggestionsContainer.innerHTML = '<div class="search-loading">Loading task...</div>';
+        suggestionsContainer.style.display = 'block';
+    }
+
+    // First try to find task in locally stored tasks
     const task = allTasks.find(t => t.id === taskId);
     if (task) {
-        console.log('Found task, opening popup:', task.title);
+        console.log('Found task locally, opening popup:', task.title);
         openPopup(task);
-        // Clear and hide search suggestions
-        const suggestionsContainer = document.getElementById('search-suggestions-container');
-        if (suggestionsContainer) {
-            suggestionsContainer.innerHTML = '';
-            suggestionsContainer.style.display = 'none';
-        }
-        // Clear search input
-        const searchInput = document.getElementById('search-input');
-        if (searchInput) {
-            searchInput.value = '';
-        }
+
+        // --- KORREKTUR START ---
+        // Verzögere das Leeren des Inputs, damit der "click outside" Listener
+        // den Klick korrekt zuordnen kann, bevor das Element verschwindet.
+        setTimeout(() => {
+            clearSearchInput();
+        }, 10); // Eine kleine Verzögerung von 10ms genügt.
+        // --- KORREKTUR ENDE ---
+
     } else {
-        console.error('Task not found in local tasks:', taskId);
-        console.log('Available task IDs:', allTasks.map(t => t.id));
-        // Try to reload tasks if not found
-        if (allTasks.length === 0) {
-            console.log('No tasks loaded, trying to reload...');
-            loadAllTasks();
-        }
+        console.log('Task not found locally, fetching from API...');
+        // Fallback: Fetch task from API
+        fetch(`/api/tasks/${taskId}`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            })
+            .then(task => {
+                console.log('Task fetched from API, opening popup:', task.title);
+                openPopup(task);
+                // --- KORREKTUR AUCH HIER ---
+                setTimeout(() => {
+                    clearSearchInput();
+                }, 10);
+            })
+            .catch(err => {
+                console.error('Error fetching task from API:', err);
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '<div class="search-error">Failed to load task</div>';
+                }
+            });
+    }
+}
+
+function clearSearchInput() {
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    if (suggestionsContainer) {
+        suggestionsContainer.innerHTML = '';
+        suggestionsContainer.style.display = 'none';
+    }
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.value = '';
     }
 }
 
@@ -717,7 +748,17 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("click", (event) => {
     const popup = document.getElementById("popup");
     if (!popup || popup.classList.contains("hidden")) return;
+
+    // Ignoriere Klicks auf die Task-Karten in der Hauptansicht
     if (event.target.closest(".task-card")) return;
+
+    // NEU: Ignoriere Klicks, die aus dem Suchvorschlag-Container kommen
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    if (suggestionsContainer && suggestionsContainer.contains(event.target)) {
+        return; // Nichts tun, das Öffnen des Tasks wird bereits gehandhabt
+    }
+
+    // Wenn der Klick ausserhalb des Popup-Inhalts war, schliesse es
     const content = popup.querySelector(".popup-content");
     if (content && !content.contains(event.target)) {
         closePopup();
