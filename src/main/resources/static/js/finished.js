@@ -53,22 +53,6 @@ function updatePagination(newPage) {
     if (currentBtn) currentBtn.textContent = pagination;
     if (input) input.value = pagination;
 
-    loadFinishedTasks(pagination);
-}
-
-/** Loads Finished Tasks for given page */
-function loadFinishedTasks(page) {
-    fetch(`/api/tasks/finished?page=${page}`)
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            return res.json();
-        })
-        .then(data => {
-            const container = document.getElementById("task-container");
-            if (!container) return;
-
             container.innerHTML = "";
 
             if (data.length === 0) {
@@ -151,6 +135,7 @@ function openPopup(task) {
     loadComments(task.id);
 
     document.getElementById("popup").classList.remove("hidden");
+    loadPopupContent(task);
 }
 
 function closePopup() {

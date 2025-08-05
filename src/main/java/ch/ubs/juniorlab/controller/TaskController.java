@@ -282,6 +282,7 @@ public class TaskController {
         System.out.println("Status‑Mail sent to: " + client.getEmail());
     }
 
+    @Transactional
     @PostMapping("/{id}/status")
     public ResponseEntity<Void> updateTaskStatus(@PathVariable Long id, @RequestBody StatusUpdateRequest request) {
         Task task = taskRepository.findById(id).orElseThrow();
@@ -299,7 +300,6 @@ public class TaskController {
                 }
             } catch (Exception e) {
                 System.err.println("Failed to send status update email to " + client.getEmail() + ": " + e.getMessage());
-                // Continue without failing the entire operation
             }
         }
 
@@ -365,6 +365,7 @@ public class TaskController {
         System.out.println("Finished‑Mail sent to: " + client.getEmail());
     }
 
+    @Transactional
     @PostMapping("/{taskId}/comments")
     public ResponseEntity<Void> addCommentToTask(@PathVariable Long taskId, @RequestBody CommentRequest commentRequest) {
         Task task = taskRepository.findById(taskId)
@@ -375,13 +376,12 @@ public class TaskController {
         newComment.setTitle("User Comment");
         commentRepository.save(newComment);
 
-        Person client = task.getClient();
+        Person client = task.getClient(); // <- Wird korrekt geladen durch offene Session
         if (client != null && client.getEmail() != null && !client.getEmail().isBlank()) {
             try {
                 sendCommentEmail(task, client, commentRequest);
             } catch (Exception e) {
                 System.err.println("Failed to send comment email to " + client.getEmail() + ": " + e.getMessage());
-                // Continue without failing the entire operation
             }
         }
 
