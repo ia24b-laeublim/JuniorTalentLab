@@ -5,75 +5,62 @@
   <title>Update Poll Task - Junior Talent Lab</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-  <script th:src="@{/js/script.js}"></script>
 </head>
 
 <body>
-
-
-<!-- Main Content -->
 <main class="create-task-wrapper">
   <div class="page-title-container">
-    <h1>Update poll task</h1>
+    <h1>Update Poll Task</h1>
     <div class="red-underline"></div>
   </div>
 
   <div class="create-task-container">
-    <form id="create-poll-form" action="/create-task/poll" method="post" novalidate>
-      <input type="hidden" name="taskType" value="poll">
+    <form id="update-poll-form"
+          th:object="${task}"
+          th:action="@{/tasks/update/{id}(id=${task.id})}"
+          method="post"
+          novalidate>
 
-      <!-- Basic Task Details -->
-      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+      <input type="hidden" name="taskType" th:value="*{taskType}">
 
-      <!-- Poll Specific Details -->
+      <div th:replace="~{fragments/updateTaskDetails :: updateTaskDetails}"></div>
+
+      <!-- KORRIGIERT: th:object wurde hier entfernt, um verschachtelte Kontexte zu vermeiden -->
       <div class="form-section">
         <h2>Poll specifications</h2>
-
         <div class="form-row">
           <div class="form-field">
-            <label for="question-count" class="form-label">Question count</label>
-            <input type="number" id="question-count" name="questionCount" class="form-input"
-                   min="1" max="50" placeholder="e.g., 10" />
+            <label for="poll-question-count" class="form-label">Number of questions</label>
+            <input type="number" id="poll-question-count" name="questionCount" th:value="${specificTask.questionCount}" class="form-input" min="1" />
           </div>
-
           <div class="form-field">
-            <label for="question-type" class="form-label">Question type</label>
-            <select id="question-type" name="questionType" class="form-select">
-              <option value="">Select question type</option>
-              <option value="multiple-choice">Multiple choice</option>
-              <option value="single-choice">Single choice</option>
-              <option value="text">Text response</option>
-              <option value="rating">Rating scale</option>
-              <option value="mixed">Mixed types</option>
-            </select>
+            <label for="poll-question-type" class="form-label">Question Type</label>
+            <input type="text" id="poll-question-type" name="questionType" th:value="${specificTask.questionType}" class="form-input" placeholder="e.g., Multiple Choice, Open-ended" />
           </div>
         </div>
-
         <div class="form-row">
           <div class="form-field">
-            <label for="start-date" class="form-label">Start date</label>
-            <input type="date" id="start-date" name="startDate" class="form-input" />
+            <label for="poll-start-date" class="form-label">Start Date</label>
+            <input type="date" id="poll-start-date" name="startDate" th:value="${specificTask.startDate != null ? #temporals.format(specificTask.startDate, 'yyyy-MM-dd') : ''}" class="form-input" />
           </div>
-
           <div class="form-field">
-            <label for="end-date" class="form-label">End date</label>
-            <input type="date" id="end-date" name="endDate" class="form-input" />
-          </div>
+            <label for="poll-end-date" class="form-label">End Date</label>
+            <input type="date" id="poll-end-date" name="endDate" th:value="${specificTask.endDate != null ? #temporals.format(specificTask.endDate, 'yyyy-MM-dd') : ''}" class="form-input" />          </div>
         </div>
-
         <div class="form-row">
-          <div class="form-field">
-            <label for="anonymous" class="form-label">Anonymous poll</label>
-            <select id="anonymous" name="anonymous" class="form-select">
-              <option value="">Select option</option>
-              <option value="true">Yes, anonymous</option>
-              <option value="false">No, collect names</option>
+          <div class="form-field form-field-full">
+            <label for="poll-anonymous" class="form-label">Anonymous</label>
+            <select id="poll-anonymous" name="anonymous" class="form-select">
+              <!-- KORRIGIERT: Null-sichere Bedingungen -->
+              <!-- "No" ist ausgewählt, wenn der Wert nicht explizit true ist (also bei false oder null) -->
+              <option value="false" th:selected="${specificTask.anonymous != true}">No</option>
+              <!-- "Yes" ist nur ausgewählt, wenn der Wert explizit true ist -->
+              <option value="true" th:selected="${specificTask.anonymous == true}">Yes</option>
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Submit Section -->
       <div class="form-section">
         <div class="form-actions">
           <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
@@ -83,7 +70,5 @@
     </form>
   </div>
 </main>
-
-
 </body>
 </html>

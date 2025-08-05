@@ -71,6 +71,17 @@ function loadOpenTasks(page) {
 
             container.innerHTML = "";
 
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📝</div>
+                        <h3 style="color: #333; margin-bottom: 10px;">No tasks available</h3>
+                        <p style="font-size: 16px;">Check back later for new requests!</p>
+                    </div>
+                `;
+                return;
+            }
+
             data.forEach(task => {
                 const card = document.createElement("div");
                 card.className = "task-card";
@@ -277,12 +288,47 @@ document.addEventListener("click", (event) => {
 
 // ✅ IMPROVED: Helper function for Content Type
 function getTaskType(task) {
-    if (task.paperSize && task.paperType) return "Flyer";
-    if (task.posterSize) return "Poster";
-    if (task.photoCount) return "Slideshow";
-    if (task.lengthSec) return "Video";
-    if (task.questionCount) return "Poll";
-    if (task.format && task.resolution) return "Photo";
+    console.log("getTaskType called with task:", task); // Debug log
+    
+    // Check Poll first (most specific)
+    if (task.questionCount != null || task.questionType != null) {
+        console.log("Detected as Poll");
+        return "Poll";
+    }
+    
+    // Check Video (has lengthSec)
+    if (task.lengthSec != null) {
+        console.log("Detected as Video");
+        return "Video";
+    }
+    
+    // Check Flyer (has paperSize AND paperType)
+    if (task.paperSize != null && task.paperType != null) {
+        console.log("Detected as Flyer");
+        return "Flyer";
+    }
+    
+    // Check Poster (has posterSize)
+    if (task.posterSize != null) {
+        console.log("Detected as Poster");
+        return "Poster";
+    }
+    
+    // Check Slideshow (has photoCount)
+    if (task.photoCount != null) {
+        console.log("Detected as Slideshow");
+        return "Slideshow";
+    }
+    
+    // Check Photo (more restrictive - should be ONLY Photo tasks)
+    if (task.format != null && task.resolution != null && 
+        task.lengthSec == null && task.photoCount == null && task.posterSize == null &&
+        task.paperSize == null && task.paperType == null && task.questionCount == null && task.questionType == null) {
+        console.log("Detected as Photo");
+        return "Photo";
+    }
+    
+    console.log("Detected as General Task");
     return "General Task";
 }
 

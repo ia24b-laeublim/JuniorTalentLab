@@ -5,101 +5,62 @@
     <title>Update Poster Task - Junior Talent Lab</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-    <script th:src="@{/js/script.js}"></script>
 </head>
 
 <body>
-
-
-<!-- Main Content -->
 <main class="create-task-wrapper">
     <div class="page-title-container">
-        <h1>Update poster task</h1>
+        <h1>Update Poster Task</h1>
         <div class="red-underline"></div>
     </div>
 
     <div class="create-task-container">
-        <form id="create-poster-form" action="/create-task/poster" method="post" novalidate>
-            <input type="hidden" name="taskType" value="poster">
+        <!-- Das Formular ist an das allgemeine "task"-Objekt gebunden. Das ist KORREKT. -->
+        <form id="update-poster-form"
+              th:object="${task}"
+              th:action="@{/tasks/update/{id}(id=${task.id})}"
+              method="post"
+              novalidate>
 
-            <!-- Basic Task Details -->
-            <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+            <input type="hidden" name="taskType" th:value="*{taskType}">
 
-            <!-- Poster Specific Details -->
+            <div th:replace="~{fragments/updateTaskDetails :: updateTaskDetails}"></div>
+
             <div class="form-section">
                 <h2>Poster specifications</h2>
-
                 <div class="form-row">
                     <div class="form-field">
-                        <label for="format" class="form-label">Format</label>
-                        <select id="format" name="format" class="form-select">
-                            <option value="">Select format</option>
-                            <option value="Portrait">Portrait</option>
-                            <option value="Landscape">Landscape</option>
-                            <option value="Square">Square</option>
-                        </select>
+                        <label for="poster-format" class="form-label">Format</label>
+                        <!-- KORREKTION: Wir verwenden ${specificTask.format}, um auf das ZWEITE Objekt im Model zuzugreifen. -->
+                        <input type="text" id="poster-format" name="format" th:value="${specificTask.format}" class="form-input" placeholder="e.g., A0, A1" />
                     </div>
-
                     <div class="form-field">
-                        <label for="poster-size" class="form-label">Poster size</label>
-                        <input type="text" id="poster-size" name="posterSize" class="form-input"
-                               list="poster-size-options" placeholder="Select or enter custom size" />
-                        <datalist id="poster-size-options">
-                            <option value="A0">
-                            <option value="A1">
-                            <option value="A2">
-                            <option value="A3">
-                            <option value="A4">
-                            <option value="24x36 inches">
-                            <option value="18x24 inches">
-                            <option value="11x17 inches">
-                        </datalist>
+                        <label for="poster-size" class="form-label">Size</label>
+                        <input type="text" id="poster-size" name="posterSize" th:value="${specificTask.posterSize}" class="form-input" placeholder="e.g., 841 x 1189 mm" />
                     </div>
                 </div>
-
                 <div class="form-row">
                     <div class="form-field">
-                        <label for="paper-type" class="form-label">Paper type</label>
-                        <select id="paper-type" name="paperType" class="form-select">
+                        <label for="poster-paper-type" class="form-label">Paper type</label>
+                        <select id="poster-paper-type" name="paperType" class="form-select">
                             <option value="">Select paper type</option>
-                            <option value="Standard">Standard (80gsm)</option>
-                            <option value="Premium">Premium (120gsm)</option>
-                            <option value="Glossy">Glossy</option>
-                            <option value="Matte">Matte</option>
-                            <option value="Canvas">Canvas</option>
-                            <option value="Photo Paper">Photo paper</option>
+                            <option value="Glossy" th:selected="${specificTask.paperType == 'Glossy'}">Glossy</option>
+                            <option value="Matte" th:selected="${specificTask.paperType == 'Matte'}">Matte</option>
                         </select>
                     </div>
-
                     <div class="form-field">
-                        <label for="print-quality-dpi" class="form-label">Print quality (DPI)</label>
-                        <select id="print-quality-dpi" name="printQualityDpi" class="form-select">
-                            <option value="">Select print quality</option>
-                            <option value="150">150 DPI (Draft)</option>
-                            <option value="300">300 DPI (Standard)</option>
-                            <option value="600">600 DPI (High quality)</option>
-                            <option value="1200">1200 DPI (Premium)</option>
-                        </select>
+                        <label for="poster-print-quality" class="form-label">Print Quality (DPI)</label>
+                        <input type="number" id="poster-print-quality" name="printQualityDpi" th:value="${specificTask.printQualityDpi}" class="form-input" placeholder="e.g., 300" min="1" />
                     </div>
                 </div>
-
                 <div class="form-row">
-                    <div class="form-field">
-                        <label for="mounting-type" class="form-label">Mounting type</label>
-                        <select id="mounting-type" name="mountingType" class="form-select">
-                            <option value="">Select mounting type</option>
-                            <option value="None">No mounting</option>
-                            <option value="Foam Board">Foam board</option>
-                            <option value="Aluminum">Aluminum composite</option>
-                            <option value="Acrylic">Acrylic</option>
-                            <option value="Canvas Frame">Canvas frame</option>
-                            <option value="Wooden Frame">Wooden frame</option>
-                        </select>
+                    <div class="form-field form-field-full">
+                        <label for="poster-mounting-type" class="form-label">Mounting Type</label>
+                        <input type="text" id="poster-mounting-type" name="mountingType" th:value="${specificTask.mountingType}" class="form-input" placeholder="e.g., Framed, Roll-up" />
                     </div>
                 </div>
             </div>
 
-            <!-- Submit Section -->
             <div class="form-section">
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
@@ -109,7 +70,5 @@
         </form>
     </div>
 </main>
-
-
 </body>
 </html>

@@ -2,29 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Update Other Task - Junior Talent Lab</title>
+  <title>Update General Task - Junior Talent Lab</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/createTask.css}" />
-  <script th:src="@{/js/script.js}"></script>
 </head>
 
 <body>
-
-<!-- Main Content -->
 <main class="create-task-wrapper">
   <div class="page-title-container">
-    <h1>Update other task</h1>
+    <h1>Update General Task</h1>
     <div class="red-underline"></div>
   </div>
 
   <div class="create-task-container">
-    <form id="create-flyer-form" action="/create-task/flyer" method="post" novalidate>
-      <input type="hidden" name="taskType" value="flyer">
+    <form id="update-other-form"
+          th:object="${task}"
+          th:action="@{/tasks/update/{id}(id=${task.id})}"
+          method="post"
+          novalidate>
 
-      <!-- Basic Task Details -->
-      <div th:replace="~{fragments/basicTaskDetails :: basicTaskDetails}"></div>
+      <input type="hidden" name="taskType" th:value="${taskType}">
 
-      <!-- Submit Section -->
+      <div th:replace="fragments/updateTaskDetails :: updateTaskDetails"></div>
+
       <div class="form-section">
         <div class="form-actions">
           <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
@@ -34,7 +34,5 @@
     </form>
   </div>
 </main>
-
-
 </body>
 </html>
