@@ -129,6 +129,14 @@ public class HomeController {
         return "contact";
     }
 
+    // For testing the update Task page
+    @GetMapping("/test-task-url")
+    public String testTaskUrl() {
+        String taskUrl = hashService.getInfoUrl(27);
+        System.out.println("URL for task 27: " + taskUrl);
+        return "redirect:/";
+    }
+
     private String renderContactEmail(String first, String last, String gpn, String email, String message) {
         String tpl = """
 <!doctype html>
@@ -214,15 +222,5 @@ public class HomeController {
                 .replace("\"","&quot;")
                 .replace("'","&#39;");
     }
-
-
-    // For reaching the update Task page
-    @GetMapping("/test-task-url")
-    public String testTaskUrl() {
-        String taskUrl = hashService.getInfoUrl(27);
-        System.out.println("URL for task 27: " + taskUrl);
-        return "redirect:/";
-    }
-
 
 }
