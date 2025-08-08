@@ -24,7 +24,6 @@ public class HomeController {
     }
 
 
-
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("pageTitle", "Home - Junior Talent Lab");
@@ -106,19 +105,116 @@ public class HomeController {
 
     @PostMapping("/api/send-contact-mail")
     public String sendContactEmail(@ModelAttribute ContactFormDto form, Model model) {
-        // Validate email domain
         if (form.getEmail() == null || !form.getEmail().endsWith("@ubs.com")) {
             model.addAttribute("formFeedback", "Please use a valid @ubs.com email address.");
             return "contact";
         }
 
         String subject = "Kontaktanfrage von " + form.getFirstName() + " " + form.getLastName();
-        String message = "GPN: " + form.getGpn() + "\nEmail: " + form.getEmail() + "\n\nMessage:\n" + form.getMessage();
 
-        mailService.sendEmail("dariangermann@gmail.com", subject, message);
+        String text = "GPN: " + form.getGpn() +
+                "\nEmail: " + form.getEmail() +
+                "\n\nMessage:\n" + form.getMessage();
+
+        String html = renderContactEmail(
+                safe(form.getFirstName()),
+                safe(form.getLastName()),
+                safe(form.getGpn()),
+                safe(form.getEmail()),
+                safe(form.getMessage())
+        );
+
+        mailService.sendEmail("dariangermann@gmail.com", subject, text, html);
         model.addAttribute("formFeedback", "Thank you for your feedback!");
         return "contact";
     }
+
+    private String renderContactEmail(String first, String last, String gpn, String email, String message) {
+        String tpl = """
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kontaktanfrage</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f6f8fa;">
+    <center style="width:100%;background:#f6f8fa;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f6f8fa;">
+        <tr>
+          <td align="center" style="padding:24px 12px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="width:640px;max-width:100%;background:#ffffff;border:1px solid #e1e3e1;border-radius:12px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;">
+              <tr>
+                <td style="background:#f9f9f9;color:#000000;padding:18px 24px;">
+                  <div style="font-size:18px;font-weight:700;line-height:1.2;">Neue Kontaktanfrage</div>
+                  <div style="height:6px;width:60px;background:#E60100;border-radius:3px;margin-top:10px;"></div>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:24px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;border-spacing:0 10px;">
+                    <tr>
+                      <td style="width:140px;vertical-align:top;color:#666;font-size:12px;font-weight:700;padding:0;">Vorname</td>
+                      <td style="vertical-align:top;color:#000000;font-size:15px;padding:0;">${FIRST}</td>
+                    </tr>
+                    <tr>
+                      <td style="width:140px;vertical-align:top;color:#666;font-size:12px;font-weight:700;padding:0;">Nachname</td>
+                      <td style="vertical-align:top;color:#000000;font-size:15px;padding:0;">${LAST}</td>
+                    </tr>
+                    <tr>
+                      <td style="width:140px;vertical-align:top;color:#666;font-size:12px;font-weight:700;padding:0;">GPN</td>
+                      <td style="vertical-align:top;color:#000000;font-size:15px;padding:0;">${GPN}</td>
+                    </tr>
+                    <tr>
+                      <td style="width:140px;vertical-align:top;color:#666;font-size:12px;font-weight:700;padding:0;">E-Mail</td>
+                      <td style="vertical-align:top;color:#000000;font-size:15px;padding:0;">${EMAIL}</td>
+                    </tr>
+                  </table>
+
+                  <div style="margin-top:18px;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:6px;padding:14px;">
+                    <div style="color:#666;font-size:12px;font-weight:700;margin-bottom:6px;">Nachricht</div>
+                    <div style="color:#000000;font-size:15px;line-height:1.55;white-space:pre-wrap;">${MESSAGE}</div>
+                  </div>
+
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px;">
+                  </table>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="background:#f9f9f9;color:#000000;font-size:12px;padding:14px 24px;border-top:1px solid #eaecef;">
+                  Diese E-Mail wurde automatisch vom Junior Talent Lab Kontaktformular gesendet.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>
+""";
+
+        return tpl
+                .replace("${FIRST}", safe(first))
+                .replace("${LAST}", safe(last))
+                .replace("${GPN}", safe(gpn))
+                .replace("${EMAIL}", safe(email))
+                .replace("${MESSAGE}", safe(message));
+    }
+
+    private String safe(String s) {
+        if (s == null) return "";
+        return s
+                .replace("&","&amp;")
+                .replace("<","&lt;")
+                .replace(">","&gt;")
+                .replace("\"","&quot;")
+                .replace("'","&#39;");
+    }
+
 
     // For reaching the update Task page
     @GetMapping("/test-task-url")
